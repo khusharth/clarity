@@ -9,6 +9,8 @@ export default function Settings() {
     setReducedMotionPref,
     soundEnabled,
     setSoundEnabled,
+    themePreference,
+    setThemePreference,
     exportJSON,
     importJSON,
   } = useTodos();
@@ -30,19 +32,35 @@ export default function Settings() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 left-6 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 text-sm shadow-[var(--shadow-soft)]"
+        className="fixed bottom-6 left-6 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 text-sm shadow-[var(--shadow-soft)] cursor-pointer"
       >
         Settings
       </button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
-            className="absolute inset-0 bg-black/30"
+            className="absolute inset-0 bg-black/30 cursor-pointer"
             onClick={() => setOpen(false)}
           />
           <div className="relative z-10 w-full max-w-md rounded-[var(--radius-md)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] p-4 shadow-[var(--shadow-soft)]">
             <h2 className="mb-3 text-lg font-medium">Settings</h2>
             <div className="flex flex-col gap-3 text-sm">
+              <label className="flex items-center justify-between">
+                <span>Theme</span>
+                <select
+                  className="rounded-md border border-[rgb(var(--color-border))] bg-transparent px-2 py-1"
+                  value={themePreference}
+                  onChange={(e) =>
+                    setThemePreference(
+                      e.target.value as "system" | "light" | "dark"
+                    )
+                  }
+                >
+                  <option value="system">System</option>
+                  <option value="light">Light</option>
+                  <option value="dark">Dark</option>
+                </select>
+              </label>
               <label className="flex items-center justify-between">
                 <span>Reduced motion</span>
                 <select
@@ -61,11 +79,12 @@ export default function Settings() {
                   type="checkbox"
                   checked={soundEnabled}
                   onChange={(e) => setSoundEnabled(e.target.checked)}
+                  className="cursor-pointer"
                 />
               </label>
               <div className="mt-2 flex items-center justify-between">
                 <button
-                  className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1"
+                  className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1 cursor-pointer"
                   onClick={() => {
                     download(
                       "clarity-tasks.json",
@@ -99,7 +118,7 @@ export default function Settings() {
                     }}
                   />
                   <button
-                    className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1"
+                    className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1 cursor-pointer"
                     onClick={() => fileRef.current?.click()}
                   >
                     Import JSON
@@ -108,7 +127,7 @@ export default function Settings() {
               </div>
               <div className="mt-2 flex justify-end">
                 <button
-                  className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1"
+                  className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1 cursor-pointer"
                   onClick={() => setOpen(false)}
                 >
                   Close

@@ -24,20 +24,20 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-[rgb(var(--color-bg))] text-[rgb(var(--color-fg))]">
       <Matrix />
       <ConfettiOverlay />
       <Settings />
       <Toasts />
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 rounded-full bg-[rgb(var(--color-accent))] px-4 py-3 text-white shadow-[var(--shadow-soft)] transition-transform duration-200 hover:-translate-y-0.5"
+        className="fixed bottom-6 right-6 rounded-full bg-[rgb(var(--color-accent))] px-4 py-3 text-white shadow-[var(--shadow-soft)] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer"
       >
         Add Task (A)
       </button>
       <a
         href="/completed"
-        className="fixed bottom-6 left-28 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 text-sm shadow-[var(--shadow-soft)] transition-transform duration-200 hover:-translate-y-0.5"
+        className="fixed bottom-6 left-28 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 text-sm shadow-[var(--shadow-soft)] transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer"
       >
         Completed
       </a>

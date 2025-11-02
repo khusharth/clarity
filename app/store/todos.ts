@@ -17,6 +17,7 @@ interface TodosState {
   // Preferences
   reducedMotionPref: "system" | "reduce" | "motion";
   soundEnabled: boolean;
+  themePreference: "system" | "light" | "dark";
   add: (text: string, isUrgent: boolean, isImportant: boolean) => Promise<void>;
   updateText: (id: string, text: string) => Promise<void>;
   toggleUrgent: (id: string) => Promise<void>;
@@ -35,6 +36,7 @@ interface TodosState {
   celebrate: () => void;
   setReducedMotionPref: (pref: "system" | "reduce" | "motion") => void;
   setSoundEnabled: (enabled: boolean) => void;
+  setThemePreference: (pref: "system" | "light" | "dark") => void;
 }
 
 export const useTodos = create<TodosState>()(
@@ -48,6 +50,7 @@ export const useTodos = create<TodosState>()(
       confettiKey: 0,
       reducedMotionPref: "system",
       soundEnabled: false,
+      themePreference: "system",
       hydrate: async () => {
         const tasks = await loadAllTasks();
         set({ tasks, isHydrated: true });
@@ -154,10 +157,27 @@ export const useTodos = create<TodosState>()(
       celebrate: () => set({ confettiKey: get().confettiKey + 1 }),
       setReducedMotionPref: (pref) => set({ reducedMotionPref: pref }),
       setSoundEnabled: (enabled) => set({ soundEnabled: enabled }),
+      setThemePreference: (pref) => {
+        set({ themePreference: pref });
+        // Apply theme immediately
+        const root = document.documentElement;
+        if (pref === "dark") {
+          root.setAttribute("data-theme", "dark");
+        } else if (pref === "light") {
+          root.setAttribute("data-theme", "light");
+        } else {
+          root.removeAttribute("data-theme");
+        }
+      },
     }),
     {
       name: "clarity.zustand.meta", // minimal metadata; real data in Dexie/localStorage
-      partialize: (state) => ({ isHydrated: state.isHydrated }),
+      partialize: (state) => ({
+        isHydrated: state.isHydrated,
+        themePreference: state.themePreference,
+        reducedMotionPref: state.reducedMotionPref,
+        soundEnabled: state.soundEnabled,
+      }),
     }
   )
 );

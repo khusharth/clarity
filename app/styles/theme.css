@@ -37,17 +37,29 @@
   --shadow-soft: 0 4px 24px 0 rgb(99 102 241 / 0.08), 0 2px 8px 0 rgb(15 23 42 / 0.06);
 }
 
+/* Manual dark theme override */
+[data-theme="dark"] {
+  --color-bg: 2 6 23;
+  --color-surface: 15 23 42;
+  --color-border: 51 65 85;
+  --color-fg: 226 232 240;
+  --color-fg-muted: 148 163 184;
+  --color-accent: 165 180 252;
+}
+
+/* Manual light theme override */
+[data-theme="light"] {
+  --color-bg: 248 250 252;
+  --color-surface: 255 255 255;
+  --color-border: 224 231 255;
+  --color-fg: 15 23 42;
+  --color-fg-muted: 71 85 105;
+  --color-accent: 99 102 241;
+}
+
+/* System preference (default) - only applies when no manual theme is set */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: 2 6 23;
-    --color-surface: 15 23 42;
-    --color-border: 51 65 85;
-    --color-fg: 226 232 240;
-    --color-fg-muted: 148 163 184;
-    --color-accent: 165 180 252;
-  }
-  
-  @theme {
+  :root:not([data-theme]) {
     --color-bg: 2 6 23;
     --color-surface: 15 23 42;
     --color-border: 51 65 85;

@@ -14,7 +14,7 @@ export default function Quadrant({
   emptyMessage?: string;
 }) {
   return (
-    <section className="flex flex-col gap-3 rounded-md border border-border bg-surface p-3 shadow-[var(--shadow-soft)] transition-shadow hover:shadow-lg">
+    <section className="flex flex-col gap-3 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] p-3 shadow-[var(--shadow-soft)] transition-shadow hover:shadow-lg">
       <header className="flex items-center gap-2">
         <div
           className="h-2 w-2 rounded-full"
