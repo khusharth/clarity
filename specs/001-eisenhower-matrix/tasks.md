@@ -11,13 +11,13 @@
 
 **Purpose**: Initialize local-first app foundation and styling/theme
 
-- [ ] T001 Add Tailwind `@theme` tokens in app/styles/theme.css
-- [ ] T002 Import theme.css in app/layout.tsx and verify tokens apply
-- [ ] T003 Add deps in package.json: dexie, dexie-react-hooks, framer-motion, date-fns, zustand, lucide-react
-- [ ] T004 Create app/lib/schema.ts with Task and Preferences types
-- [ ] T005 Create app/lib/db.ts with Dexie setup (tasks table: id, createdAt, status indexes)
-- [ ] T006 Create app/lib/persistence.ts with localStorage fallback (enable/disable via check)
-- [ ] T007 [P] Create app/hooks/useReducedMotion.ts (system + app toggle support)
+- [x] T001 Add Tailwind `@theme` tokens in app/styles/theme.css
+- [x] T002 Import theme.css in app/layout.tsx and verify tokens apply
+- [x] T003 Add deps in package.json: dexie, dexie-react-hooks, framer-motion, date-fns, zustand, lucide-react
+- [x] T004 Create app/lib/schema.ts with Task and Preferences types
+- [x] T005 Create app/lib/db.ts with Dexie setup (tasks table: id, createdAt, status indexes)
+- [x] T006 Create app/lib/persistence.ts with localStorage fallback (enable/disable via check)
+- [x] T007 [P] Create app/hooks/useReducedMotion.ts (system + app toggle support)
 
 ---
 
