@@ -89,6 +89,9 @@
 - [ ] T020 [US3] Add app/components/AddTodoModal.tsx (text input, urgent/important toggles)
 - [ ] T021 [US3] Show modal from app/page.tsx (button + keyboard shortcut)
 - [ ] T022 [P] [US3] Submit → create task in store + Dexie; entry animation
+- [x] T020 [US3] Add app/components/AddTodoModal.tsx (text input, urgent/important toggles)
+- [x] T021 [US3] Show modal from app/page.tsx (button + keyboard shortcut)
+- [x] T022 [P] [US3] Submit → create task in store + Dexie; entry animation
 
 Optional (only if needed):
 
