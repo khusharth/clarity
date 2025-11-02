@@ -22,6 +22,15 @@ export default function AddTodoModal({
     }
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const trimmed = text.trim();

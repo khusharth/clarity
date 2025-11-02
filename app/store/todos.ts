@@ -14,6 +14,9 @@ interface TodosState {
   activeTaskId: string | null;
   // UI feedback
   confettiKey: number;
+  // Preferences
+  reducedMotionPref: "system" | "reduce" | "motion";
+  soundEnabled: boolean;
   add: (text: string, isUrgent: boolean, isImportant: boolean) => Promise<void>;
   updateText: (id: string, text: string) => Promise<void>;
   toggleUrgent: (id: string) => Promise<void>;
@@ -30,6 +33,8 @@ interface TodosState {
   setActiveTask: (id: string | null) => void;
   nextFocusTask: () => void;
   celebrate: () => void;
+  setReducedMotionPref: (pref: "system" | "reduce" | "motion") => void;
+  setSoundEnabled: (enabled: boolean) => void;
 }
 
 export const useTodos = create<TodosState>()(
@@ -41,6 +46,8 @@ export const useTodos = create<TodosState>()(
       focusMode: "all",
       activeTaskId: null,
       confettiKey: 0,
+      reducedMotionPref: "system",
+      soundEnabled: false,
       hydrate: async () => {
         const tasks = await loadAllTasks();
         set({ tasks, isHydrated: true });
@@ -145,6 +152,8 @@ export const useTodos = create<TodosState>()(
         set({ activeTaskId: next.id });
       },
       celebrate: () => set({ confettiKey: get().confettiKey + 1 }),
+      setReducedMotionPref: (pref) => set({ reducedMotionPref: pref }),
+      setSoundEnabled: (enabled) => set({ soundEnabled: enabled }),
     }),
     {
       name: "clarity.zustand.meta", // minimal metadata; real data in Dexie/localStorage

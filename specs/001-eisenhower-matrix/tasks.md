@@ -132,6 +132,11 @@ Optional (only if needed):
 - [ ] T029 [P] Accessibility pass (labels, focus states, contrast)
 - [ ] T030 [P] Settings toggles (reduced-motion, sound) wiring in store
 - [ ] T031 [P] Import/Export JSON actions (settings)
+- [x] T027 [P] Keyboard navigation for add, confirm/cancel, change quadrant, complete, delete
+- [x] T028 [P] Responsive layout checks for mobile/desktop
+- [x] T029 [P] Accessibility pass (labels, focus states, contrast)
+- [x] T030 [P] Settings toggles (reduced-motion, sound) wiring in store
+- [x] T031 [P] Import/Export JSON actions (settings)
 
 ---
 

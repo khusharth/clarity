@@ -4,16 +4,29 @@ import { motion } from "framer-motion";
 import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
 import { CheckCircle2, Trash2, Flame, Sparkles } from "lucide-react";
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 
 export default function TodoCard({ task }: { task: Task }) {
   const { toggleUrgent, toggleImportant, complete, remove, celebrate } = useTodos();
-  const reduced = useReducedMotion();
+  const reduced = useAppReducedMotion();
   const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
       layout
+      tabIndex={0}
+      onKeyDown={async (e) => {
+        if (e.key.toLowerCase() === "c") {
+          celebrate();
+          await complete(task.id);
+        } else if (e.key === "Delete" || e.key === "Backspace") {
+          await remove(task.id);
+        } else if (e.key.toLowerCase() === "u") {
+          await toggleUrgent(task.id);
+        } else if (e.key.toLowerCase() === "i") {
+          await toggleImportant(task.id);
+        }
+      }}
       initial={reduced ? false : { opacity: 0, y: 8 }}
       animate={reduced ? undefined : { opacity: 1, y: 0 }}
       exit={reduced ? undefined : { opacity: 0, y: -8 }}
