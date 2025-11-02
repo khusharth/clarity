@@ -18,7 +18,7 @@ Minimal, delightful, local-first TODO app using the Eisenhower Matrix. Primary f
 -->
 
 **Language/Version**: TypeScript 5.x; Next.js 16 (App Router); React 19  
-**Primary Dependencies**: Tailwind CSS 4 (`@theme`), Framer Motion 12, date-fns, Zustand (if needed), shadcn/ui (if needed)  
+**Primary Dependencies**: Tailwind CSS 4 (`@theme`), Framer Motion 12, date-fns, Zustand (if needed), shadcn/ui (if needed), lucide-react  
 **Storage**: IndexedDB via Dexie + dexie-react-hooks; fallback to localStorage for MVP  
 **Testing**: Not required for MVP (per request)  
 **Target Platform**: Web (modern desktop/mobile browsers)  

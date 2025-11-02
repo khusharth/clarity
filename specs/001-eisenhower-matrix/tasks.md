@@ -48,6 +48,8 @@
 - [ ] T015 [P] [US1] Wire TodoCard controls to update urgency/importance with motion transitions
 - [ ] T016 [P] [US1] Ensure reduced-motion disables heavy animations
 
+- [ ] T032 [P] [US1] Add inline text edit in app/components/TodoCard.tsx and update app/store/todos.ts
+
 **Checkpoint**: Matrix view functional, tasks placed and move correctly
 
 ---
@@ -99,6 +101,8 @@ Optional (only if needed):
 - [ ] T024 [US4] Add confetti effect on complete (respect reduced-motion)
 - [ ] T025 [US4] Add Completed view at app/completed/page.tsx (list by completedAt desc)
 - [ ] T026 [US4] Delete completed task with gentle confirmation
+
+- [ ] T033 [US4] Create app/lib/dates.ts and format completedAt in app/completed/page.tsx
 
 **Checkpoint**: Completion and management of completed tasks done
 
