@@ -70,6 +70,9 @@
 - [ ] T017 [US2] Add app/components/FocusControls.tsx (enter/exit, mode toggle, Next)
 - [ ] T018 [US2] Focus state in store (isFocus, focusMode: all|single, activeTaskId?)
 - [ ] T019 [US2] Animate page transition to focus and back (framer-motion)
+- [x] T017 [US2] Add app/components/FocusControls.tsx (enter/exit, mode toggle, Next)
+- [x] T018 [US2] Focus state in store (isFocus, focusMode: all|single, activeTaskId?)
+- [x] T019 [US2] Animate page transition to focus and back (framer-motion)
 
 **Checkpoint**: Focus Mode implemented per FR-012
 

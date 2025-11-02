@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { v4 as uuidv4 } from "uuid";
 import type { Task } from "../lib/schema";
 import { loadAllTasks, saveTask, deleteTask } from "../lib/persistence";
 
@@ -9,6 +8,10 @@ type ImportExportBundle = { tasks: Task[] };
 interface TodosState {
   tasks: Task[];
   isHydrated: boolean;
+  // Focus mode state
+  isFocus: boolean;
+  focusMode: "all" | "single";
+  activeTaskId: string | null;
   add: (text: string, isUrgent: boolean, isImportant: boolean) => Promise<void>;
   updateText: (id: string, text: string) => Promise<void>;
   toggleUrgent: (id: string) => Promise<void>;
@@ -18,6 +21,12 @@ interface TodosState {
   importJSON: (bundle: ImportExportBundle) => Promise<void>;
   exportJSON: () => ImportExportBundle;
   hydrate: () => Promise<void>;
+  // Focus controls
+  enterFocus: (mode?: "all" | "single") => void;
+  exitFocus: () => void;
+  setFocusMode: (mode: "all" | "single") => void;
+  setActiveTask: (id: string | null) => void;
+  nextFocusTask: () => void;
 }
 
 export const useTodos = create<TodosState>()(
@@ -25,13 +34,21 @@ export const useTodos = create<TodosState>()(
     (set, get) => ({
       tasks: [],
       isHydrated: false,
+      isFocus: false,
+      focusMode: "all",
+      activeTaskId: null,
       hydrate: async () => {
         const tasks = await loadAllTasks();
         set({ tasks, isHydrated: true });
       },
       add: async (text, isUrgent, isImportant) => {
+        const id =
+          typeof crypto !== "undefined" &&
+          typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : Math.random().toString(36).slice(2) + Date.now().toString(36);
         const task: Task = {
-          id: uuidv4(),
+          id,
           text: text.trim(),
           isUrgent,
           isImportant,
@@ -43,50 +60,42 @@ export const useTodos = create<TodosState>()(
         set({ tasks: [task, ...get().tasks] });
       },
       updateText: async (id, text) => {
-        set(async (state) => {
-          const tasks = state.tasks.map((t) =>
-            t.id === id ? { ...t, text: text.trim() } : t
-          );
-          const updated = tasks.find((t) => t.id === id);
-          if (updated) await saveTask(updated);
-          return { tasks } as Partial<TodosState>;
-        });
+        const tasks = get().tasks.map((t) =>
+          t.id === id ? { ...t, text: text.trim() } : t
+        );
+        const updated = tasks.find((t) => t.id === id);
+        if (updated) await saveTask(updated);
+        set({ tasks });
       },
       toggleUrgent: async (id) => {
-        set(async (state) => {
-          const tasks = state.tasks.map((t) =>
-            t.id === id ? { ...t, isUrgent: !t.isUrgent } : t
-          );
-          const updated = tasks.find((t) => t.id === id);
-          if (updated) await saveTask(updated);
-          return { tasks } as Partial<TodosState>;
-        });
+        const tasks = get().tasks.map((t) =>
+          t.id === id ? { ...t, isUrgent: !t.isUrgent } : t
+        );
+        const updated = tasks.find((t) => t.id === id);
+        if (updated) await saveTask(updated);
+        set({ tasks });
       },
       toggleImportant: async (id) => {
-        set(async (state) => {
-          const tasks = state.tasks.map((t) =>
-            t.id === id ? { ...t, isImportant: !t.isImportant } : t
-          );
-          const updated = tasks.find((t) => t.id === id);
-          if (updated) await saveTask(updated);
-          return { tasks } as Partial<TodosState>;
-        });
+        const tasks = get().tasks.map((t) =>
+          t.id === id ? { ...t, isImportant: !t.isImportant } : t
+        );
+        const updated = tasks.find((t) => t.id === id);
+        if (updated) await saveTask(updated);
+        set({ tasks });
       },
       complete: async (id) => {
-        set(async (state) => {
-          const tasks = state.tasks.map((t) =>
-            t.id === id
-              ? {
-                  ...t,
-                  status: "completed" as const,
-                  completedAt: new Date().toISOString(),
-                }
-              : t
-          );
-          const updated = tasks.find((t) => t.id === id);
-          if (updated) await saveTask(updated);
-          return { tasks } as Partial<TodosState>;
-        });
+        const tasks = get().tasks.map((t) =>
+          t.id === id
+            ? {
+                ...t,
+                status: "completed" as const,
+                completedAt: new Date().toISOString(),
+              }
+            : t
+        );
+        const updated = tasks.find((t) => t.id === id);
+        if (updated) await saveTask(updated);
+        set({ tasks });
       },
       remove: async (id) => {
         await deleteTask(id);
@@ -105,6 +114,32 @@ export const useTodos = create<TodosState>()(
         set({ tasks: imported });
       },
       exportJSON: () => ({ tasks: get().tasks }),
+      enterFocus: (mode = "all") => set({ isFocus: true, focusMode: mode }),
+      exitFocus: () => set({ isFocus: false }),
+      setFocusMode: (mode) => set({ focusMode: mode }),
+      setActiveTask: (id) => set({ activeTaskId: id }),
+      nextFocusTask: () => {
+        const q1 = get()
+          .tasks.filter(
+            (t) => t.status === "active" && t.isUrgent && t.isImportant
+          )
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        if (q1.length === 0) {
+          set({ activeTaskId: null });
+          return;
+        }
+        const current = get().activeTaskId;
+        if (!current) {
+          set({ activeTaskId: q1[0].id });
+          return;
+        }
+        const idx = q1.findIndex((t) => t.id === current);
+        const next = q1[(idx + 1) % q1.length];
+        set({ activeTaskId: next.id });
+      },
     }),
     {
       name: "clarity.zustand.meta", // minimal metadata; real data in Dexie/localStorage
