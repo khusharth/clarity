@@ -12,6 +12,8 @@ interface TodosState {
   isFocus: boolean;
   focusMode: "all" | "single";
   activeTaskId: string | null;
+  // UI feedback
+  confettiKey: number;
   add: (text: string, isUrgent: boolean, isImportant: boolean) => Promise<void>;
   updateText: (id: string, text: string) => Promise<void>;
   toggleUrgent: (id: string) => Promise<void>;
@@ -27,6 +29,7 @@ interface TodosState {
   setFocusMode: (mode: "all" | "single") => void;
   setActiveTask: (id: string | null) => void;
   nextFocusTask: () => void;
+  celebrate: () => void;
 }
 
 export const useTodos = create<TodosState>()(
@@ -37,6 +40,7 @@ export const useTodos = create<TodosState>()(
       isFocus: false,
       focusMode: "all",
       activeTaskId: null,
+      confettiKey: 0,
       hydrate: async () => {
         const tasks = await loadAllTasks();
         set({ tasks, isHydrated: true });
@@ -140,6 +144,7 @@ export const useTodos = create<TodosState>()(
         const next = q1[(idx + 1) % q1.length];
         set({ activeTaskId: next.id });
       },
+      celebrate: () => set({ confettiKey: get().confettiKey + 1 }),
     }),
     {
       name: "clarity.zustand.meta", // minimal metadata; real data in Dexie/localStorage

@@ -112,8 +112,12 @@ Optional (only if needed):
 - [ ] T024 [US4] Add confetti effect on complete (respect reduced-motion)
 - [ ] T025 [US4] Add Completed view at app/completed/page.tsx (list by completedAt desc)
 - [ ] T026 [US4] Delete completed task with gentle confirmation
+- [x] T024 [US4] Add confetti effect on complete (respect reduced-motion)
+- [x] T025 [US4] Add Completed view at app/completed/page.tsx (list by completedAt desc)
+- [x] T026 [US4] Delete completed task with gentle confirmation
 
 - [ ] T033 [US4] Create app/lib/dates.ts and format completedAt in app/completed/page.tsx
+- [x] T033 [US4] Create app/lib/dates.ts and format completedAt in app/completed/page.tsx
 
 **Checkpoint**: Completion and management of completed tasks done
 

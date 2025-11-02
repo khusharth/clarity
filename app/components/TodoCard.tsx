@@ -7,7 +7,7 @@ import { CheckCircle2, Trash2, Flame, Sparkles } from "lucide-react";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 
 export default function TodoCard({ task }: { task: Task }) {
-  const { toggleUrgent, toggleImportant, complete, remove } = useTodos();
+  const { toggleUrgent, toggleImportant, complete, remove, celebrate } = useTodos();
   const reduced = useReducedMotion();
   const [hovered, setHovered] = useState(false);
 
@@ -45,7 +45,10 @@ export default function TodoCard({ task }: { task: Task }) {
       </div>
       <div className="flex shrink-0 items-center gap-2 opacity-80">
         <button
-          onClick={() => complete(task.id)}
+          onClick={async () => {
+            celebrate();
+            await complete(task.id);
+          }}
           className="rounded-md p-1 hover:bg-black/5"
           aria-label="Complete"
           title="Complete"
