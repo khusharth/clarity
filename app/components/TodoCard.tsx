@@ -6,11 +6,13 @@ import type { Task } from "../lib/schema";
 import { CheckCircle2, Trash2, Flame, Sparkles } from "lucide-react";
 import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 import { useSfx } from "../hooks/useSfx";
+import { useToast } from "../store/toast";
 
 export default function TodoCard({ task }: { task: Task }) {
   const { toggleUrgent, toggleImportant, complete, remove, celebrate } = useTodos();
   const reduced = useAppReducedMotion();
   const sfx = useSfx();
+  const toast = useToast();
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -33,6 +35,7 @@ export default function TodoCard({ task }: { task: Task }) {
       animate={reduced ? undefined : { opacity: 1, y: 0 }}
       exit={reduced ? undefined : { opacity: 0, y: -8 }}
       transition={{ duration: reduced ? 0 : 0.18 }}
+      whileHover={reduced ? undefined : { scale: 1.01 }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       className="group flex items-center justify-between rounded-[var(--radius-sm)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-[var(--shadow-soft)]"
@@ -70,6 +73,7 @@ export default function TodoCard({ task }: { task: Task }) {
             sfx.complete();
             celebrate();
             await complete(task.id);
+            toast.push({ type: "success", message: "Completed 🎉" });
           }}
           className="rounded-md p-1 hover:bg-black/5"
           aria-label="Complete"
@@ -81,6 +85,7 @@ export default function TodoCard({ task }: { task: Task }) {
           onClick={async () => {
             sfx.remove();
             await remove(task.id);
+            toast.push({ type: "info", message: "Deleted" });
           }}
           className="rounded-md p-1 hover:bg-black/5"
           aria-label="Delete"

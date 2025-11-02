@@ -18,7 +18,8 @@ export default function FocusControls() {
   const sfx = useSfx();
 
   const q1 = useMemo(
-    () => tasks.filter((t) => t.status === "active" && t.isUrgent && t.isImportant),
+    () =>
+      tasks.filter((t) => t.status === "active" && t.isUrgent && t.isImportant),
     [tasks]
   );
   const hasQ1 = q1.length > 0;

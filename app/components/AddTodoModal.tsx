@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useTodos } from "../store/todos";
+import { useToast } from "../store/toast";
 import { useSfx } from "../hooks/useSfx";
 
 export default function AddTodoModal({
@@ -12,6 +13,7 @@ export default function AddTodoModal({
 }) {
   const { add } = useTodos();
   const sfx = useSfx();
+  const toast = useToast();
   const [text, setText] = useState("");
   const [urgent, setUrgent] = useState(false);
   const [important, setImportant] = useState(false);
@@ -39,6 +41,7 @@ export default function AddTodoModal({
     if (!trimmed) return;
     await add(trimmed, urgent, important);
     sfx.add();
+    toast.push({ type: "success", message: "Task added" });
     onClose();
   }
 

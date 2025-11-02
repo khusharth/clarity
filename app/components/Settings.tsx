@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { useTodos } from "../store/todos";
+import { useToast } from "../store/toast";
 
 export default function Settings() {
   const {
@@ -13,6 +14,7 @@ export default function Settings() {
   } = useTodos();
   const [open, setOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
 
   function download(filename: string, text: string) {
     const blob = new Blob([text], { type: "application/json" });
@@ -61,7 +63,16 @@ export default function Settings() {
               <div className="mt-2 flex items-center justify-between">
                 <button
                   className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1"
-                  onClick={() => download("clarity-tasks.json", JSON.stringify(exportJSON(), null, 2))}
+                  onClick={() => {
+                    download(
+                      "clarity-tasks.json",
+                      JSON.stringify(exportJSON(), null, 2)
+                    );
+                    toast.push({
+                      type: "success",
+                      message: "Exported to JSON",
+                    });
+                  }}
                 >
                   Export JSON
                 </button>
@@ -77,6 +88,10 @@ export default function Settings() {
                       const text = await file.text();
                       const bundle = JSON.parse(text);
                       await importJSON(bundle);
+                      toast.push({
+                        type: "success",
+                        message: "Imported tasks",
+                      });
                       setOpen(false);
                     }}
                   />
@@ -103,5 +118,3 @@ export default function Settings() {
     </>
   );
 }
-
-
