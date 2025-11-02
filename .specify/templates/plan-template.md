@@ -29,9 +29,15 @@
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-[Gates determined based on constitution file]
+Derived from `.specify/memory/constitution.md` (Clarity):
+
+- Clarity over Complexity: Only essential interactions; Eisenhower Matrix visible by default.
+- Delight in Motion: 150–250ms micro‑animations; 60fps; global reduced‑motion toggle.
+- Calm Design: Neutral palette; WCAG AA contrast; non‑alarming error patterns, Responsive.
+- Local‑First: No network calls in core flows; local persistence; import/export JSON.
+- Fun Focus: Gamification optional (confetti/sound/streaks) with clear toggles.
 
 ## Project Structure
 
@@ -48,6 +54,7 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
+
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
   for this feature. Delete unused options and expand the chosen structure with
@@ -98,7 +105,7 @@ directories captured above]
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

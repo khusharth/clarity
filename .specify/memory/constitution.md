@@ -1,50 +1,133 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: template → 1.0.0
+- Modified principles: placeholders → concrete principles (5 total)
+- Added sections: Architecture & Technology Constraints; Development Workflow & Quality Gates
+- Removed sections: none
+- Templates requiring updates:
+  ✅ .specify/templates/plan-template.md (Constitution gates aligned)
+  ✅ .specify/templates/tasks-template.md (Advisory for local-first, no backend)
+  ✅ .specify/templates/agent-file-template.md (no change needed)
+  ✅ .specify/templates/spec-template.md (no change needed)
+- Follow-up TODOs: none
+-->
+
+# Clarity Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Clarity over Complexity
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Minimalism is non‑negotiable. Only essential interactions are visible.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- UI MUST show the Eisenhower Matrix (Urgent × Important) as the primary canvas.
+- Tasks MUST have only the essentials by default: title, importance, urgency, and status.
+- Quick actions (add, drag between quadrants, complete, delete) MUST be one‑tap/one‑click.
+- Hidden modes, nested menus, or advanced options MUST be discoverable but never required.
+- Copy, iconography, and empty states MUST be self‑explanatory (no manuals needed).
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Delight in Motion
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+Every action should have a subtle, rewarding animation.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+- Motion MUST be responsive (150–250ms for simple transitions) and never block interaction.
+- Easing SHOULD default to spring/bezier curves that feel natural; jitter is not allowed.
+- Animations MUST run at 60fps on modern hardware; avoid heavy layouts/reflows.
+- Respect reduced‑motion preferences and provide a global toggle to disable animations.
+- Positive reinforcement (subtle bounce, shimmer) SHOULD accompany key moments.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Calm Design
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Avoid clutter, loud colors, and stressful UIs.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Palette MUST be neutral and calming; accent colors are sparing and purposeful.
+- Typography MUST be legible with generous spacing and clear hierarchy.
+- Dark and light themes MUST be supported; contrast ratios MUST meet WCAG AA.
+- Alerts and errors MUST be non‑alarming; destructive actions require gentle confirmation.
+- Sound feedback is subtle and muted by default; users can opt‑in.
+
+### IV. Local‑First
+
+Store data locally for now; no auth or cloud dependency.
+
+- Data MUST persist locally (IndexedDB preferred; localStorage acceptable for MVP scale).
+- The app MUST function offline; no network requests in core flows.
+- Provide import/export of tasks as JSON to enable backups and portability.
+- IDs and ordering MUST be deterministic to avoid sync conflicts in future expansions.
+
+### V. Fun Focus
+
+Gamify completion and add micro‑moments of joy.
+
+- Completing a task SHOULD trigger tasteful confetti and/or a soft sound.
+- Streaks and progress cues MAY be shown; they MUST never create pressure.
+- All gamified elements MUST be optional, with clear toggles in settings.
+- Joyful micro‑interactions MUST not obscure clarity or slow users down.
+- Feedback MUST be accessible (visual alternatives for sound; respect reduced motion).
+
+## Architecture & Technology Constraints
+
+**Stack**: Next.js, React, Tailwind CSS (use versions pinned in the lockfile/package.json)
+
+- Next.js MUST be the app framework (package.json: next 16.x).
+- React 19.x MUST be used with functional components and hooks.
+- Tailwind CSS 4.x MUST be used for styling; avoid ad‑hoc CSS files where possible.
+- No backend services; no authentication; no external databases.
+- Project must be fully responsive and accessible.
+- Can use Framer motion v12.x for animations.
+
+**Performance**
+
+- Initial load p95 < 1s on a modern laptop; interactions p95 < 100ms.
+- Avoid large dependencies; keep bundle lean; prefer native browser APIs.
+
+**Accessibility**
+
+- Keyboard navigation for all core actions (add, edit, move, complete, delete).
+- Respect prefers‑reduced‑motion and color contrast; ARIA labels where needed.
+
+**Data**
+
+- Local persistence on every task mutation; failure MUST be recoverable.
+- Provide export/import JSON; schema documented and versioned for evolution.
+
+## Development Workflow & Quality Gates
+
+**Quality Gates**
+
+- Lint and typecheck MUST pass (`eslint`, `typescript`).
+- UI conforms to Core Principles I–V; reviewers MUST verify against this constitution.
+- Animations validated: duration ranges, easing, and reduced‑motion behavior.
+- Accessibility checks for keyboard and contrast MUST pass.
+
+**Workflow**
+
+- MVP slices favored; ship vertical features that are independently useful.
+- No network calls; if introduced for future features, must be flagged and isolated.
+- Feature flags/toggles for motion, sound, and gamification.
+- Keep configuration local (no env secrets required).
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**Supremacy & Compliance**
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+- This constitution supersedes other guidelines for this project.
+- All PRs MUST include a “Constitution Check” note mapping changes to Principles/Constraints.
+
+**Amendments**
+
+- Amendments require documentation of rationale and expected user impact.
+- Breaking governance changes require a migration plan and a MAJOR version bump.
+
+**Versioning**
+
+- Semantic versioning for this document:
+  - MAJOR: redefine/remove principles or governance; backward‑incompatible policy.
+  - MINOR: add a new principle/section or materially expand guidance.
+  - PATCH: clarifications/wording/typos without policy change.
+
+**Review Cadence**
+
+- Quarterly review for alignment with user needs; out‑of‑cycle amendments as needed.
+
+**Version**: 1.0.0 | **Ratified**: 2025-11-02 | **Last Amended**: 2025-11-02
