@@ -11,7 +11,15 @@
   "dependencies": {
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "next": "16.0.1"
+    "next": "16.0.1",
+    "dexie": "^4.0.8",
+    "dexie-react-hooks": "^1.1.7",
+    "framer-motion": "^12.0.0",
+    "date-fns": "^4.1.0",
+    "zustand": "^4.5.5",
+    "lucide-react": "^0.468.0",
+    "use-sound": "^4.0.1",
+    "howler": "^2.2.4"
   },
   "devDependencies": {
     "typescript": "^5",

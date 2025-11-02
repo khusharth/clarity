@@ -1,0 +1,70 @@
+:root {
+  color-scheme: light dark;
+  
+  /* CSS variables for use in arbitrary values like rgb(var(--color-bg)) */
+  --color-bg: 248 250 252;          /* base background (slate-50) */
+  --color-surface: 255 255 255;     /* cards, panels */
+  --color-border: 224 231 255;      /* soft indigo border */
+  --color-fg: 15 23 42;             /* primary text */
+  --color-fg-muted: 71 85 105;      /* secondary text */
+  --color-accent: 99 102 241;       /* indigo accent */
+
+  /* Quadrant accents (very soft) */
+  --q1: 99 102 241;  /* Do Now (indigo) */
+  --q2: 16 185 129;  /* Plan It (emerald) */
+  --q3: 234 179 8;   /* Delegate (amber) */
+  --q4: 236 72 153;  /* Later (pink) */
+
+  /* Radii and shadows */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --shadow-soft: 0 4px 24px 0 rgb(99 102 241 / 0.08), 0 2px 8px 0 rgb(15 23 42 / 0.06);
+}
+
+@theme {
+  /* Tailwind color tokens - RGB triplets for utility classes */
+  /* Define colors without --color- prefix to create bg-bg, text-fg, etc. */
+  --color-bg: 248 250 252;          /* base background (slate-50) -> bg-bg */
+  --color-surface: 255 255 255;     /* cards, panels -> bg-surface */
+  --color-border: 224 231 255;      /* soft indigo border -> border-border */
+  --color-fg: 15 23 42;             /* primary text -> text-fg */
+  --color-fg-muted: 71 85 105;      /* secondary text -> text-fg-muted */
+  --color-accent: 99 102 241;       /* indigo accent -> bg-accent */
+
+  /* Radii and shadows */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --shadow-soft: 0 4px 24px 0 rgb(99 102 241 / 0.08), 0 2px 8px 0 rgb(15 23 42 / 0.06);
+}
+
+/* Manual dark theme override */
+[data-theme="dark"] {
+  --color-bg: 2 6 23;
+  --color-surface: 15 23 42;
+  --color-border: 51 65 85;
+  --color-fg: 226 232 240;
+  --color-fg-muted: 148 163 184;
+  --color-accent: 165 180 252;
+}
+
+/* Manual light theme override */
+[data-theme="light"] {
+  --color-bg: 248 250 252;
+  --color-surface: 255 255 255;
+  --color-border: 224 231 255;
+  --color-fg: 15 23 42;
+  --color-fg-muted: 71 85 105;
+  --color-accent: 99 102 241;
+}
+
+/* System preference (default) - only applies when no manual theme is set */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg: 2 6 23;
+    --color-surface: 15 23 42;
+    --color-border: 51 65 85;
+    --color-fg: 226 232 240;
+    --color-fg-muted: 148 163 184;
+    --color-accent: 165 180 252;
+  }
+}
