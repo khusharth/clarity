@@ -10,6 +10,9 @@ export default function Home() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const isTyping = !!target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || (target as any).isContentEditable);
+      if (open || isTyping) return;
       if (e.key.toLowerCase() === "a" && !e.metaKey && !e.ctrlKey && !e.altKey) {
         e.preventDefault();
         setOpen(true);
@@ -30,6 +33,12 @@ export default function Home() {
       >
         Add Task (A)
       </button>
+      <a
+        href="/completed"
+        className="fixed bottom-6 left-28 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 text-sm shadow-[var(--shadow-soft)]"
+      >
+        Completed
+      </a>
       <AddTodoModal open={open} onClose={() => setOpen(false)} />
     </main>
   );

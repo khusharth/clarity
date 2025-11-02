@@ -21,13 +21,13 @@ export default function ConfettiOverlay() {
   const reduced = useReducedMotion();
   const { confettiKey } = useTodos();
   const [activeKey, setActiveKey] = useState<number>(0);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     if (confettiKey !== activeKey) {
       setActiveKey(confettiKey);
-      const timeout = setTimeout(() => {
-        // auto-clear overlay
-      }, 700);
+      setVisible(true);
+      const timeout = setTimeout(() => setVisible(false), 1200);
       return () => clearTimeout(timeout);
     }
   }, [confettiKey, activeKey]);
@@ -42,15 +42,20 @@ export default function ConfettiOverlay() {
     }));
   }, [activeKey]);
 
-  if (reduced || confettiKey === 0) return null;
+  if (reduced || !visible) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-40 overflow-hidden">
-      <div className="relative mx-auto mt-24 h-6 w-full max-w-4xl">
+      <motion.div
+        initial={{ y: -40, opacity: 1 }}
+        animate={{ y: 240, opacity: 0 }}
+        transition={{ duration: 1.2 }}
+        className="relative mx-auto mt-24 h-0 w-full max-w-4xl"
+      >
         {pieces.map((p, idx) => (
-          <Piece key={idx + "-p"} delay={p.delay} x={p.x} color={p.color} />)
-        )}
-      </div>
+          <Piece key={idx + "-p"} delay={p.delay} x={p.x} color={p.color} />
+        ))}
+      </motion.div>
     </div>
   );
 }

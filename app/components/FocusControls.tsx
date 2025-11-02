@@ -23,22 +23,15 @@ export default function FocusControls() {
 
   return (
     <div className="flex items-center gap-2 p-2">
-      {!isFocus ? (
-        <button
-          className="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-1 text-sm shadow-[var(--shadow-soft)] disabled:opacity-50"
-          onClick={() => enterFocus("all")}
-          disabled={!hasQ1}
-        >
-          Focus Q1
-        </button>
-      ) : (
+      <button
+        className="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-4 py-2 text-sm shadow-[var(--shadow-soft)] disabled:opacity-50"
+        onClick={() => (isFocus ? exitFocus() : enterFocus("all"))}
+        disabled={!hasQ1 && !isFocus}
+      >
+        {isFocus ? "✨ Exit Focus" : "✨ Focus Q1"}
+      </button>
+      {isFocus && (
         <>
-          <button
-            className="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-1 text-sm shadow-[var(--shadow-soft)]"
-            onClick={exitFocus}
-          >
-            Exit Focus
-          </button>
           <div className="ml-2 inline-flex items-center gap-1 text-sm">
             <label className="mr-1">Mode:</label>
             <select

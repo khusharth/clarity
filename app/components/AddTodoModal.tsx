@@ -44,7 +44,7 @@ export default function AddTodoModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
-        className="absolute inset-0 bg-black/30"
+        className="absolute inset-0 bg-black/60"
         role="button"
         aria-label="Close"
         onClick={onClose}
