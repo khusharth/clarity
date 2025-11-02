@@ -30,6 +30,11 @@
 - [ ] T010 [P] Add app/components/Quadrant.tsx (header, container, empty state slot)
 - [ ] T011 [P] Add app/components/TodoCard.tsx (text, urgent/important toggles, complete, delete)
 - [ ] T012 [P] Add framer-motion variants util for entry/move/exit animations
+- [x] T008 Create app/store/todos.ts Zustand store (add, update, toggle urgent/important, complete, delete, import/export)
+- [x] T009 [P] Add app/components/EmptyState.tsx (calm copy)
+- [x] T010 [P] Add app/components/Quadrant.tsx (header, container, empty state slot)
+- [x] T011 [P] Add app/components/TodoCard.tsx (text, urgent/important toggles, complete, delete)
+- [x] T012 [P] Add framer-motion variants util for entry/move/exit animations
 
 **Checkpoint**: Store + base components ready; user story work can begin
 
