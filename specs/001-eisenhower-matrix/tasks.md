@@ -48,10 +48,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Compose matrix grid in app/components/Matrix.tsx (uses Quadrant)
-- [ ] T014 [US1] Render Matrix on app/page.tsx with selectors for Q1..Q4 (sort by createdAt desc)
-- [ ] T015 [P] [US1] Wire TodoCard controls to update urgency/importance with motion transitions
-- [ ] T016 [P] [US1] Ensure reduced-motion disables heavy animations
+- [x] T013 [US1] Compose matrix grid in app/components/Matrix.tsx (uses Quadrant)
+- [x] T014 [US1] Render Matrix on app/page.tsx with selectors for Q1..Q4 (sort by createdAt desc)
+- [x] T015 [P] [US1] Wire TodoCard controls to update urgency/importance with motion transitions
+- [x] T016 [P] [US1] Ensure reduced-motion disables heavy animations
 
 - [ ] T032 [P] [US1] Add inline text edit in app/components/TodoCard.tsx and update app/store/todos.ts
 

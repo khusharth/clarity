@@ -1,9 +1,9 @@
+import Matrix from "./components/Matrix";
+
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <main>
-        <h1>Hello World</h1>
-      </main>
-    </div>
+    <main className="min-h-screen">
+      <Matrix />
+    </main>
   );
 }

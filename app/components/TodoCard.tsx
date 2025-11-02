@@ -4,18 +4,20 @@ import { motion } from "framer-motion";
 import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
 import { CheckCircle2, Trash2, Flame, Sparkles } from "lucide-react";
+import { useReducedMotion } from "../hooks/useReducedMotion";
 
 export default function TodoCard({ task }: { task: Task }) {
   const { toggleUrgent, toggleImportant, complete, remove } = useTodos();
+  const reduced = useReducedMotion();
   const [hovered, setHovered] = useState(false);
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.18 }}
+      initial={reduced ? false : { opacity: 0, y: 8 }}
+      animate={reduced ? undefined : { opacity: 1, y: 0 }}
+      exit={reduced ? undefined : { opacity: 0, y: -8 }}
+      transition={{ duration: reduced ? 0 : 0.18 }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       className="group flex items-center justify-between rounded-[var(--radius-sm)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-[var(--shadow-soft)]"
