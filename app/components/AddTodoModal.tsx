@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useTodos } from "../store/todos";
+import { useSfx } from "../hooks/useSfx";
 
 export default function AddTodoModal({
   open,
@@ -10,6 +11,7 @@ export default function AddTodoModal({
   onClose: () => void;
 }) {
   const { add } = useTodos();
+  const sfx = useSfx();
   const [text, setText] = useState("");
   const [urgent, setUrgent] = useState(false);
   const [important, setImportant] = useState(false);
@@ -36,6 +38,7 @@ export default function AddTodoModal({
     const trimmed = text.trim();
     if (!trimmed) return;
     await add(trimmed, urgent, important);
+    sfx.add();
     onClose();
   }
 

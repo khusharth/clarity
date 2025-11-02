@@ -1,5 +1,6 @@
 "use client";
 import { useTodos } from "../store/todos";
+import { useSfx } from "../hooks/useSfx";
 import { useMemo } from "react";
 
 export default function FocusControls() {
@@ -14,6 +15,7 @@ export default function FocusControls() {
     nextFocusTask,
     setActiveTask,
   } = useTodos();
+  const sfx = useSfx();
 
   const q1 = useMemo(
     () => tasks.filter((t) => t.status === "active" && t.isUrgent && t.isImportant),
@@ -25,7 +27,10 @@ export default function FocusControls() {
     <div className="flex items-center gap-2 p-2">
       <button
         className="rounded-full border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-4 py-2 text-sm shadow-[var(--shadow-soft)] disabled:opacity-50"
-        onClick={() => (isFocus ? exitFocus() : enterFocus("all"))}
+        onClick={() => {
+          sfx.focus();
+          isFocus ? exitFocus() : enterFocus("all");
+        }}
         disabled={!hasQ1 && !isFocus}
       >
         {isFocus ? "✨ Exit Focus" : "✨ Focus Q1"}

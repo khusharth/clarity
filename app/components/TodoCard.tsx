@@ -5,10 +5,12 @@ import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
 import { CheckCircle2, Trash2, Flame, Sparkles } from "lucide-react";
 import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
+import { useSfx } from "../hooks/useSfx";
 
 export default function TodoCard({ task }: { task: Task }) {
   const { toggleUrgent, toggleImportant, complete, remove, celebrate } = useTodos();
   const reduced = useAppReducedMotion();
+  const sfx = useSfx();
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -40,7 +42,10 @@ export default function TodoCard({ task }: { task: Task }) {
         <div className="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--color-fg-muted))]">
           <button
             className="inline-flex items-center gap-1 hover:underline"
-            onClick={() => toggleUrgent(task.id)}
+            onClick={async () => {
+              sfx.toggle();
+              await toggleUrgent(task.id);
+            }}
             aria-label="Toggle urgent"
           >
             <Flame size={14} /> {task.isUrgent ? "Urgent" : "Not urgent"}
@@ -48,7 +53,10 @@ export default function TodoCard({ task }: { task: Task }) {
           <span>•</span>
           <button
             className="inline-flex items-center gap-1 hover:underline"
-            onClick={() => toggleImportant(task.id)}
+            onClick={async () => {
+              sfx.toggle();
+              await toggleImportant(task.id);
+            }}
             aria-label="Toggle important"
           >
             <Sparkles size={14} />{" "}
@@ -59,6 +67,7 @@ export default function TodoCard({ task }: { task: Task }) {
       <div className="flex shrink-0 items-center gap-2 opacity-80">
         <button
           onClick={async () => {
+            sfx.complete();
             celebrate();
             await complete(task.id);
           }}
@@ -69,7 +78,10 @@ export default function TodoCard({ task }: { task: Task }) {
           <CheckCircle2 size={16} />
         </button>
         <button
-          onClick={() => remove(task.id)}
+          onClick={async () => {
+            sfx.remove();
+            await remove(task.id);
+          }}
           className="rounded-md p-1 hover:bg-black/5"
           aria-label="Delete"
           title="Delete"
