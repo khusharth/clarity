@@ -55,7 +55,7 @@ export default function AddTodoModal({
         aria-label="Close"
         onClick={onClose}
       />
-      <div className="relative z-10 w-full max-w-md rounded-[var(--radius-md)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] p-4 shadow-[var(--shadow-soft)]">
+      <div className="relative z-10 w-full max-w-md rounded-md border border-border bg-surface p-4 shadow-[var(--shadow-soft)]">
         <h2 className="mb-3 text-lg font-medium">Add Task</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input
@@ -63,7 +63,7 @@ export default function AddTodoModal({
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="What needs to be done?"
-            className="w-full rounded-md border border-[rgb(var(--color-border))] bg-transparent px-3 py-2 outline-none"
+            className="w-full rounded-md border border-border bg-transparent px-3 py-2 outline-none"
           />
           <div className="flex items-center gap-4 text-sm">
             <label className="inline-flex items-center gap-2">
@@ -79,13 +79,13 @@ export default function AddTodoModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-1 text-sm"
+              className="rounded-md border border-border bg-surface px-3 py-1 text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-md bg-[rgb(var(--color-accent))] px-3 py-1 text-sm text-white"
+              className="rounded-md bg-accent px-3 py-1 text-sm text-white"
             >
               Add
             </button>

@@ -38,11 +38,11 @@ export default function TodoCard({ task }: { task: Task }) {
       whileHover={reduced ? undefined : { scale: 1.01 }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="group flex items-center justify-between rounded-[var(--radius-sm)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-[var(--shadow-soft)]"
+      className="group flex items-center justify-between rounded-sm border border-border bg-surface px-3 py-2 shadow-[var(--shadow-soft)] transition-colors"
     >
       <div className="min-w-0 pr-2">
         <p className="truncate text-sm">{task.text}</p>
-        <div className="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--color-fg-muted))]">
+        <div className="mt-1 flex items-center gap-2 text-xs text-fg-muted">
           <button
             className="inline-flex items-center gap-1 hover:underline"
             onClick={async () => {
@@ -75,7 +75,7 @@ export default function TodoCard({ task }: { task: Task }) {
             await complete(task.id);
             toast.push({ type: "success", message: "Completed 🎉" });
           }}
-          className="rounded-md p-1 hover:bg-black/5"
+          className="rounded-md p-1 hover:bg-accent/10"
           aria-label="Complete"
           title="Complete"
         >
@@ -87,7 +87,7 @@ export default function TodoCard({ task }: { task: Task }) {
             await remove(task.id);
             toast.push({ type: "info", message: "Deleted" });
           }}
-          className="rounded-md p-1 hover:bg-black/5"
+          className="rounded-md p-1 hover:bg-accent/10"
           aria-label="Delete"
           title="Delete"
         >
