@@ -8,6 +8,7 @@ import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 import { useSfx } from "../hooks/useSfx";
 import { useToast } from "../store/toast";
 import EditTodoModal from "./EditTodoModal";
+import DeleteTodoModal from "./DeleteTodoModal";
 import { useReward } from "react-rewards";
 import { CONFETTI_ID } from "./Confetti";
 
@@ -25,6 +26,7 @@ export default function TodoCard({
   const toast = useToast();
   const [hovered, setHovered] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const { reward } = useReward(CONFETTI_ID, "confetti", {
     lifetime: 3000,
     angle: 270,
@@ -109,11 +111,7 @@ export default function TodoCard({
             <CheckCircle2 size={16} />
           </button>
           <button
-            onClick={async () => {
-              sfx.remove();
-              await remove(task.id);
-              toast.push({ type: "success", message: "Task deleted" });
-            }}
+            onClick={() => setDeleteOpen(true)}
             className="rounded-md p-1 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
             aria-label="Delete"
             title="Delete"
@@ -126,6 +124,11 @@ export default function TodoCard({
         task={task}
         open={editOpen}
         onClose={() => setEditOpen(false)}
+      />
+      <DeleteTodoModal
+        task={task}
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
       />
     </>
   );
