@@ -25,7 +25,7 @@ export default function CompletedPage() {
   );
 
   return (
-    <main className="mx-auto w-full max-w-3xl p-4 bg-[rgb(var(--color-bg))] text-[rgb(var(--color-fg))] min-h-screen">
+    <div className="mx-auto max-w-3xl">
       <div className="mb-4 flex items-center gap-3">
         <Link
           href="/"
@@ -65,6 +65,6 @@ export default function CompletedPage() {
           ))}
         </ul>
       )}
-    </main>
+    </div>
   );
 }

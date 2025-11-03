@@ -33,7 +33,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[rgb(var(--color-bg))] text-[rgb(var(--color-fg))]">
+    <div>
       <Matrix />
       <ConfettiOverlay />
       <Settings />
@@ -51,6 +51,6 @@ export default function Home() {
         Completed
       </a>
       <AddTodoModal open={open} onClose={() => setOpen(false)} />
-    </main>
+    </div>
   );
 }
