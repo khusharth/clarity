@@ -100,11 +100,11 @@ export default function AddTodoModal({
               Add
             </button>
           </div>
-          <p className="mt-1 text-xs text-[rgb(var(--color-fg-muted))]">Shortcut: press A to open</p>
+          <p className="mt-1 text-xs text-[rgb(var(--color-fg-muted))] hidden sm:block">
+            Shortcut: press A to open, Esc to close
+          </p>
         </form>
       </div>
     </div>
   );
 }
-
-

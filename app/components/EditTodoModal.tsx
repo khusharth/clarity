@@ -46,22 +46,22 @@ export default function EditTodoModal({
       toast.push({ type: "warn", message: "Task text cannot be empty" });
       return;
     }
-    
+
     // Update text if changed
     if (trimmed !== task.text) {
       await updateText(task.id, trimmed);
     }
-    
+
     // Update urgent if changed
     if (urgent !== task.isUrgent) {
       await toggleUrgent(task.id);
     }
-    
+
     // Update important if changed
     if (important !== task.isImportant) {
       await toggleImportant(task.id);
     }
-    
+
     sfx.toggle();
     toast.push({ type: "success", message: "Task updated" });
     onClose();
@@ -122,10 +122,8 @@ export default function EditTodoModal({
               Save
             </button>
           </div>
-          <p className="mt-1 text-xs text-[rgb(var(--color-fg-muted))]">Press Escape to close</p>
         </form>
       </div>
     </div>
   );
 }
-
