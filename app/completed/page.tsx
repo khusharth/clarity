@@ -18,7 +18,8 @@ export default function CompletedPage() {
         .filter((t) => t.status === "completed")
         .sort(
           (a, b) =>
-            new Date(b.completedAt ?? 0).getTime() - new Date(a.completedAt ?? 0).getTime()
+            new Date(b.completedAt ?? 0).getTime() -
+            new Date(a.completedAt ?? 0).getTime()
         ),
     [tasks]
   );
@@ -36,11 +37,16 @@ export default function CompletedPage() {
         <h1 className="text-xl font-semibold">Completed</h1>
       </div>
       {completed.length === 0 ? (
-        <p className="text-[rgb(var(--color-fg-muted))]">No completed tasks yet.</p>
+        <p className="text-[rgb(var(--color-fg-muted))]">
+          No completed tasks yet.
+        </p>
       ) : (
         <ul className="divide-y divide-[rgb(var(--color-border))] rounded-[var(--radius-md)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))]">
           {completed.map((t) => (
-            <li key={t.id} className="flex items-center justify-between px-3 py-2">
+            <li
+              key={t.id}
+              className="flex items-center justify-between px-3 py-2"
+            >
               <div>
                 <p className="text-sm">{t.text}</p>
                 <p className="text-xs text-[rgb(var(--color-fg-muted))]">
@@ -62,5 +68,3 @@ export default function CompletedPage() {
     </main>
   );
 }
-
-

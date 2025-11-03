@@ -24,22 +24,41 @@ export default function FocusControls() {
   );
   const hasQ1 = q1.length > 0;
 
+  if (!hasQ1) return <div className="p-2" />;
+
   return (
     <div className="flex items-center gap-2 p-2">
-      <button
-        className={`rounded-full border px-4 py-2 text-sm shadow-[var(--shadow-soft)] transition-all disabled:opacity-50 cursor-pointer ${
-          isFocus
-            ? "border-[rgb(var(--color-accent))] bg-[rgb(var(--color-accent))] text-white"
-            : "border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] hover:bg-accent/10"
-        }`}
-        onClick={() => {
-          sfx.focus();
-          isFocus ? exitFocus() : enterFocus("all");
-        }}
-        disabled={!hasQ1 && !isFocus}
-      >
-        {isFocus ? "✨ Exit Focus" : "✨ Focus Q1"}
-      </button>
+      <div className="inline-flex items-center gap-2">
+        <span className="text-sm font-medium">Focus:</span>
+
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isFocus}
+          onClick={() => {
+            sfx.focus();
+            isFocus ? exitFocus() : enterFocus("all");
+          }}
+          disabled={!hasQ1 && !isFocus}
+          className={`relative inline-flex h-7 w-14 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
+            isFocus
+              ? "bg-[rgb(var(--color-accent))]"
+              : "bg-[rgb(var(--color-border))]"
+          } ${
+            !hasQ1 && !isFocus
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer"
+          }`}
+        >
+          <span
+            aria-hidden="true"
+            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-200 ${
+              isFocus ? "translate-x-7" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </div>
+
       {isFocus && (
         <>
           <div className="ml-2 inline-flex items-center gap-1 text-sm">
