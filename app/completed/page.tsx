@@ -25,7 +25,7 @@ export default function CompletedPage() {
   );
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-3xl p-4">
       <div className="mb-4 flex items-center gap-3">
         <Link
           href="/"

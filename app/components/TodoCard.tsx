@@ -9,8 +9,15 @@ import { useSfx } from "../hooks/useSfx";
 import { useToast } from "../store/toast";
 import EditTodoModal from "./EditTodoModal";
 
-export default function TodoCard({ task }: { task: Task }) {
-  const { toggleUrgent, toggleImportant, complete, remove, celebrate } = useTodos();
+export default function TodoCard({
+  task,
+  className = "",
+}: {
+  task: Task;
+  className?: string;
+}) {
+  const { toggleUrgent, toggleImportant, complete, remove, celebrate } =
+    useTodos();
   const reduced = useAppReducedMotion();
   const sfx = useSfx();
   const toast = useToast();
@@ -45,66 +52,73 @@ export default function TodoCard({ task }: { task: Task }) {
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
         onClick={() => setEditOpen(true)}
-        className="group flex items-center justify-between rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-[var(--shadow-soft)] transition-colors cursor-pointer"
+        className={`group flex items-center justify-between rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-[var(--shadow-soft)] transition-colors cursor-pointer ${className}`}
       >
-      <div className="min-w-0 pr-2">
-        <p className="truncate text-sm">{task.text}</p>
-        <div className="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--color-fg-muted))]">
+        <div className="min-w-0 pr-2">
+          <p className="truncate text-sm">{task.text}</p>
+          <div className="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--color-fg-muted))]">
+            <button
+              className="inline-flex items-center gap-1 hover:underline cursor-pointer"
+              onClick={async (e) => {
+                e.stopPropagation();
+                sfx.toggle();
+                await toggleUrgent(task.id);
+              }}
+              aria-label="Toggle urgent"
+            >
+              <Flame size={14} /> {task.isUrgent ? "Urgent" : "Not urgent"}
+            </button>
+            <span>•</span>
+            <button
+              className="inline-flex items-center gap-1 hover:underline cursor-pointer"
+              onClick={async (e) => {
+                e.stopPropagation();
+                sfx.toggle();
+                await toggleImportant(task.id);
+              }}
+              aria-label="Toggle important"
+            >
+              <Sparkles size={14} />{" "}
+              {task.isImportant ? "Important" : "Not important"}
+            </button>
+          </div>
+        </div>
+        <div
+          className="flex shrink-0 items-center gap-2 opacity-80"
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
-            className="inline-flex items-center gap-1 hover:underline cursor-pointer"
-            onClick={async (e) => {
-              e.stopPropagation();
-              sfx.toggle();
-              await toggleUrgent(task.id);
+            onClick={async () => {
+              sfx.complete();
+              celebrate();
+              await complete(task.id);
+              toast.push({ type: "success", message: "Completed 🎉" });
             }}
-            aria-label="Toggle urgent"
+            className="rounded-md p-1 hover:bg-green-500/20 text-green-600 dark:text-green-400 transition-colors cursor-pointer"
+            aria-label="Complete"
+            title="Complete"
           >
-            <Flame size={14} /> {task.isUrgent ? "Urgent" : "Not urgent"}
+            <CheckCircle2 size={16} />
           </button>
-          <span>•</span>
           <button
-            className="inline-flex items-center gap-1 hover:underline cursor-pointer"
-            onClick={async (e) => {
-              e.stopPropagation();
-              sfx.toggle();
-              await toggleImportant(task.id);
+            onClick={async () => {
+              sfx.remove();
+              await remove(task.id);
+              toast.push({ type: "info", message: "Deleted" });
             }}
-            aria-label="Toggle important"
+            className="rounded-md p-1 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
+            aria-label="Delete"
+            title="Delete"
           >
-            <Sparkles size={14} />{" "}
-            {task.isImportant ? "Important" : "Not important"}
+            <Trash2 size={16} />
           </button>
         </div>
-      </div>
-      <div className="flex shrink-0 items-center gap-2 opacity-80" onClick={(e) => e.stopPropagation()}>
-        <button
-          onClick={async () => {
-            sfx.complete();
-            celebrate();
-            await complete(task.id);
-            toast.push({ type: "success", message: "Completed 🎉" });
-          }}
-          className="rounded-md p-1 hover:bg-green-500/20 text-green-600 dark:text-green-400 transition-colors cursor-pointer"
-          aria-label="Complete"
-          title="Complete"
-        >
-          <CheckCircle2 size={16} />
-        </button>
-        <button
-          onClick={async () => {
-            sfx.remove();
-            await remove(task.id);
-            toast.push({ type: "info", message: "Deleted" });
-          }}
-          className="rounded-md p-1 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
-          aria-label="Delete"
-          title="Delete"
-        >
-          <Trash2 size={16} />
-        </button>
-      </div>
-    </motion.div>
-    <EditTodoModal task={task} open={editOpen} onClose={() => setEditOpen(false)} />
+      </motion.div>
+      <EditTodoModal
+        task={task}
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+      />
     </>
   );
 }

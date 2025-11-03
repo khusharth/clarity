@@ -23,11 +23,12 @@ export default function FocusControls() {
     [tasks]
   );
   const hasQ1 = q1.length > 0;
+  const hasMoreThanOneQ1 = q1.length > 1;
 
   if (!hasQ1) return <div className="p-2" />;
 
   return (
-    <div className="flex items-center gap-2 p-2">
+    <div className="flex items-center gap-2 p-2 mb-1">
       <div className="inline-flex items-center gap-2">
         <span className="text-sm font-medium">Focus:</span>
 
@@ -59,7 +60,7 @@ export default function FocusControls() {
         </button>
       </div>
 
-      {isFocus && (
+      {isFocus && hasMoreThanOneQ1 && (
         <>
           <div className="ml-2 inline-flex items-center gap-1 text-sm">
             <label className="mr-1">Mode:</label>

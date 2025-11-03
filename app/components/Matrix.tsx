@@ -15,13 +15,17 @@ function sortNewest(a: Task, b: Task) {
 
 export default function Matrix() {
   const reduced = useReducedMotion();
-  const { tasks, isHydrated, hydrate, isFocus, focusMode, activeTaskId } = useTodos();
+  const { tasks, isHydrated, hydrate, isFocus, focusMode, activeTaskId } =
+    useTodos();
 
   useEffect(() => {
     if (!isHydrated) void hydrate();
   }, [isHydrated, hydrate]);
 
-  const active = useMemo(() => tasks.filter((t) => t.status === "active"), [tasks]);
+  const active = useMemo(
+    () => tasks.filter((t) => t.status === "active"),
+    [tasks]
+  );
 
   const q1 = useMemo(
     () => active.filter((t) => t.isUrgent && t.isImportant).sort(sortNewest),
@@ -53,11 +57,18 @@ export default function Matrix() {
                 isEmpty={q1.length === 0}
                 emptyMessage="Nothing urgent and important right now"
               >
-                <motion.div variants={reduced ? undefined : listVariants} animate="animate">
+                <motion.div
+                  variants={reduced ? undefined : listVariants}
+                  animate="animate"
+                >
                   <AnimatePresence initial={false}>
                     {(() => {
-                      const item = activeTaskId ? q1.find((t) => t.id === activeTaskId) : q1[0];
-                      return item ? <TodoCard key={item.id} task={item} /> : null;
+                      const item = activeTaskId
+                        ? q1.find((t) => t.id === activeTaskId)
+                        : q1[0];
+                      return item ? (
+                        <TodoCard key={item.id} task={item} />
+                      ) : null;
                     })()}
                   </AnimatePresence>
                 </motion.div>
@@ -71,10 +82,13 @@ export default function Matrix() {
                 isEmpty={q1.length === 0}
                 emptyMessage="Nothing urgent and important right now"
               >
-                <motion.div variants={reduced ? undefined : listVariants} animate="animate">
+                <motion.div
+                  variants={reduced ? undefined : listVariants}
+                  animate="animate"
+                >
                   <AnimatePresence initial={false}>
                     {q1.map((t) => (
-                      <TodoCard key={t.id} task={t} />
+                      <TodoCard key={t.id} task={t} className="mb-1.5" />
                     ))}
                   </AnimatePresence>
                 </motion.div>
@@ -83,38 +97,70 @@ export default function Matrix() {
           )
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Quadrant title="Q1 • Do Now" colorVar="--q1" isEmpty={q1.length === 0} emptyMessage="Nothing urgent and important right now">
-              <motion.div variants={reduced ? undefined : listVariants} animate="animate">
+            <Quadrant
+              title="Q1 • Do Now"
+              colorVar="--q1"
+              isEmpty={q1.length === 0}
+              emptyMessage="Nothing urgent and important right now"
+            >
+              <motion.div
+                variants={reduced ? undefined : listVariants}
+                animate="animate"
+              >
                 <AnimatePresence initial={false}>
                   {q1.map((t) => (
-                    <TodoCard key={t.id} task={t} />
+                    <TodoCard key={t.id} task={t} className="mb-1.5" />
                   ))}
                 </AnimatePresence>
               </motion.div>
             </Quadrant>
-            <Quadrant title="Q2 • Plan It" colorVar="--q2" isEmpty={q2.length === 0} emptyMessage="Plan important tasks without urgency">
-              <motion.div variants={reduced ? undefined : listVariants} animate="animate">
+            <Quadrant
+              title="Q2 • Plan It"
+              colorVar="--q2"
+              isEmpty={q2.length === 0}
+              emptyMessage="Plan important tasks without urgency"
+            >
+              <motion.div
+                variants={reduced ? undefined : listVariants}
+                animate="animate"
+              >
                 <AnimatePresence initial={false}>
                   {q2.map((t) => (
-                    <TodoCard key={t.id} task={t} />
+                    <TodoCard key={t.id} task={t} className="mb-1.5" />
                   ))}
                 </AnimatePresence>
               </motion.div>
             </Quadrant>
-            <Quadrant title="Q3 • Delegate" colorVar="--q3" isEmpty={q3.length === 0} emptyMessage="Urgent but not important—delegate if possible">
-              <motion.div variants={reduced ? undefined : listVariants} animate="animate">
+            <Quadrant
+              title="Q3 • Delegate"
+              colorVar="--q3"
+              isEmpty={q3.length === 0}
+              emptyMessage="Urgent but not important—delegate if possible"
+            >
+              <motion.div
+                variants={reduced ? undefined : listVariants}
+                animate="animate"
+              >
                 <AnimatePresence initial={false}>
                   {q3.map((t) => (
-                    <TodoCard key={t.id} task={t} />
+                    <TodoCard key={t.id} task={t} className="mb-1.5" />
                   ))}
                 </AnimatePresence>
               </motion.div>
             </Quadrant>
-            <Quadrant title="Q4 • Later" colorVar="--q4" isEmpty={q4.length === 0} emptyMessage="Not urgent and not important—consider dropping">
-              <motion.div variants={reduced ? undefined : listVariants} animate="animate">
+            <Quadrant
+              title="Q4 • Later"
+              colorVar="--q4"
+              isEmpty={q4.length === 0}
+              emptyMessage="Not urgent and not important—consider dropping"
+            >
+              <motion.div
+                variants={reduced ? undefined : listVariants}
+                animate="animate"
+              >
                 <AnimatePresence initial={false}>
                   {q4.map((t) => (
-                    <TodoCard key={t.id} task={t} />
+                    <TodoCard key={t.id} task={t} className="mb-1.5" />
                   ))}
                 </AnimatePresence>
               </motion.div>
@@ -125,5 +171,3 @@ export default function Matrix() {
     </div>
   );
 }
-
-
