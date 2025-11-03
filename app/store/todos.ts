@@ -49,7 +49,7 @@ export const useTodos = create<TodosState>()(
       activeTaskId: null,
       confettiKey: 0,
       reducedMotionPref: "system",
-      soundEnabled: false,
+      soundEnabled: true,
       themePreference: "system",
       hydrate: async () => {
         const tasks = await loadAllTasks();
