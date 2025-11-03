@@ -8,6 +8,8 @@ import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 import { useSfx } from "../hooks/useSfx";
 import { useToast } from "../store/toast";
 import EditTodoModal from "./EditTodoModal";
+import { useReward } from "react-rewards";
+import { CONFETTI_ID } from "./Confetti";
 
 export default function TodoCard({
   task,
@@ -23,6 +25,11 @@ export default function TodoCard({
   const toast = useToast();
   const [hovered, setHovered] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const { reward } = useReward(CONFETTI_ID, "confetti", {
+    lifetime: 3000,
+    angle: 270,
+    spread: 180,
+  });
 
   return (
     <>
@@ -92,6 +99,7 @@ export default function TodoCard({
               sfx.complete();
               celebrate();
               await complete(task.id);
+              reward();
               toast.push({ type: "success", message: "Completed 🎉" });
             }}
             className="rounded-md p-1 hover:bg-green-500/20 text-green-600 dark:text-green-400 transition-colors cursor-pointer"

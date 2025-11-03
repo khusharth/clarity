@@ -9,27 +9,28 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "next": "16.0.1",
+    "date-fns": "^4.1.0",
     "dexie": "^4.0.8",
     "dexie-react-hooks": "^1.1.7",
     "framer-motion": "^12.0.0",
-    "date-fns": "^4.1.0",
-    "zustand": "^4.5.5",
+    "howler": "^2.2.4",
     "lucide-react": "^0.468.0",
+    "next": "16.0.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-rewards": "^2.1.0",
     "use-sound": "^4.0.1",
-    "howler": "^2.2.4"
+    "zustand": "^4.5.5"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
-    "eslint-config-next": "16.0.1"
+    "eslint-config-next": "16.0.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   },
   "volta": {
     "node": "22.11.0",
