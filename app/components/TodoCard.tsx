@@ -104,7 +104,7 @@ export default function TodoCard({
             onClick={async () => {
               sfx.remove();
               await remove(task.id);
-              toast.push({ type: "info", message: "Deleted" });
+              toast.push({ type: "success", message: "Task deleted" });
             }}
             className="rounded-md p-1 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
             aria-label="Delete"

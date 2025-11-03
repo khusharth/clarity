@@ -43,7 +43,7 @@ export default function EditTodoModal({
     if (!task) return;
     const trimmed = text.trim();
     if (!trimmed) {
-      toast.push({ type: "warn", message: "Task text cannot be empty" });
+      toast.push({ type: "error", message: "Task text cannot be empty" });
       return;
     }
 
