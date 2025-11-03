@@ -10,10 +10,10 @@
   --color-accent: 99 102 241;       /* indigo accent */
 
   /* Quadrant accents (very soft) */
-  --q1: 99 102 241;  /* Do Now (indigo) */
-  --q2: 16 185 129;  /* Plan It (emerald) */
-  --q3: 234 179 8;   /* Delegate (amber) */
-  --q4: 236 72 153;  /* Later (pink) */
+  --q1: 244 114 182;  /* Do Now (soft rose) */
+  --q2: 56 189 248;   /* Plan It (sky blue) */
+  --q3: 251 191 36;   /* Delegate (soft amber) */
+  --q4: 148 163 184;  /* Later (muted slate) */
 
   /* Radii and shadows */
   --radius-sm: 8px;
