@@ -44,7 +44,7 @@
   --color-border: 51 65 85;
   --color-fg: 226 232 240;
   --color-fg-muted: 148 163 184;
-  --color-accent: 165 180 252;
+  --color-accent: 99, 102, 241;
 }
 
 /* Manual light theme override */
@@ -65,6 +65,6 @@
     --color-border: 51 65 85;
     --color-fg: 226 232 240;
     --color-fg-muted: 148 163 184;
-    --color-accent: 165 180 252;
+    --color-accent: 99, 102, 241;
   }
 }
