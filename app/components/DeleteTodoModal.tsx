@@ -36,11 +36,21 @@ export default function DeleteTodoModal(props: DeleteTodoModalProps) {
       description={`Are you sure you want to delete "${task.text}"? This action cannot be undone.`}
       openSfx="remove"
     >
-      <div className="flex justify-end gap-3 mt-4">
-        <Button variant="outline" onClick={onCloseAction} size="sm">
+      <div className="flex gap-3 mt-4 sm:justify-end">
+        <Button
+          variant="outline"
+          onClick={onCloseAction}
+          size="sm"
+          className="flex-1 sm:flex-none"
+        >
           Cancel
         </Button>
-        <Button variant="destructive" onClick={handleDelete} size="sm">
+        <Button
+          variant="destructive"
+          onClick={handleDelete}
+          size="sm"
+          className="flex-1 sm:flex-none"
+        >
           Delete
         </Button>
       </div>

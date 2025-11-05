@@ -132,15 +132,21 @@ export default function CompletedPage() {
         }? This action cannot be undone.`}
         openSfx="remove"
       >
-        <div className="flex justify-end gap-3 mt-4">
+        <div className="flex gap-3 mt-4 sm:justify-end">
           <Button
             variant="outline"
             onClick={() => setDeleteAllOpen(false)}
             size="sm"
+            className="flex-1 sm:flex-none"
           >
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleDeleteAll} size="sm">
+          <Button
+            variant="destructive"
+            onClick={handleDeleteAll}
+            size="sm"
+            className="flex-1 sm:flex-none"
+          >
             Delete All
           </Button>
         </div>

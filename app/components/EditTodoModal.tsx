@@ -94,16 +94,22 @@ export default function EditTodoModal(props: EditTodoModalProps) {
             Important
           </label>
         </div>
-        <div className="mt-2 flex justify-end gap-2">
+        <div className="mt-2 flex gap-2 sm:justify-end">
           <Button
             type="button"
             variant="outline"
             onClick={onCloseAction}
             size="sm"
+            className="flex-1 sm:flex-none"
           >
             Cancel
           </Button>
-          <Button type="submit" size="sm" variant="accent">
+          <Button
+            type="submit"
+            size="sm"
+            variant="accent"
+            className="flex-1 sm:flex-none"
+          >
             Save
           </Button>
         </div>

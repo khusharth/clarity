@@ -73,7 +73,7 @@ export default function TodoCard({
       >
         <div className="min-w-0 pr-2">
           <p className="truncate text-sm">{task.text}</p>
-          <div className="mt-1 flex items-center gap-2 text-xs text-[rgb(var(--color-fg-muted))]">
+          <div className="mt-2 sm:mt-1 flex items-center gap-2 text-xs text-[rgb(var(--color-fg-muted))]">
             <button
               className="inline-flex items-center gap-1 hover:underline cursor-pointer"
               onClick={async (e) => {
