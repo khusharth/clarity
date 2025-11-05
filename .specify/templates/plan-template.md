@@ -38,6 +38,7 @@ Derived from `.specify/memory/constitution.md` (Clarity):
 - Calm Design: Neutral palette; WCAG AA contrast; non‑alarming error patterns, Responsive.
 - Local‑First: No network calls in core flows; local persistence; import/export JSON.
 - Fun Focus: Gamification optional (confetti/sound/streaks) with clear toggles.
+- Component Reuse: Check existing components first; build on Radix UI via shadcn patterns.
 
 ## Project Structure
 

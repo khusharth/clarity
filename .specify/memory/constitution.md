@@ -1,14 +1,14 @@
 <!--
 Sync Impact Report
-- Version change: template → 1.0.0
-- Modified principles: placeholders → concrete principles (5 total)
-- Added sections: Architecture & Technology Constraints; Development Workflow & Quality Gates
+- Version change: 1.0.0 → 1.1.0
+- Modified principles: none
+- Added sections: Core Principles VI (Component Reuse & Composition)
 - Removed sections: none
 - Templates requiring updates:
   ✅ .specify/templates/plan-template.md (Constitution gates aligned)
-  ✅ .specify/templates/tasks-template.md (Advisory for local-first, no backend)
-  ✅ .specify/templates/agent-file-template.md (no change needed)
+  ✅ .specify/templates/tasks-template.md (Component reuse guidance added)
   ✅ .specify/templates/spec-template.md (no change needed)
+  ✅ .specify/templates/agent-file-template.md (no change needed)
 - Follow-up TODOs: none
 -->
 
@@ -65,6 +65,19 @@ Gamify completion and add micro‑moments of joy.
 - Joyful micro‑interactions MUST not obscure clarity or slow users down.
 - Feedback MUST be accessible (visual alternatives for sound; respect reduced motion).
 
+### VI. Component Reuse & Composition
+
+Build on existing foundations; avoid reinventing primitives.
+
+- Before creating any component, MUST check if it already exists in `app/components/`.
+- Existing components MUST be reused or composed when they meet the need.
+- New UI components MUST be built on top of Radix UI primitives via shadcn patterns.
+- Components MUST reside in `app/components/ui/` following shadcn conventions.
+- Custom styling via Tailwind is encouraged; avoid inline styles or separate CSS.
+- Rationale: Radix provides accessible, unstyled primitives; shadcn wraps them with
+  consistent patterns. Reuse reduces bundle size, ensures accessibility, and maintains
+  a coherent component library without duplicating primitives.
+
 ## Architecture & Technology Constraints
 
 **Stack**: Next.js, React, Tailwind CSS (use versions pinned in the lockfile/package.json)
@@ -96,9 +109,10 @@ Gamify completion and add micro‑moments of joy.
 **Quality Gates**
 
 - Lint and typecheck MUST pass (`eslint`, `typescript`).
-- UI conforms to Core Principles I–V; reviewers MUST verify against this constitution.
+- UI conforms to Core Principles I–VI; reviewers MUST verify against this constitution.
 - Animations validated: duration ranges, easing, and reduced‑motion behavior.
 - Accessibility checks for keyboard and contrast MUST pass.
+- Component reuse verified: no duplicate primitives; Radix UI via shadcn for new components.
 
 **Workflow**
 
@@ -130,4 +144,4 @@ Gamify completion and add micro‑moments of joy.
 
 - Quarterly review for alignment with user needs; out‑of‑cycle amendments as needed.
 
-**Version**: 1.0.0 | **Ratified**: 2025-11-02 | **Last Amended**: 2025-11-02
+**Version**: 1.1.0 | **Ratified**: 2025-11-02 | **Last Amended**: 2025-11-06

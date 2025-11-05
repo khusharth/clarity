@@ -14,6 +14,8 @@ description: "Task list template for feature implementation"
 > Project advisory (Clarity): Local‑first, no backend/auth/database. Replace backend examples
 > with tasks for offline persistence (IndexedDB/localStorage), motion/gamification toggles,
 > accessibility checks (keyboard, contrast, reduced motion), and JSON import/export.
+> Before creating components, check `app/components/` for existing ones. Build new UI
+> components in `app/components/ui/` using Radix UI primitives via shadcn patterns.
 
 ## Format: `[ID] [P?] [Story] Description`
 
