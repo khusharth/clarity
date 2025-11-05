@@ -1,69 +1,49 @@
 "use client";
-
-import { useEffect } from "react";
 import { useTodos } from "../store/todos";
 import { useToast } from "../store/toast";
 import { useSfx } from "../hooks/useSfx";
 import type { Task } from "../lib/schema";
+import { Modal } from "./ui/Modal";
+import { Button } from "./ui/button";
 
-export default function DeleteTodoModal({
-  task,
-  open,
-  onClose,
-}: {
+type DeleteTodoModalProps = {
   task: Task | null;
   open: boolean;
-  onClose: () => void;
-}) {
+  onCloseAction: () => void;
+};
+
+export default function DeleteTodoModal(props: DeleteTodoModalProps) {
+  const { task, open, onCloseAction } = props;
   const { remove } = useTodos();
   const sfx = useSfx();
   const toast = useToast();
-
-  useEffect(() => {
-    if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
 
   async function handleDelete() {
     if (!task) return;
     await remove(task.id);
     sfx.remove();
     toast.push({ type: "success", message: "Task deleted" });
-    onClose();
+    onCloseAction();
   }
 
-  if (!open) return null;
+  if (!task) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-[90vw] max-w-lg rounded-lg bg-[rgb(var(--color-surface))] p-6 shadow-[var(--shadow-soft)]">
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Delete Task</h2>
-          <p className="text-[rgb(var(--color-text-muted))]">
-            Are you sure you want to delete &quot;{task?.text}&quot;? This
-            action cannot be undone.
-          </p>
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={onClose}
-              className="rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-[rgb(var(--color-hover))] cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDelete}
-              className="rounded-md bg-rose-700/90 hover:bg-rose-900/90 px-4 py-2 text-sm font-medium text-white transition-colors cursor-pointer"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
+    <Modal
+      open={open}
+      onClose={onCloseAction}
+      title="Delete Task"
+      description={`Are you sure you want to delete "${task.text}"? This action cannot be undone.`}
+      openSfx="remove"
+    >
+      <div className="flex justify-end gap-3 mt-4">
+        <Button variant="outline" onClick={onCloseAction} size="sm">
+          Cancel
+        </Button>
+        <Button variant="destructive" onClick={handleDelete} size="sm">
+          Delete
+        </Button>
       </div>
-    </div>
+    </Modal>
   );
 }

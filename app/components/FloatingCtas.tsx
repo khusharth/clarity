@@ -47,7 +47,7 @@ const FloatingCtas = () => {
         </Link>
       </div>
 
-      <AddTodoModal open={open} onClose={() => setOpen(false)} />
+      <AddTodoModal open={open} onCloseAction={() => setOpen(false)} />
     </>
   );
 };

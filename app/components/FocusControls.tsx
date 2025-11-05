@@ -2,6 +2,14 @@
 import { useTodos } from "../store/todos";
 import { useSfx } from "../hooks/useSfx";
 import { useMemo } from "react";
+import { Toggle } from "./ui/toggle";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export default function FocusControls() {
   const {
@@ -32,46 +40,39 @@ export default function FocusControls() {
       <div className="inline-flex items-center gap-2">
         <span className="text-sm font-medium">Focus:</span>
 
-        <button
-          type="button"
-          role="switch"
-          aria-checked={isFocus}
-          onClick={() => {
+        <Toggle
+          pressed={isFocus}
+          onPressedChange={(pressed) => {
             sfx.focus();
-            isFocus ? exitFocus() : enterFocus("all");
+            if (pressed) {
+              enterFocus("all");
+            } else {
+              exitFocus();
+            }
           }}
           disabled={!hasQ1 && !isFocus}
-          className={`relative inline-flex h-7 w-14 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none ${
-            isFocus
-              ? "bg-[rgb(var(--color-accent))]"
-              : "bg-[rgb(var(--color-border))]"
-          } ${
-            !hasQ1 && !isFocus
-              ? "opacity-50 cursor-not-allowed"
-              : "cursor-pointer"
-          }`}
-        >
-          <span
-            aria-hidden="true"
-            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform duration-200 ${
-              isFocus ? "translate-x-7" : "translate-x-1"
-            }`}
-          />
-        </button>
+          aria-label="Toggle focus mode"
+        />
       </div>
 
       {isFocus && hasMoreThanOneQ1 && (
         <>
           <div className="ml-2 inline-flex items-center gap-1 text-sm">
             <label className="mr-1">Mode:</label>
-            <select
-              className="rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-2 py-1 text-sm cursor-pointer"
+            <Select
               value={focusMode}
-              onChange={(e) => setFocusMode(e.target.value as any)}
+              onValueChange={(value: string) =>
+                setFocusMode(value as "all" | "single")
+              }
             >
-              <option value="all">All Q1</option>
-              <option value="single">Single</option>
-            </select>
+              <SelectTrigger className="w-[100px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Q1</SelectItem>
+                <SelectItem value="single">Single</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           {focusMode === "single" && (
             <button
