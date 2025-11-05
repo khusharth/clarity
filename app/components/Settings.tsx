@@ -76,22 +76,15 @@ export default function Settings(props: { className?: string }) {
             </SelectContent>
           </Select>
 
-          <span>Reduced motion</span>
-          <Select
-            value={reducedMotionPref}
-            onValueChange={(value: string) =>
-              setReducedMotionPref(value as "system" | "reduce" | "motion")
-            }
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="system">System</SelectItem>
-              <SelectItem value="reduce">Reduce</SelectItem>
-              <SelectItem value="motion">Prefer motion</SelectItem>
-            </SelectContent>
-          </Select>
+          <span>Reduce motion</span>
+          <div className="flex justify-end">
+            <Toggle
+              pressed={reducedMotionPref}
+              onPressedChange={setReducedMotionPref}
+              size="sm"
+              aria-label="Toggle reduced motion"
+            />
+          </div>
 
           <span>Sound effects</span>
           <div className="flex justify-end">

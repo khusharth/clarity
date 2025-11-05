@@ -15,7 +15,7 @@ interface TodosState {
   // UI feedback
   confettiKey: number;
   // Preferences
-  reducedMotionPref: "system" | "reduce" | "motion";
+  reducedMotionPref: boolean;
   soundEnabled: boolean;
   themePreference: "system" | "light" | "dark";
   add: (text: string, isUrgent: boolean, isImportant: boolean) => Promise<void>;
@@ -35,7 +35,7 @@ interface TodosState {
   setActiveTask: (id: string | null) => void;
   nextFocusTask: () => void;
   celebrate: () => void;
-  setReducedMotionPref: (pref: "system" | "reduce" | "motion") => void;
+  setReducedMotionPref: (enabled: boolean) => void;
   setSoundEnabled: (enabled: boolean) => void;
   setThemePreference: (pref: "system" | "light" | "dark") => void;
 }
@@ -49,7 +49,7 @@ export const useTodos = create<TodosState>()(
       focusMode: "all",
       activeTaskId: null,
       confettiKey: 0,
-      reducedMotionPref: "system",
+      reducedMotionPref: false,
       soundEnabled: true,
       themePreference: "system",
       hydrate: async () => {
@@ -170,7 +170,7 @@ export const useTodos = create<TodosState>()(
         set({ activeTaskId: next.id });
       },
       celebrate: () => set({ confettiKey: get().confettiKey + 1 }),
-      setReducedMotionPref: (pref) => set({ reducedMotionPref: pref }),
+      setReducedMotionPref: (enabled) => set({ reducedMotionPref: enabled }),
       setSoundEnabled: (enabled) => set({ soundEnabled: enabled }),
       setThemePreference: (pref) => {
         set({ themePreference: pref });
