@@ -17,7 +17,7 @@ interface TodosState {
   // Preferences
   reducedMotionPref: boolean;
   soundEnabled: boolean;
-  themePreference: "system" | "light" | "dark";
+  themePreference: "light" | "dark";
   add: (text: string, isUrgent: boolean, isImportant: boolean) => Promise<void>;
   updateText: (id: string, text: string) => Promise<void>;
   toggleUrgent: (id: string) => Promise<void>;
@@ -37,7 +37,7 @@ interface TodosState {
   celebrate: () => void;
   setReducedMotionPref: (enabled: boolean) => void;
   setSoundEnabled: (enabled: boolean) => void;
-  setThemePreference: (pref: "system" | "light" | "dark") => void;
+  setThemePreference: (pref: "light" | "dark") => void;
 }
 
 export const useTodos = create<TodosState>()(
@@ -51,7 +51,7 @@ export const useTodos = create<TodosState>()(
       confettiKey: 0,
       reducedMotionPref: false,
       soundEnabled: true,
-      themePreference: "system",
+      themePreference: "dark",
       hydrate: async () => {
         const tasks = await loadAllTasks();
         set({ tasks, isHydrated: true });
@@ -178,10 +178,8 @@ export const useTodos = create<TodosState>()(
         const root = document.documentElement;
         if (pref === "dark") {
           root.setAttribute("data-theme", "dark");
-        } else if (pref === "light") {
-          root.setAttribute("data-theme", "light");
         } else {
-          root.removeAttribute("data-theme");
+          root.setAttribute("data-theme", "light");
         }
       },
     }),

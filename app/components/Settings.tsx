@@ -63,14 +63,13 @@ export default function Settings(props: { className?: string }) {
           <Select
             value={themePreference}
             onValueChange={(value: string) =>
-              setThemePreference(value as "system" | "light" | "dark")
+              setThemePreference(value as "light" | "dark")
             }
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="system">System</SelectItem>
               <SelectItem value="light">Light</SelectItem>
               <SelectItem value="dark">Dark</SelectItem>
             </SelectContent>
