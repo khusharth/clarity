@@ -38,7 +38,7 @@ const FloatingCtas = () => {
           <Settings className="sm:mb-2 gap-0" />
           <Link
             href="/completed"
-            className="group/completed flex items-center rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 h-8 text-sm shadow-(--shadow-soft) transition-all duration-200 cursor-pointer overflow-hidden"
+            className="group/completed flex items-center rounded-md bg-[rgb(var(--color-accent))] text-white hover:brightness-110 border border-[rgb(var(--color-border))] px-3 h-8 text-sm shadow-(--shadow-soft) transition-all duration-200 cursor-pointer overflow-hidden"
           >
             <CircleCheckBigIcon
               size={16}

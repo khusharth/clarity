@@ -42,7 +42,7 @@ export default function Settings(props: { className?: string }) {
   return (
     <>
       <Button
-        variant="outline"
+        variant="accent"
         size="sm"
         onClick={() => setOpen(true)}
         icon={<SettingsIcon size={16} />}
