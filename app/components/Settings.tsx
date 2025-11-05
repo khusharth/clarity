@@ -46,9 +46,11 @@ export default function Settings(props: { className?: string }) {
         size="sm"
         onClick={() => setOpen(true)}
         icon={<SettingsIcon size={16} />}
-        className={`transition-transform duration-200 hover:-translate-y-0.5 ${props.className}`}
+        className={`group/settings gap-0! ${props.className}`}
       >
-        <span className="hidden sm:inline">Settings</span>
+        <span className="hidden sm:inline sm:max-w-0 sm:group-hover/settings:max-w-[100px] sm:opacity-0 sm:group-hover/settings:opacity-100 sm:group-hover/settings:ml-1.5 transition-all duration-200 whitespace-nowrap">
+          Settings
+        </span>
       </Button>
       <Modal
         open={open}

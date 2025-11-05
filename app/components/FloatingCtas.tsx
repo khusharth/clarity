@@ -34,14 +34,19 @@ const FloatingCtas = () => {
   return (
     <>
       <div className="z-1 fixed w-full pr-6 pl-6 bottom-6 flex items-center justify-between">
-        <div className="inline-flex items-center">
-          <Settings className="mr-2" />
+        <div className="flex items-center sm:items-start sm:flex-col gap-2 ">
+          <Settings className="sm:mb-2 gap-0" />
           <Link
             href="/completed"
-            className="inline-flex items-center rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3  h-8 text-sm shadow-(--shadow-soft) transition-transform duration-200 hover:-translate-y-0.5 cursor-pointer"
+            className="group/completed flex items-center rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 h-8 text-sm shadow-(--shadow-soft) transition-all duration-200 cursor-pointer overflow-hidden"
           >
-            <CircleCheckBigIcon size={16} className="sm:mr-1.5" />{" "}
-            <span className="hidden sm:inline">Completed</span>
+            <CircleCheckBigIcon
+              size={16}
+              className="shrink-0 transition-all duration-200"
+            />
+            <span className="inline max-w-0 group-hover/completed:max-w-[100px] opacity-0 group-hover/completed:opacity-100 whitespace-nowrap transition-all duration-200 group-hover/completed:ml-1.5">
+              Completed
+            </span>
           </Link>
         </div>
 

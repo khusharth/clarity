@@ -18,7 +18,7 @@ const Footer = () => {
 
   return (
     <BlurTransition visible={!isFocus} duration={isInitialMount ? 0 : 1}>
-      <footer className="flex justify-center items-center p-12">
+      <footer className="flex justify-center items-center pt-16 pb-24 sm:p-16 ">
         <a
           href="https://github.com/khusharth/clarity"
           target="_blank"
