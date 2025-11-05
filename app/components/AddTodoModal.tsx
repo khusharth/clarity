@@ -6,6 +6,7 @@ import { useSfx } from "../hooks/useSfx";
 import { Modal } from "./ui/Modal";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Checkbox } from "./ui/checkbox";
 
 type AddTodoModalProps = { open: boolean; onCloseAction: () => void };
 
@@ -60,20 +61,16 @@ export default function AddTodoModal(props: AddTodoModalProps) {
         />
         <div className="flex items-center gap-4 text-sm">
           <label className="inline-flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={urgent}
-              onChange={(e) => setUrgent(e.target.checked)}
-              className="cursor-pointer"
+              onCheckedChange={(checked) => setUrgent(checked === true)}
             />
             Urgent
           </label>
           <label className="inline-flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={important}
-              onChange={(e) => setImportant(e.target.checked)}
-              className="cursor-pointer"
+              onCheckedChange={(checked) => setImportant(checked === true)}
             />
             Important
           </label>

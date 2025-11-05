@@ -2,6 +2,16 @@
 import { useRef, useState } from "react";
 import { useTodos } from "../store/todos";
 import { useToast } from "../store/toast";
+import { Modal } from "./ui/Modal";
+import { Button } from "./ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Toggle } from "./ui/toggle";
 
 export default function Settings() {
   const {
@@ -36,107 +46,110 @@ export default function Settings() {
       >
         Settings
       </button>
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/30 cursor-pointer"
-            onClick={() => setOpen(false)}
-          />
-          <div className="relative z-10 w-full max-w-md rounded-[var(--radius-md)] border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] p-4 shadow-[var(--shadow-soft)]">
-            <h2 className="mb-3 text-lg font-medium">Settings</h2>
-            <div className="flex flex-col gap-3 text-sm">
-              <label className="flex items-center justify-between">
-                <span>Theme</span>
-                <select
-                  className="rounded-md border border-[rgb(var(--color-border))] bg-transparent px-2 py-1"
-                  value={themePreference}
-                  onChange={(e) =>
-                    setThemePreference(
-                      e.target.value as "system" | "light" | "dark"
-                    )
-                  }
-                >
-                  <option value="system">System</option>
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                </select>
-              </label>
-              <label className="flex items-center justify-between">
-                <span>Reduced motion</span>
-                <select
-                  className="rounded-md border border-[rgb(var(--color-border))] bg-transparent px-2 py-1"
-                  value={reducedMotionPref}
-                  onChange={(e) => setReducedMotionPref(e.target.value as any)}
-                >
-                  <option value="system">System</option>
-                  <option value="reduce">Reduce</option>
-                  <option value="motion">Prefer motion</option>
-                </select>
-              </label>
-              <label className="flex items-center justify-between">
-                <span>Sound effects</span>
-                <input
-                  type="checkbox"
-                  checked={soundEnabled}
-                  onChange={(e) => setSoundEnabled(e.target.checked)}
-                  className="cursor-pointer"
-                />
-              </label>
-              <div className="mt-2 flex items-center justify-between">
-                <button
-                  className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1 cursor-pointer"
-                  onClick={() => {
-                    download(
-                      "clarity-tasks.json",
-                      JSON.stringify(exportJSON(), null, 2)
-                    );
-                    toast.push({
-                      type: "success",
-                      message: "Exported to JSON",
-                    });
-                  }}
-                >
-                  Export JSON
-                </button>
-                <div>
-                  <input
-                    ref={fileRef}
-                    type="file"
-                    accept="application/json"
-                    className="hidden"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      const text = await file.text();
-                      const bundle = JSON.parse(text);
-                      await importJSON(bundle);
-                      toast.push({
-                        type: "success",
-                        message: "Imported tasks",
-                      });
-                      setOpen(false);
-                    }}
-                  />
-                  <button
-                    className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1 cursor-pointer"
-                    onClick={() => fileRef.current?.click()}
-                  >
-                    Import JSON
-                  </button>
-                </div>
-              </div>
-              <div className="mt-2 flex justify-end">
-                <button
-                  className="rounded-md border border-[rgb(var(--color-border))] px-3 py-1 cursor-pointer"
-                  onClick={() => setOpen(false)}
-                >
-                  Close
-                </button>
-              </div>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        title="Settings"
+        description="Configure your preferences"
+      >
+        <div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-3 items-center text-sm">
+          <span>Theme</span>
+          <Select
+            value={themePreference}
+            onValueChange={(value: string) =>
+              setThemePreference(value as "system" | "light" | "dark")
+            }
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="system">System</SelectItem>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <span>Reduced motion</span>
+          <Select
+            value={reducedMotionPref}
+            onValueChange={(value: string) =>
+              setReducedMotionPref(
+                value as "system" | "reduce" | "motion"
+              )
+            }
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="system">System</SelectItem>
+              <SelectItem value="reduce">Reduce</SelectItem>
+              <SelectItem value="motion">Prefer motion</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <span>Sound effects</span>
+          <div className="flex justify-end">
+            <Toggle
+              pressed={soundEnabled}
+              onPressedChange={setSoundEnabled}
+              size="sm"
+              aria-label="Toggle sound effects"
+            />
+          </div>
+          <div className="col-span-2 mt-2 flex items-center justify-between">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                download(
+                  "clarity-tasks.json",
+                  JSON.stringify(exportJSON(), null, 2)
+                );
+                toast.push({
+                  type: "success",
+                  message: "Exported to JSON",
+                });
+              }}
+            >
+              Export JSON
+            </Button>
+            <div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="application/json"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const text = await file.text();
+                  const bundle = JSON.parse(text);
+                  await importJSON(bundle);
+                  toast.push({
+                    type: "success",
+                    message: "Imported tasks",
+                  });
+                  setOpen(false);
+                }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileRef.current?.click()}
+              >
+                Import JSON
+              </Button>
             </div>
           </div>
+          <div className="col-span-2 mt-2 flex justify-end">
+            <Button variant="outline" size="sm" onClick={() => setOpen(false)}>
+              Close
+            </Button>
+          </div>
         </div>
-      )}
+      </Modal>
     </>
   );
 }

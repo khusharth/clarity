@@ -123,12 +123,12 @@ export default function TodoCard({
       <EditTodoModal
         task={task}
         open={editOpen}
-        onClose={() => setEditOpen(false)}
+        onCloseAction={() => setEditOpen(false)}
       />
       <DeleteTodoModal
         task={task}
         open={deleteOpen}
-        onClose={() => setDeleteOpen(false)}
+        onCloseAction={() => setDeleteOpen(false)}
       />
     </>
   );
