@@ -68,10 +68,10 @@
 
 ### Phase 6: Polish & Validation
 
-- [ ] T024 Run TypeScript type checking (pnpm typecheck)
-- [ ] T025 [P] Verify dark/light theme parity
-- [ ] T026 Test reduced-motion support
-- [ ] T027 Document usage examples in Modal component
+- [x] T024 Run TypeScript type checking (pnpm typecheck)
+- [x] T025 [P] Verify dark/light theme parity
+- [x] T026 Test reduced-motion support
+- [x] T027 Document usage examples in Modal component
 
 ## Dependencies & Order
 

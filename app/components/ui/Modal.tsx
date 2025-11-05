@@ -6,8 +6,50 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { useSfx } from "../../hooks/useSfx";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useAppReducedMotion } from "../../hooks/useAppReducedMotion";
 import { cn } from "./utils";
 
+/**
+ * Unified Modal component that renders as a dialog on desktop and bottom sheet on mobile.
+ *
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <Modal
+ *   open={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   title="Confirm Action"
+ *   description="Are you sure you want to proceed?"
+ * >
+ *   <p>Modal content goes here</p>
+ * </Modal>
+ *
+ * // With footer actions
+ * <Modal
+ *   open={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   title="Edit Task"
+ * >
+ *   <Input value={text} onChange={setText} />
+ *   <div className="flex gap-2 mt-4">
+ *     <Button onClick={() => setIsOpen(false)}>Cancel</Button>
+ *     <Button variant="accent" onClick={handleSave}>Save</Button>
+ *   </div>
+ * </Modal>
+ *
+ * // With initial focus
+ * const inputRef = useRef<HTMLInputElement>(null);
+ * <Modal
+ *   open={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   title="Add Task"
+ *   initialFocusRef={inputRef}
+ *   openSfx="add"
+ * >
+ *   <Input ref={inputRef} placeholder="Task name" />
+ * </Modal>
+ * ```
+ */
 interface ModalProps {
   /** Whether the modal is visible */
   open: boolean;
@@ -48,6 +90,7 @@ export function Modal({
 }: ModalProps) {
   const sfx = useSfx();
   const isMobile = useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+  const reducedMotion = useAppReducedMotion();
   const isBottomSheet =
     variant === "bottomsheet" || (variant === "auto" && isMobile);
   const dragConstraintsRef = useRef<HTMLDivElement>(null);
@@ -80,7 +123,7 @@ export function Modal({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: reducedMotion ? 0 : 0.2 }}
                 onClick={() => closeOnOverlayClick && onClose()}
               />
             </RadixDialog.Overlay>
@@ -94,17 +137,31 @@ export function Modal({
                     "w-full max-w-md rounded-t-xl sm:rounded-xl p-6 pointer-events-auto",
                     "bg-[rgb(var(--color-surface))] text-[rgb(var(--color-fg))]",
                     "shadow-(--shadow-soft)",
-                    isBottomSheet ? "bottom-0 left-0 right-0" : "relative"
+                    isBottomSheet ? "bottom-0 left-0 right-0 pb-10" : "relative"
                   )}
                   initial={
-                    isBottomSheet ? { y: "100%" } : { scale: 0.95, opacity: 0 }
+                    reducedMotion
+                      ? {}
+                      : isBottomSheet
+                      ? { y: "100%" }
+                      : { scale: 0.95, opacity: 0 }
                   }
-                  animate={isBottomSheet ? { y: 0 } : { scale: 1, opacity: 1 }}
+                  animate={
+                    reducedMotion
+                      ? {}
+                      : isBottomSheet
+                      ? { y: 0 }
+                      : { scale: 1, opacity: 1 }
+                  }
                   exit={
-                    isBottomSheet ? { y: "100%" } : { scale: 0.95, opacity: 0 }
+                    reducedMotion
+                      ? {}
+                      : isBottomSheet
+                      ? { y: "100%" }
+                      : { scale: 0.95, opacity: 0 }
                   }
                   transition={{
-                    duration: 0.2,
+                    duration: reducedMotion ? 0 : 0.2,
                     ease: [0.32, 0.72, 0, 1],
                   }}
                   {...(isBottomSheet && {

@@ -23,7 +23,7 @@ const DeleteTaskCta = (props: { task: Task }) => {
       <DeleteTodoModal
         task={props.task}
         open={deleteOpen}
-        onClose={() => setDeleteOpen(false)}
+        onCloseAction={() => setDeleteOpen(false)}
       />
     </>
   );
