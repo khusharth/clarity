@@ -1,4 +1,5 @@
 "use client";
+import { Settings as SettingsIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTodos } from "../store/todos";
 import { useToast } from "../store/toast";
@@ -13,7 +14,7 @@ import {
 } from "./ui/select";
 import { Toggle } from "./ui/toggle";
 
-export default function Settings() {
+export default function Settings(props: { className?: string }) {
   const {
     reducedMotionPref,
     setReducedMotionPref,
@@ -40,12 +41,15 @@ export default function Settings() {
 
   return (
     <>
-      <button
+      <Button
+        variant="outline"
+        size="sm"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 left-6 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 text-sm shadow-[var(--shadow-soft)] cursor-pointer"
+        icon={<SettingsIcon size={16} />}
+        className={`transition-transform duration-200 hover:-translate-y-0.5 ${props.className}`}
       >
-        Settings
-      </button>
+        <span className="hidden sm:inline">Settings</span>
+      </Button>
       <Modal
         open={open}
         onClose={() => setOpen(false)}

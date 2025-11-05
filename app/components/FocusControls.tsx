@@ -2,6 +2,7 @@
 import { useTodos } from "../store/todos";
 import { useSfx } from "../hooks/useSfx";
 import { useMemo } from "react";
+import { Button } from "./ui/button";
 import { Toggle } from "./ui/toggle";
 import {
   Select,
@@ -75,8 +76,10 @@ export default function FocusControls() {
             </Select>
           </div>
           {focusMode === "single" && (
-            <button
-              className="ml-2 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-1 text-sm shadow-[var(--shadow-soft)] disabled:opacity-50 cursor-pointer"
+            <Button
+              variant="outline"
+              size="sm"
+              className="ml-2 shadow-[var(--shadow-soft)]"
               onClick={() => {
                 if (!activeTaskId && q1[0]) setActiveTask(q1[0].id);
                 else nextFocusTask();
@@ -84,7 +87,7 @@ export default function FocusControls() {
               disabled={!hasQ1}
             >
               Next
-            </button>
+            </Button>
           )}
         </>
       )}

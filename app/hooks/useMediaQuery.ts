@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+const MOBILE_BREAKPOINT = 640; // Tailwind 'sm'
+
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(() => {
     // Default to false on server, use matchMedia on client if available
@@ -25,3 +27,6 @@ export function useMediaQuery(query: string): boolean {
 
   return matches;
 }
+
+export const useIsMobile = () =>
+  useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT}px)`);

@@ -5,7 +5,7 @@ import * as RadixDialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { useSfx } from "../../hooks/useSfx";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useIsMobile } from "../../hooks/useMediaQuery";
 import { useAppReducedMotion } from "../../hooks/useAppReducedMotion";
 import { cn } from "./utils";
 
@@ -73,7 +73,6 @@ interface ModalProps {
   openSfx?: "add" | "complete" | "remove" | "toggle" | "focus" | null;
 }
 
-const MOBILE_BREAKPOINT = 640; // Tailwind 'sm'
 const DRAG_THRESHOLD = 120; // pixels to drag before dismiss
 
 export function Modal({
@@ -89,7 +88,7 @@ export function Modal({
   openSfx,
 }: ModalProps) {
   const sfx = useSfx();
-  const isMobile = useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+  const isMobile = useIsMobile();
   const reducedMotion = useAppReducedMotion();
   const isBottomSheet =
     variant === "bottomsheet" || (variant === "auto" && isMobile);

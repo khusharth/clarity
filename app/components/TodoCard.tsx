@@ -7,6 +7,7 @@ import { CheckCircle2, Trash2, Flame, Sparkles } from "lucide-react";
 import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 import { useSfx } from "../hooks/useSfx";
 import { useToast } from "../store/toast";
+import { Button } from "./ui/button";
 import EditTodoModal from "./EditTodoModal";
 import DeleteTodoModal from "./DeleteTodoModal";
 import { useReward } from "react-rewards";
@@ -93,10 +94,13 @@ export default function TodoCard({
           </div>
         </div>
         <div
-          className="flex shrink-0 items-center gap-2 opacity-80"
+          className="flex shrink-0 items-center gap-0.5 opacity-80"
           onClick={(e) => e.stopPropagation()}
         >
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
+            contentType="icon-only"
             onClick={async () => {
               sfx.complete();
               celebrate();
@@ -104,20 +108,22 @@ export default function TodoCard({
               reward();
               toast.push({ type: "success", message: "Completed 🎉" });
             }}
-            className="rounded-md p-1 hover:bg-[rgb(var(--color-success))]/20 text-[rgb(var(--color-success))] transition-colors cursor-pointer"
+            className="rounded-md hover:bg-[rgb(var(--color-success))]/20! text-[rgb(var(--color-success))]"
             aria-label="Complete"
             title="Complete"
-          >
-            <CheckCircle2 size={16} />
-          </button>
-          <button
+            icon={<CheckCircle2 size={16} />}
+          />
+
+          <Button
+            variant="ghost"
+            size="sm"
+            contentType="icon-only"
             onClick={() => setDeleteOpen(true)}
-            className="rounded-md p-1 hover:bg-[rgb(var(--color-error))]/20 text-[rgb(var(--color-error))] transition-colors cursor-pointer"
+            className="rounded-md hover:bg-[rgb(var(--color-error))]/20! text-[rgb(var(--color-error))]"
             aria-label="Delete"
             title="Delete"
-          >
-            <Trash2 size={16} />
-          </button>
+            icon={<Trash2 size={16} />}
+          />
         </div>
       </motion.div>
       <EditTodoModal

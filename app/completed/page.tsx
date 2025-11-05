@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTodos } from "../store/todos";
 import { formatDateTime } from "../lib/dates";
 import { ArrowLeft, Trash2 } from "lucide-react";
+import { Button } from "../components/ui/button";
 import DeleteTodoModal from "../components/DeleteTodoModal";
 import { Task } from "../lib/schema";
 
@@ -12,14 +13,17 @@ const DeleteTaskCta = (props: { task: Task }) => {
 
   return (
     <>
-      <button
-        className="rounded-md p-1 hover:bg-[rgb(var(--color-error))]/20 text-[rgb(var(--color-error))] transition-colors cursor-pointer"
+      <Button
+        variant="ghost"
+        size="sm"
+        contentType="icon-only"
+        className="rounded-md hover:bg-[rgb(var(--color-error))]/20! text-[rgb(var(--color-error))]"
         aria-label="Delete"
         title="Delete"
         onClick={() => setDeleteOpen(true)}
-      >
-        <Trash2 size={16} />
-      </button>
+        icon={<Trash2 size={16} />}
+      />
+
       <DeleteTodoModal
         task={props.task}
         open={deleteOpen}
