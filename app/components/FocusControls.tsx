@@ -2,7 +2,6 @@
 import { useTodos } from "../store/todos";
 import { useSfx } from "../hooks/useSfx";
 import { useMemo } from "react";
-import { Button } from "./ui/button";
 import { Toggle } from "./ui/toggle";
 import {
   Select,
@@ -13,17 +12,8 @@ import {
 } from "./ui/select";
 
 export default function FocusControls() {
-  const {
-    tasks,
-    isFocus,
-    focusMode,
-    activeTaskId,
-    enterFocus,
-    exitFocus,
-    setFocusMode,
-    nextFocusTask,
-    setActiveTask,
-  } = useTodos();
+  const { tasks, isFocus, focusMode, enterFocus, exitFocus, setFocusMode } =
+    useTodos();
   const sfx = useSfx();
 
   const q1 = useMemo(
@@ -75,20 +65,6 @@ export default function FocusControls() {
               </SelectContent>
             </Select>
           </div>
-          {focusMode === "single" && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="ml-2 shadow-[var(--shadow-soft)]"
-              onClick={() => {
-                if (!activeTaskId && q1[0]) setActiveTask(q1[0].id);
-                else nextFocusTask();
-              }}
-              disabled={!hasQ1}
-            >
-              Next
-            </Button>
-          )}
         </>
       )}
     </div>

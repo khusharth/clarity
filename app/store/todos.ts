@@ -34,6 +34,7 @@ interface TodosState {
   setFocusMode: (mode: "all" | "single") => void;
   setActiveTask: (id: string | null) => void;
   nextFocusTask: () => void;
+  prevFocusTask: () => void;
   celebrate: () => void;
   setReducedMotionPref: (enabled: boolean) => void;
   setSoundEnabled: (enabled: boolean) => void;
@@ -168,6 +169,28 @@ export const useTodos = create<TodosState>()(
         const idx = q1.findIndex((t) => t.id === current);
         const next = q1[(idx + 1) % q1.length];
         set({ activeTaskId: next.id });
+      },
+      prevFocusTask: () => {
+        const q1 = get()
+          .tasks.filter(
+            (t) => t.status === "active" && t.isUrgent && t.isImportant
+          )
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        if (q1.length === 0) {
+          set({ activeTaskId: null });
+          return;
+        }
+        const current = get().activeTaskId;
+        if (!current) {
+          set({ activeTaskId: q1[q1.length - 1].id });
+          return;
+        }
+        const idx = q1.findIndex((t) => t.id === current);
+        const prev = q1[(idx - 1 + q1.length) % q1.length];
+        set({ activeTaskId: prev.id });
       },
       celebrate: () => set({ confettiKey: get().confettiKey + 1 }),
       setReducedMotionPref: (enabled) => set({ reducedMotionPref: enabled }),

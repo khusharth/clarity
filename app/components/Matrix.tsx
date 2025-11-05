@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { listVariants } from "../lib/motion";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import FocusControls from "./FocusControls";
+import { Button } from "./ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 function sortNewest(a: Task, b: Task) {
   return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -15,8 +17,17 @@ function sortNewest(a: Task, b: Task) {
 
 export default function Matrix() {
   const reduced = useReducedMotion();
-  const { tasks, isHydrated, hydrate, isFocus, focusMode, activeTaskId } =
-    useTodos();
+  const {
+    tasks,
+    isHydrated,
+    hydrate,
+    isFocus,
+    focusMode,
+    activeTaskId,
+    nextFocusTask,
+    prevFocusTask,
+    setActiveTask,
+  } = useTodos();
 
   useEffect(() => {
     if (!isHydrated) void hydrate();
@@ -47,21 +58,18 @@ export default function Matrix() {
   return (
     <div className="mx-auto w-full max-w-6xl p-4">
       <FocusControls />
-      <motion.div layout animate={{ opacity: 1 }}>
+      <motion.div animate={{ opacity: 1 }}>
         {isFocus ? (
           focusMode === "single" ? (
-            <div className="grid grid-cols-1 gap-4">
-              <Quadrant
-                title="Q1 • Do Now"
-                colorVar="--q1"
-                isEmpty={q1.length === 0}
-                emptyMessage="Nothing urgent and important right now"
-              >
-                <motion.div
-                  variants={reduced ? undefined : listVariants}
-                  animate="animate"
+            <>
+              <div className="grid grid-cols-1 gap-4">
+                <Quadrant
+                  title="Q1 • Do Now"
+                  colorVar="--q1"
+                  isEmpty={q1.length === 0}
+                  emptyMessage="Nothing urgent and important right now"
                 >
-                  <AnimatePresence initial={false}>
+                  <AnimatePresence mode="wait" initial={false}>
                     {(() => {
                       const item = activeTaskId
                         ? q1.find((t) => t.id === activeTaskId)
@@ -71,9 +79,37 @@ export default function Matrix() {
                       ) : null;
                     })()}
                   </AnimatePresence>
-                </motion.div>
-              </Quadrant>
-            </div>
+                </Quadrant>
+              </div>
+              {q1.length > 1 && (
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (!activeTaskId && q1[q1.length - 1])
+                        setActiveTask(q1[q1.length - 1].id);
+                      else prevFocusTask();
+                    }}
+                    disabled={q1.length === 0}
+                    icon={<ChevronLeft size={16} />}
+                  >
+                    Prev
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (!activeTaskId && q1[0]) setActiveTask(q1[0].id);
+                      else nextFocusTask();
+                    }}
+                    disabled={q1.length === 0}
+                  >
+                    Next <ChevronRight size={16} />
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="grid grid-cols-1 gap-4">
               <Quadrant

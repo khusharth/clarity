@@ -5,5 +5,3 @@ export function useAppReducedMotion(): boolean {
   const pref = useTodos((s) => s.reducedMotionPref);
   return pref;
 }
-
-
