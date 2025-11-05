@@ -68,6 +68,8 @@ export default function Matrix() {
                   colorVar="--q1"
                   isEmpty={q1.length === 0}
                   emptyMessage="Nothing urgent and important right now"
+                  quadrantId="q1"
+                  tasks={q1}
                 >
                   <AnimatePresence mode="wait" initial={false}>
                     {(() => {
@@ -117,6 +119,8 @@ export default function Matrix() {
                 colorVar="--q1"
                 isEmpty={q1.length === 0}
                 emptyMessage="Nothing urgent and important right now"
+                quadrantId="q1"
+                tasks={q1}
               >
                 <motion.div
                   variants={reduced ? undefined : listVariants}
@@ -138,6 +142,8 @@ export default function Matrix() {
               colorVar="--q1"
               isEmpty={q1.length === 0}
               emptyMessage="Nothing urgent and important right now"
+              quadrantId="q1"
+              tasks={q1}
             >
               <motion.div
                 variants={reduced ? undefined : listVariants}
@@ -155,6 +161,8 @@ export default function Matrix() {
               colorVar="--q2"
               isEmpty={q2.length === 0}
               emptyMessage="Plan important tasks without urgency"
+              quadrantId="q2"
+              tasks={q2}
             >
               <motion.div
                 variants={reduced ? undefined : listVariants}
@@ -172,6 +180,8 @@ export default function Matrix() {
               colorVar="--q3"
               isEmpty={q3.length === 0}
               emptyMessage="Urgent but not important—delegate if possible"
+              quadrantId="q3"
+              tasks={q3}
             >
               <motion.div
                 variants={reduced ? undefined : listVariants}
@@ -189,6 +199,8 @@ export default function Matrix() {
               colorVar="--q4"
               isEmpty={q4.length === 0}
               emptyMessage="Not urgent and not important—consider dropping"
+              quadrantId="q4"
+              tasks={q4}
             >
               <motion.div
                 variants={reduced ? undefined : listVariants}
