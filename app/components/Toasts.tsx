@@ -18,12 +18,12 @@ export default function Toasts() {
         {toasts.map((t) => {
           const borderColor =
             t.type === "success"
-              ? "border-green-400/50 dark:border-green-500/50"
+              ? "border-[rgb(var(--color-success))]/50"
               : t.type === "error"
-              ? "border-red-400/50 dark:border-red-500/50"
+              ? "border-[rgb(var(--color-error))]/50"
               : t.type === "warn"
-              ? "border-amber-400/50 dark:border-amber-500/50"
-              : "border-blue-400/50 dark:border-blue-500/50";
+              ? "border-[rgb(var(--color-warning))]/50"
+              : "border-[rgb(var(--color-info))]/50";
 
           return (
             <motion.div
@@ -38,23 +38,20 @@ export default function Toasts() {
                 {t.type === "success" ? (
                   <CheckCircle2
                     size={16}
-                    className="text-green-500 dark:text-green-400"
+                    className="text-[rgb(var(--color-success))]"
                   />
                 ) : t.type === "error" ? (
                   <AlertCircle
                     size={16}
-                    className="text-red-500 dark:text-red-400"
+                    className="text-[rgb(var(--color-error))]"
                   />
                 ) : t.type === "warn" ? (
                   <AlertTriangle
                     size={16}
-                    className="text-amber-500 dark:text-amber-400"
+                    className="text-[rgb(var(--color-warning))]"
                   />
                 ) : (
-                  <Info
-                    size={16}
-                    className="text-blue-500 dark:text-blue-400"
-                  />
+                  <Info size={16} className="text-[rgb(var(--color-info))]" />
                 )}
                 <div className="text-sm">{t.message}</div>
               </div>

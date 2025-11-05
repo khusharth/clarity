@@ -23,7 +23,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         "bg-[rgb(var(--color-accent))] text-white hover:bg-[rgb(var(--color-accent))]/90",
       outline:
         "border border-[rgb(var(--color-border))] bg-transparent hover:bg-[rgb(var(--color-surface))]/80",
-      destructive: "bg-red-600 text-white hover:bg-red-700",
+      destructive:
+        "bg-[rgb(var(--color-error))]/90 text-white hover:bg-[rgb(var(--color-error))]/80",
       ghost: "hover:bg-[rgb(var(--color-surface))]/60",
     };
     const sizes: Record<Size, string> = {

@@ -104,7 +104,7 @@ export default function TodoCard({
               reward();
               toast.push({ type: "success", message: "Completed 🎉" });
             }}
-            className="rounded-md p-1 hover:bg-green-500/20 text-green-600 dark:text-green-400 transition-colors cursor-pointer"
+            className="rounded-md p-1 hover:bg-[rgb(var(--color-success))]/20 text-[rgb(var(--color-success))] transition-colors cursor-pointer"
             aria-label="Complete"
             title="Complete"
           >
@@ -112,7 +112,7 @@ export default function TodoCard({
           </button>
           <button
             onClick={() => setDeleteOpen(true)}
-            className="rounded-md p-1 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
+            className="rounded-md p-1 hover:bg-[rgb(var(--color-error))]/20 text-[rgb(var(--color-error))] transition-colors cursor-pointer"
             aria-label="Delete"
             title="Delete"
           >

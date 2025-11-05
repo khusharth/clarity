@@ -13,7 +13,7 @@ const DeleteTaskCta = (props: { task: Task }) => {
   return (
     <>
       <button
-        className="rounded-md p-1 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
+        className="rounded-md p-1 hover:bg-[rgb(var(--color-error))]/20 text-[rgb(var(--color-error))] transition-colors cursor-pointer"
         aria-label="Delete"
         title="Delete"
         onClick={() => setDeleteOpen(true)}

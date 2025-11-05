@@ -15,6 +15,12 @@
   --q3: 251 191 36;   /* Delegate (soft amber) */
   --q4: 148 163 184;  /* Later (muted slate) */
 
+  /* Semantic colors - match original vibrant icon colors */
+  --color-error: 220 38 38;      /* red-600 (light mode) */
+  --color-warning: 234 179 8;    /* yellow-500 */
+  --color-success: 22 163 74;    /* green-600 (light mode) */
+  --color-info: 37 99 235;       /* blue-600 */
+
   /* Radii and shadows */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -31,6 +37,12 @@
   --color-fg-muted: 71 85 105;      /* secondary text -> text-fg-muted */
   --color-accent: 99 102 241;       /* indigo accent -> bg-accent */
 
+  /* Semantic colors - match original vibrant icon colors */
+  --color-error: 220 38 38;      /* red-600 (light mode) */
+  --color-warning: 234 179 8;    /* yellow-500 (light mode) */
+  --color-success: 22 163 74;    /* green-600 (light mode) */
+  --color-info: 37 99 235;       /* blue-600 (light mode) */
+
   /* Radii and shadows */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -45,6 +57,10 @@
   --color-fg: 226 232 240;
   --color-fg-muted: 148 163 184;
   --color-accent: 99 102 241;
+  --color-error: 248 113 113;    /* red-400 in dark mode */
+  --color-warning: 250 204 21;   /* yellow-400 in dark mode */
+  --color-success: 74 222 128;   /* green-400 in dark mode */
+  --color-info: 96 165 250;      /* blue-400 in dark mode */
 }
 
 /* Manual light theme override */
@@ -66,5 +82,9 @@
     --color-fg: 226 232 240;
     --color-fg-muted: 148 163 184;
     --color-accent: 99 102 241;
+    --color-error: 248 113 113;    /* red-400 in dark mode */
+    --color-warning: 250 204 21;   /* yellow-400 in dark mode */
+    --color-success: 74 222 128;   /* green-400 in dark mode */
+    --color-info: 96 165 250;      /* blue-400 in dark mode */
   }
 }
