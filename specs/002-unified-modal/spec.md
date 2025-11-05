@@ -63,7 +63,7 @@ Functional Requirements (testable)
 
 FR-1: The Modal component must render a backdrop and an accessible dialog region when open is true.
 
-FR-2: When viewport width is below a reasonable mobile breakpoint (e.g., 640px), the component must render as a bottom sheet covering the bottom area and implement a basic vertical drag-to-close (threshold-based dismissal with smooth translate/opacity). The drag must have a clear dismissal threshold and gracefully fall back to overlay/Escape dismissal.
+FR-2: When viewport width is below 640px (Tailwind 'sm' breakpoint), the component must render as a bottom sheet covering the bottom area and implement a vertical drag-to-close with a 120px dismissal threshold (smooth translate/opacity animation). The drag gesture must gracefully fall back to overlay/Escape dismissal if threshold not met.
 
 FR-3: The Modal must close when the Escape key is pressed.
 
@@ -77,7 +77,9 @@ FR-7: The Modal must provide a prop to trigger small sfx events via existing use
 
 FR-8: The Modal must be theme-aware (use CSS variables already present in the app for background/foreground colors).
 
-FR-9: The Modal must provide a minimal animation for open/close and allow disabling animations for reduced motion users.
+FR-9: The Modal must provide animation for open/close that adheres to Clarity Constitution timing (150-250ms duration with natural spring/bezier easing) and MUST respect the global animation toggle from Settings modal, which in turn respects prefers-reduced-motion.
+
+FR-10: The Modal must meet Clarity Constitution performance targets (p95 < 100ms for all interactions including open, close, and drag gestures).
 
 Success Criteria
 ----------------
