@@ -6,7 +6,7 @@ import { useSfx } from "../hooks/useSfx";
 import type { Task } from "../lib/schema";
 import { Modal } from "./ui/Modal";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 
 type EditTodoModalProps = {
@@ -23,7 +23,7 @@ export default function EditTodoModal(props: EditTodoModalProps) {
   const [text, setText] = useState("");
   const [urgent, setUrgent] = useState(false);
   const [important, setImportant] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (!open || !task) return;
@@ -69,11 +69,11 @@ export default function EditTodoModal(props: EditTodoModalProps) {
       onClose={onCloseAction}
       title="Edit Task"
       description="Update the task text and its urgency/importance"
-      initialFocusRef={inputRef}
+      initialFocusRef={textareaRef}
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <Input
-          ref={inputRef}
+        <Textarea
+          ref={textareaRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="What needs to be done?"

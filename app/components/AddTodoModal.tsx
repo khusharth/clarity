@@ -5,7 +5,7 @@ import { useToast } from "../store/toast";
 import { useSfx } from "../hooks/useSfx";
 import { Modal } from "./ui/Modal";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 
 type AddTodoModalProps = { open: boolean; onCloseAction: () => void };
@@ -30,7 +30,7 @@ export default function AddTodoModal(props: AddTodoModalProps) {
     return () => cancelAnimationFrame(id);
   }, [open]);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,11 +48,11 @@ export default function AddTodoModal(props: AddTodoModalProps) {
       onClose={onCloseAction}
       title="Add Task"
       description="Create a new task and set its urgency and importance"
-      initialFocusRef={inputRef}
+      initialFocusRef={textareaRef}
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <Input
-          ref={inputRef}
+        <Textarea
+          ref={textareaRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="What needs to be done?"
