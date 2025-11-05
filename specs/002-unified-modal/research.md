@@ -3,18 +3,21 @@
 ## Core Requirements
 
 1. **Keyboard Navigation**
+
    - Focus trap within modal when open
    - Escape key to close
    - Focus returns to trigger element on close
    - Initial focus on first input when specified via initialFocusRef
 
 2. **Screen Reader Support**
+
    - Modal announces its title via aria-labelledby
    - Modal announces its description via aria-describedby
    - Uses dialog role from Radix UI Dialog
    - Clear open/close announcements
 
 3. **Motion & Animation**
+
    - Respects prefers-reduced-motion
    - Uses global animation toggle from Settings
    - Animation duration: 150-250ms per constitution

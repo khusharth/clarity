@@ -7,17 +7,29 @@ import { cn } from "./utils";
 const Dialog = RadixDialog.Root;
 const DialogTrigger = RadixDialog.Trigger;
 
-function DialogPortal({ className, children, ...props }: RadixDialog.DialogPortalProps & { className?: string }) {
+function DialogPortal({
+  className,
+  children,
+  ...props
+}: RadixDialog.DialogPortalProps & { className?: string }) {
   return (
     <RadixDialog.Portal {...props}>
-      <div className={cn("fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center", className)}>
+      <div
+        className={cn(
+          "fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center",
+          className
+        )}
+      >
         {children}
       </div>
     </RadixDialog.Portal>
   );
 }
 
-function DialogOverlay({ className, ...props }: React.ComponentPropsWithoutRef<typeof RadixDialog.Overlay>) {
+function DialogOverlay({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof RadixDialog.Overlay>) {
   return (
     <RadixDialog.Overlay
       className={cn(
@@ -35,7 +47,11 @@ const DialogTitle = React.forwardRef<
   React.ElementRef<typeof RadixDialog.Title>,
   React.ComponentPropsWithoutRef<typeof RadixDialog.Title>
 >(({ className, ...props }, ref) => (
-  <RadixDialog.Title ref={ref} className={cn("text-xl font-semibold", className)} {...props} />
+  <RadixDialog.Title
+    ref={ref}
+    className={cn("text-xl font-semibold", className)}
+    {...props}
+  />
 ));
 DialogTitle.displayName = RadixDialog.Title.displayName;
 
@@ -43,21 +59,35 @@ const DialogDescription = React.forwardRef<
   React.ElementRef<typeof RadixDialog.Description>,
   React.ComponentPropsWithoutRef<typeof RadixDialog.Description>
 >(({ className, ...props }, ref) => (
-  <RadixDialog.Description ref={ref} className={cn("text-sm text-fg-muted", className)} {...props} />
+  <RadixDialog.Description
+    ref={ref}
+    className={cn("text-sm text-fg-muted", className)}
+    {...props}
+  />
 ));
 DialogDescription.displayName = RadixDialog.Description.displayName;
 
-function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function DialogHeader({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("mb-4", className)} {...props} />;
 }
 
-function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mt-6 flex justify-end gap-3", className)} {...props} />;
+function DialogFooter({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("mt-6 flex justify-end gap-3", className)} {...props} />
+  );
 }
 
 const DialogContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentPropsWithoutRef<typeof RadixDialog.Content> & { variant?: "dialog" | "bottomsheet" }
+  React.ComponentPropsWithoutRef<typeof RadixDialog.Content> & {
+    variant?: "dialog" | "bottomsheet";
+  }
 >(({ className, children, variant = "dialog", ...props }, ref) => (
   <DialogPortal>
     <DialogOverlay />

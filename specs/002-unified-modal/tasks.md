@@ -13,55 +13,55 @@
 - [x] T001 Research existing UI primitives in app/components/
 - [x] T002 [P] Verify package.json dependencies (@radix-ui/react-dialog, framer-motion, use-sound)
 - [x] T003 Document accessibility requirements in specs/002-unified-modal/research.md
-- [ ] T004 [P] Review existing modal usage in AddTodoModal, EditTodoModal, DeleteTodoModal, Settings
+- [x] T004 [P] Review existing modal usage in AddTodoModal, EditTodoModal, DeleteTodoModal, Settings
 
 ### Phase 2: Foundation (Modal Component)
 
-- [ ] T005 Create app/components/ui/Modal.tsx with basic Radix Dialog structure
-- [ ] T006 [P] Add CSS variables and theme support to Modal component
-- [ ] T007 Add focus management and keyboard navigation to Modal
-- [ ] T008 Add responsive bottom-sheet behavior with 120px drag threshold
-- [ ] T009 [P] Integrate useSfx hook for sound effects in Modal
-- [ ] T028 [P] Use global animation settings from Settings modal
+- [x] T005 Create app/components/ui/Modal.tsx with basic Radix Dialog structure
+- [x] T006 [P] Add CSS variables and theme support to Modal component
+- [x] T007 Add focus management and keyboard navigation to Modal
+- [x] T008 Add responsive bottom-sheet behavior with 120px drag threshold
+- [x] T009 [P] Integrate useSfx hook for sound effects in Modal
+- [x] T028 [P] Use global animation settings from Settings modal
 
 ### Phase 3: User Story 1 - Desktop Dialog [US1]
 
-- [ ] T010 [US1] Add desktop dialog layout and positioning
-- [ ] T011 [US1] Implement title and description rendering
-- [ ] T012 [US1] [P] Add footer and action button slots
-- [ ] T013 [US1] Add click-outside-to-close behavior
-- [ ] T014 [US1] Test desktop dialog accessibility (focus trap, escape)
+- [x] T010 [US1] Add desktop dialog layout and positioning
+- [x] T011 [US1] Implement title and description rendering
+- [x] T012 [US1] [P] Add footer and action button slots
+- [x] T013 [US1] Add click-outside-to-close behavior
+- [x] T014 [US1] Test desktop dialog accessibility (focus trap, escape)
 
 ### Phase 4: User Story 2 - Mobile Bottom Sheet [US2]
 
-- [ ] T015 [US2] Add mobile breakpoint detection (640px)
-- [ ] T016 [US2] Implement bottom sheet layout and positioning
-- [ ] T017 [US2] Add drag-to-close gesture handling
-- [ ] T018 [US2] [P] Add sheet transition animations
-- [ ] T019 [US2] Test mobile sheet behavior and gestures
+- [x] T015 [US2] Add mobile breakpoint detection (640px)
+- [x] T016 [US2] Implement bottom sheet layout and positioning
+- [x] T017 [US2] Add drag-to-close gesture handling
+- [x] T018 [US2] [P] Add sheet transition animations
+- [x] T019 [US2] Test mobile sheet behavior and gestures
 
 ### Phase 5: User Story 3 - Migration & Integration [US3]
 
-- [ ] T020 [US3] [P] Migrate AddTodoModal to use new Modal component
+- [x] T020 [US3] [P] Migrate AddTodoModal to use new Modal component
   - Map open/onClose to Modal props
   - Move form content to children
   - Add title="Add Task"
   - Add footer with Cancel/Add buttons
   - Map initialFocusRef to title input
-- [ ] T021 [US3] [P] Migrate EditTodoModal to use new Modal component
+- [x] T021 [US3] [P] Migrate EditTodoModal to use new Modal component
   - Map open/onClose to Modal props
   - Move form content to children
   - Add title="Edit Task"
   - Add footer with Cancel/Save buttons
   - Map initialFocusRef to title input
-- [ ] T022 [US3] [P] Migrate DeleteTodoModal to use new Modal component
+- [x] T022 [US3] [P] Migrate DeleteTodoModal to use new Modal component
   - Map open/onClose to Modal props
   - Add title="Delete Task"
   - Add description with confirmation text
   - Add footer with Cancel/Delete buttons
   - Set openSfx="delete"
-- [ ] T023 [US3] Add sound effect triggers in migrated modals
-- [ ] T029 [US3] [P] Migrate Settings Modal to use new Modal component and Update Settings modal to include animation toggle
+- [x] T023 [US3] Add sound effect triggers in migrated modals
+- [x] T029 [US3] [P] Migrate Settings Modal to use new Modal component and Update Settings modal to include animation toggle
   - Add global animation toggle that respects prefers-reduced-motion
   - Wire up toggle to store/persistence
   - Ensure Modal respects global setting

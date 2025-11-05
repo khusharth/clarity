@@ -42,8 +42,6 @@ export default function AddTodoModal(props: AddTodoModalProps) {
     onCloseAction();
   }
 
-  
-
   return (
     <Modal
       open={open}
@@ -76,7 +74,12 @@ export default function AddTodoModal(props: AddTodoModalProps) {
           </label>
         </div>
         <div className="mt-2 flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCloseAction} size="sm">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCloseAction}
+            size="sm"
+          >
             Cancel
           </Button>
           <Button type="submit" size="sm" variant="accent">

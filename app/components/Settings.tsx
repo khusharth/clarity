@@ -74,9 +74,7 @@ export default function Settings() {
           <Select
             value={reducedMotionPref}
             onValueChange={(value: string) =>
-              setReducedMotionPref(
-                value as "system" | "reduce" | "motion"
-              )
+              setReducedMotionPref(value as "system" | "reduce" | "motion")
             }
           >
             <SelectTrigger className="w-[140px]">

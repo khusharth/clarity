@@ -11,7 +11,11 @@ const DropdownMenuGroup = Dropdown.Group;
 const DropdownMenuSub = Dropdown.Sub;
 const DropdownMenuRadioGroup = Dropdown.RadioGroup;
 
-function DropdownMenuContent({ className, sideOffset = 8, ...props }: React.ComponentPropsWithoutRef<typeof Dropdown.Content>) {
+function DropdownMenuContent({
+  className,
+  sideOffset = 8,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof Dropdown.Content>) {
   return (
     <Dropdown.Portal>
       <Dropdown.Content
@@ -26,7 +30,10 @@ function DropdownMenuContent({ className, sideOffset = 8, ...props }: React.Comp
   );
 }
 
-function DropdownMenuItem({ className, ...props }: React.ComponentPropsWithoutRef<typeof Dropdown.Item>) {
+function DropdownMenuItem({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof Dropdown.Item>) {
   return (
     <Dropdown.Item
       className={cn(
@@ -38,12 +45,30 @@ function DropdownMenuItem({ className, ...props }: React.ComponentPropsWithoutRe
   );
 }
 
-function DropdownMenuLabel({ className, inset, ...props }: React.HTMLAttributes<HTMLDivElement> & { inset?: boolean }) {
-  return <div className={cn("px-2 py-1.5 text-xs text-fg-muted", inset && "pl-8", className)} {...props} />;
+function DropdownMenuLabel({
+  className,
+  inset,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { inset?: boolean }) {
+  return (
+    <div
+      className={cn(
+        "px-2 py-1.5 text-xs text-fg-muted",
+        inset && "pl-8",
+        className
+      )}
+      {...props}
+    />
+  );
 }
 
-function DropdownMenuSeparator({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />;
+function DropdownMenuSeparator({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />
+  );
 }
 
 export {

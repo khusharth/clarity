@@ -9,9 +9,9 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Checkbox } from "./ui/checkbox";
 
-type EditTodoModalProps = { 
-  task: Task | null; 
-  open: boolean; 
+type EditTodoModalProps = {
+  task: Task | null;
+  open: boolean;
   onCloseAction: () => void;
 };
 
@@ -95,7 +95,12 @@ export default function EditTodoModal(props: EditTodoModalProps) {
           </label>
         </div>
         <div className="mt-2 flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onCloseAction} size="sm">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCloseAction}
+            size="sm"
+          >
             Cancel
           </Button>
           <Button type="submit" size="sm" variant="accent">
