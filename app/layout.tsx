@@ -17,9 +17,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const OG_META = {
+  TITLE: "Clarity — Clear Tasks. Calm Mind.",
+  DESCRIPTION: "Quiet the clutter. Focus on what truly matters.",
+  URL: "https://claritytodo.vercel.app/",
+};
+
 export const metadata: Metadata = {
-  title: "Clarity",
-  description: "Eisenhower Matrix – minimal, delightful, local-first TODOs",
+  title: OG_META.TITLE,
+  description: OG_META.DESCRIPTION,
+  metadataBase: new URL(OG_META.URL),
+  openGraph: {
+    title: OG_META.TITLE,
+    description: OG_META.DESCRIPTION,
+    url: OG_META.URL,
+    siteName: "Clarity",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Clarity App Preview",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OG_META.TITLE,
+    description: OG_META.DESCRIPTION,
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({
