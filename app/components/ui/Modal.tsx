@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
-import { useSfx } from '../hooks/useSfx';
-import { useMediaQuery } from '../hooks/useMediaQuery';
+import * as React from "react";
+import * as RadixDialog from "@radix-ui/react-dialog";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { useSfx } from "../../hooks/useSfx";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { cn } from "./utils";
 
 interface ModalProps {
   /** Whether the modal is visible */
@@ -21,13 +22,13 @@ interface ModalProps {
   /** Optional footer area (actions) */
   footer?: React.ReactNode;
   /** Optional display variant */
-  variant?: 'dialog' | 'bottomsheet' | 'auto';
+  variant?: "dialog" | "bottomsheet" | "auto";
   /** Optional element to focus on open */
-  initialFocusRef?: React.RefObject<HTMLElement>;
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
   /** Whether clicking overlay closes modal */
   closeOnOverlayClick?: boolean;
-  /** Optional sound effect to play on open */
-  openSfx?: 'open' | 'confirm' | 'delete' | null;
+  /** Optional sound effect to play on open (maps to useSfx methods) */
+  openSfx?: "add" | "complete" | "remove" | "toggle" | "focus" | null;
 }
 
 const MOBILE_BREAKPOINT = 640; // Tailwind 'sm'
@@ -40,20 +41,23 @@ export function Modal({
   description,
   children,
   footer,
-  variant = 'auto',
+  variant = "auto",
   initialFocusRef,
   closeOnOverlayClick = true,
   openSfx,
 }: ModalProps) {
   const sfx = useSfx();
   const isMobile = useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT}px)`);
-  const isBottomSheet = variant === 'bottomsheet' || (variant === 'auto' && isMobile);
+  const isBottomSheet =
+    variant === "bottomsheet" || (variant === "auto" && isMobile);
   const dragConstraintsRef = useRef<HTMLDivElement>(null);
 
   // Play sound effect on open
   useEffect(() => {
-    if (open && openSfx && sfx[openSfx]) {
-      sfx[openSfx]();
+    if (open && openSfx) {
+      // Safely call mapped sfx method if present
+      const fn = (sfx as Record<string, () => void>)[openSfx];
+      fn?.();
     }
   }, [open, openSfx, sfx]);
 
@@ -65,91 +69,83 @@ export function Modal({
   }, [open, initialFocusRef]);
 
   return (
-    <Dialog.Root open={open} onOpenChange={(open) => !open && onClose()}>
+    <RadixDialog.Root open={open} onOpenChange={(open) => !open && onClose()}>
       <AnimatePresence>
         {open && (
-          <>
+          <RadixDialog.Portal forceMount>
             {/* Overlay */}
-            <Dialog.Overlay asChild>
-              <motion.div 
-                className="fixed inset-0 bg-black/50"
+            <RadixDialog.Overlay asChild forceMount>
+              <motion.div
+                className="fixed inset-0 z-50 bg-black/65"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 onClick={() => closeOnOverlayClick && onClose()}
               />
-            </Dialog.Overlay>
+            </RadixDialog.Overlay>
 
             {/* Content */}
-            <Dialog.Content asChild>
-              <motion.div
-                ref={dragConstraintsRef}
-                className={`
-                  fixed bg-surface text-fg-muted p-6 shadow-soft max-w-md w-full
-                  ${isBottomSheet 
-                    ? 'bottom-0 left-0 right-0 rounded-t-xl'
-                    : 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl'
+            <div className="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center pointer-events-none">
+              <RadixDialog.Content asChild forceMount>
+                <motion.div
+                  ref={dragConstraintsRef}
+                  className={cn(
+                    "w-full max-w-md rounded-t-xl sm:rounded-xl p-6 pointer-events-auto",
+                    "bg-[rgb(var(--color-surface))] text-[rgb(var(--color-fg))]",
+                    "shadow-(--shadow-soft)",
+                    isBottomSheet ? "bottom-0 left-0 right-0" : "relative"
+                  )}
+                  initial={
+                    isBottomSheet ? { y: "100%" } : { scale: 0.95, opacity: 0 }
                   }
-                `}
-                initial={isBottomSheet 
-                  ? { y: '100%' }
-                  : { scale: 0.95, opacity: 0 }
-                }
-                animate={isBottomSheet
-                  ? { y: 0 }
-                  : { scale: 1, opacity: 1 }
-                }
-                exit={isBottomSheet
-                  ? { y: '100%' }
-                  : { scale: 0.95, opacity: 0 }
-                }
-                transition={{ 
-                  duration: 0.2,
-                  ease: [0.32, 0.72, 0, 1]
-                }}
-                {...(isBottomSheet && {
-                  drag: 'y',
-                  dragConstraints: dragConstraintsRef,
-                  onDragEnd: (e, info) => {
-                    if (info.offset.y > DRAG_THRESHOLD) {
-                      onClose();
-                    }
+                  animate={isBottomSheet ? { y: 0 } : { scale: 1, opacity: 1 }}
+                  exit={
+                    isBottomSheet ? { y: "100%" } : { scale: 0.95, opacity: 0 }
                   }
-                })}
-              >
-                {/* Header */}
-                {(title || description) && (
-                  <div className="mb-4">
-                    {title && (
-                      <Dialog.Title className="text-xl font-semibold">
-                        {title}
-                      </Dialog.Title>
-                    )}
-                    {description && (
-                      <Dialog.Description className="text-sm mt-1">
-                        {description}
-                      </Dialog.Description>
-                    )}
-                  </div>
-                )}
+                  transition={{
+                    duration: 0.2,
+                    ease: [0.32, 0.72, 0, 1],
+                  }}
+                  {...(isBottomSheet && {
+                    drag: "y",
+                    dragConstraints: dragConstraintsRef,
+                    onDragEnd: (e, info) => {
+                      if (info.offset.y > DRAG_THRESHOLD) {
+                        onClose();
+                      }
+                    },
+                  })}
+                >
+                  {/* Header */}
+                  {(title || description) && (
+                    <div className="mb-4">
+                      {title && (
+                        <RadixDialog.Title className="text-xl font-semibold text-[rgb(var(--color-fg))]">
+                          {title}
+                        </RadixDialog.Title>
+                      )}
+                      {description && (
+                        <RadixDialog.Description className="text-sm text-[rgb(var(--color-fg-muted))] mt-1">
+                          {description}
+                        </RadixDialog.Description>
+                      )}
+                    </div>
+                  )}
 
-                {/* Body */}
-                <div className="space-y-4">
-                  {children}
-                </div>
+                  {/* Body */}
+                  <div className="space-y-4">{children}</div>
 
-                {/* Footer */}
-                {footer && (
-                  <div className="mt-6 flex justify-end gap-3">
-                    {footer}
-                  </div>
-                )}
-              </motion.div>
-            </Dialog.Content>
-          </>
+                  {/* Footer */}
+                  {footer && (
+                    <div className="mt-6 flex justify-end gap-3">{footer}</div>
+                  )}
+                </motion.div>
+              </RadixDialog.Content>
+            </div>
+          </RadixDialog.Portal>
         )}
       </AnimatePresence>
-    </Dialog.Root>
+    </RadixDialog.Root>
   );
 }
