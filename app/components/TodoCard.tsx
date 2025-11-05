@@ -3,7 +3,14 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
-import { CheckCircle2, Trash2, Flame, Sparkles } from "lucide-react";
+import {
+  CheckCircle2,
+  Trash2,
+  ZapIcon,
+  ZapOffIcon,
+  StarIcon,
+  StarOffIcon,
+} from "lucide-react";
 import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 import { useSfx } from "../hooks/useSfx";
 import { useToast } from "../store/toast";
@@ -76,7 +83,15 @@ export default function TodoCard({
               }}
               aria-label="Toggle urgent"
             >
-              <Flame size={14} /> {task.isUrgent ? "Urgent" : "Not urgent"}
+              {task.isUrgent ? (
+                <>
+                  <ZapIcon size={13} /> <span>Urgent</span>
+                </>
+              ) : (
+                <>
+                  <ZapOffIcon size={13} /> <span>Not urgent</span>
+                </>
+              )}
             </button>
             <span>•</span>
             <button
@@ -88,8 +103,16 @@ export default function TodoCard({
               }}
               aria-label="Toggle important"
             >
-              <Sparkles size={14} />{" "}
-              {task.isImportant ? "Important" : "Not important"}
+              {task.isImportant ? (
+                <>
+                  <StarIcon size={13} /> <span>Important</span>
+                </>
+              ) : (
+                <>
+                  <StarOffIcon size={13} />
+                  <span>Not important</span>
+                </>
+              )}
             </button>
           </div>
         </div>
