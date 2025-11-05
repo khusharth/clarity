@@ -11,8 +11,8 @@ import FocusControls from "./FocusControls";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-function sortNewest(a: Task, b: Task) {
-  return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+function sortOldest(a: Task, b: Task) {
+  return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
 }
 
 export default function Matrix() {
@@ -39,19 +39,19 @@ export default function Matrix() {
   );
 
   const q1 = useMemo(
-    () => active.filter((t) => t.isUrgent && t.isImportant).sort(sortNewest),
+    () => active.filter((t) => t.isUrgent && t.isImportant).sort(sortOldest),
     [active]
   );
   const q2 = useMemo(
-    () => active.filter((t) => !t.isUrgent && t.isImportant).sort(sortNewest),
+    () => active.filter((t) => !t.isUrgent && t.isImportant).sort(sortOldest),
     [active]
   );
   const q3 = useMemo(
-    () => active.filter((t) => t.isUrgent && !t.isImportant).sort(sortNewest),
+    () => active.filter((t) => t.isUrgent && !t.isImportant).sort(sortOldest),
     [active]
   );
   const q4 = useMemo(
-    () => active.filter((t) => !t.isUrgent && !t.isImportant).sort(sortNewest),
+    () => active.filter((t) => !t.isUrgent && !t.isImportant).sort(sortOldest),
     [active]
   );
 
