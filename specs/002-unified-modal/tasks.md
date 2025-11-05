@@ -10,9 +10,9 @@
 
 ### Phase 1: Setup & Research
 
-- [ ] T001 Research existing UI primitives in app/components/
-- [ ] T002 [P] Verify package.json dependencies (@radix-ui/react-dialog, framer-motion, use-sound)
-- [ ] T003 Document accessibility requirements in specs/002-unified-modal/research.md
+- [x] T001 Research existing UI primitives in app/components/
+- [x] T002 [P] Verify package.json dependencies (@radix-ui/react-dialog, framer-motion, use-sound)
+- [x] T003 Document accessibility requirements in specs/002-unified-modal/research.md
 - [ ] T004 [P] Review existing modal usage in AddTodoModal, EditTodoModal, DeleteTodoModal, Settings
 
 ### Phase 2: Foundation (Modal Component)
@@ -61,7 +61,7 @@
   - Add footer with Cancel/Delete buttons
   - Set openSfx="delete"
 - [ ] T023 [US3] Add sound effect triggers in migrated modals
-- [ ] T029 [US3] [P] Update Settings modal to include animation toggle
+- [ ] T029 [US3] [P] Migrate Settings Modal to use new Modal component and Update Settings modal to include animation toggle
   - Add global animation toggle that respects prefers-reduced-motion
   - Wire up toggle to store/persistence
   - Ensure Modal respects global setting
