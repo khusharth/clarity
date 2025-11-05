@@ -1,14 +1,21 @@
 "use client";
 import React from "react";
+import { SparklesIcon } from "lucide-react";
 import { useInView } from "framer-motion";
 import BlurTransition from "./BlurTransition";
 
-const AnimatedBlurHeading = ({ children }: { children: React.ReactNode }) => {
+const AnimatedBlurHeading = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   const ref = React.useRef(null);
   const isInView = useInView(ref, { once: true });
 
   return (
-    <div ref={ref}>
+    <div ref={ref} className={className}>
       <BlurTransition visible={isInView} duration={1}>
         {children}
       </BlurTransition>
@@ -18,11 +25,11 @@ const AnimatedBlurHeading = ({ children }: { children: React.ReactNode }) => {
 
 const Header = () => {
   return (
-    <div className="mt-6 text-center">
-      <AnimatedBlurHeading>
-        <h1 className="text-3xl text-center">Clarity</h1>
-      </AnimatedBlurHeading>
-    </div>
+    <AnimatedBlurHeading className="mt-6">
+      <h1 className="flex font-(family-name:--font-geist-sans) justify-center items-center text-3xl ">
+        <SparklesIcon className="inline mr-1.5" /> Clarity
+      </h1>
+    </AnimatedBlurHeading>
   );
 };
 
