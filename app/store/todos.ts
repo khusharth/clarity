@@ -23,6 +23,7 @@ interface TodosState {
   toggleUrgent: (id: string) => Promise<void>;
   toggleImportant: (id: string) => Promise<void>;
   complete: (id: string) => Promise<void>;
+  uncomplete: (id: string) => Promise<void>;
   remove: (id: string) => Promise<void>;
   importJSON: (bundle: ImportExportBundle) => Promise<void>;
   exportJSON: () => ImportExportBundle;
@@ -104,6 +105,20 @@ export const useTodos = create<TodosState>()(
                 ...t,
                 status: "completed" as const,
                 completedAt: new Date().toISOString(),
+              }
+            : t
+        );
+        const updated = tasks.find((t) => t.id === id);
+        if (updated) await saveTask(updated);
+        set({ tasks });
+      },
+      uncomplete: async (id) => {
+        const tasks = get().tasks.map((t) =>
+          t.id === id
+            ? {
+                ...t,
+                status: "active" as const,
+                completedAt: null,
               }
             : t
         );

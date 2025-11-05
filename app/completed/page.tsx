@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useTodos } from "../store/todos";
 import { formatDateTime } from "../lib/dates";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2, Undo2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import DeleteTodoModal from "../components/DeleteTodoModal";
 import { Modal } from "../components/ui/Modal";
@@ -11,11 +11,30 @@ import { useSfx } from "../hooks/useSfx";
 import { useToast } from "../store/toast";
 import { Task } from "../lib/schema";
 
-const DeleteTaskCta = (props: { task: Task }) => {
+const TaskActions = (props: { task: Task }) => {
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const { uncomplete } = useTodos();
+  const sfx = useSfx();
+  const toast = useToast();
+
+  const handleUndo = async () => {
+    await uncomplete(props.task.id);
+    sfx.toggle();
+    toast.push({ type: "success", message: "Task restored" });
+  };
 
   return (
-    <>
+    <div className="flex items-center gap-0.5">
+      <Button
+        variant="ghost"
+        size="sm"
+        contentType="icon-only"
+        className="rounded-md hover:bg-[rgb(var(--color-accent))]/20! text-[rgb(var(--color-accent))]"
+        aria-label="Restore task"
+        title="Restore task"
+        onClick={handleUndo}
+        icon={<Undo2 size={16} />}
+      />
       <Button
         variant="ghost"
         size="sm"
@@ -32,7 +51,7 @@ const DeleteTaskCta = (props: { task: Task }) => {
         open={deleteOpen}
         onCloseAction={() => setDeleteOpen(false)}
       />
-    </>
+    </div>
   );
 };
 export default function CompletedPage() {
@@ -114,7 +133,7 @@ export default function CompletedPage() {
                     Completed {formatDateTime(t.completedAt)}
                   </p>
                 </div>
-                <DeleteTaskCta task={t} />
+                <TaskActions task={t} />
               </li>
             ))}
           </ul>
