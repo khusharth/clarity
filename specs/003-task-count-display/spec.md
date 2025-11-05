@@ -5,7 +5,7 @@
 **Status**: Draft  
 **Input**: User description: "I want to add a feature for displaying total tasks count. User should be able to see total overall tasks and per quadrant total count. In focus mode Total should display only Q1 total count. The visibility of these counts should be configurable from settings - By default this will be Off, user can switch overall total on or per quad total or both on."
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Configure Task Count Visibility (Priority: P1)
 
@@ -83,7 +83,7 @@ When users enter focus mode (which shows only Q1 tasks), the task counts should 
 - What if a user toggles count visibility while on the main view (not in settings)? (Settings should require navigation, counts update on return to main view)
 - How are counts displayed on small mobile screens where space is limited? (Counts should be compact but readable, possibly abbreviated like "5" instead of "5 tasks")
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -104,7 +104,7 @@ When users enter focus mode (which shows only Q1 tasks), the task counts should 
 - **Task**: Existing entity; counts aggregate tasks by their quadrant assignment and completion status
 - **Quadrant**: Existing entity (Q1: Urgent+Important, Q2: Not Urgent+Important, Q3: Urgent+Not Important, Q4: Not Urgent+Not Important); each has an associated task count
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
@@ -115,7 +115,7 @@ When users enter focus mode (which shows only Q1 tasks), the task counts should 
 - **SC-005**: Focus mode maintains its minimalist intent by showing only Q1-relevant count information
 - **SC-006**: 90% of users who enable counts report improved awareness of task distribution across quadrants
 
-## Assumptions *(optional)*
+## Assumptions _(optional)_
 
 - Focus mode functionality already exists in the application
 - The settings interface is accessible from the main matrix view
@@ -123,7 +123,7 @@ When users enter focus mode (which shows only Q1 tasks), the task counts should 
 - Tasks belong to exactly one quadrant at any given time
 - The application already has local storage persistence for user preferences
 
-## Out of Scope *(optional)*
+## Out of Scope _(optional)_
 
 - Historical task count tracking or trends over time
 - Notifications or alerts based on task count thresholds

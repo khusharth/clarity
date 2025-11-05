@@ -17,11 +17,11 @@ This feature is frontend-only with no backend APIs. This document specifies the 
 ```typescript
 interface TodosState {
   // ... existing fields omitted for brevity
-  
+
   // Task count visibility settings
   showOverallCount: boolean;
   showQuadrantCounts: boolean;
-  
+
   // Actions
   setShowOverallCount: (enabled: boolean) => void;
   setShowQuadrantCounts: (enabled: boolean) => void;
@@ -35,9 +35,10 @@ interface TodosState {
 **Purpose**: Controls visibility of overall task count display  
 **Default**: `false` (per spec FR-001)  
 **Persistence**: Saved to localStorage via Zustand persist middleware  
-**Validation**: Must be boolean  
+**Validation**: Must be boolean
 
-**Consumer Components**: 
+**Consumer Components**:
+
 - `OverallTaskCount` (reads to determine visibility)
 - `Settings` (reads for toggle state, writes on user action)
 
@@ -48,9 +49,10 @@ interface TodosState {
 **Purpose**: Controls visibility of per-quadrant count displays  
 **Default**: `false` (per spec FR-001)  
 **Persistence**: Saved to localStorage via Zustand persist middleware  
-**Validation**: Must be boolean  
+**Validation**: Must be boolean
 
 **Consumer Components**:
+
 - `Quadrant` (reads to determine visibility of count badge)
 - `Settings` (reads for toggle state, writes on user action)
 
@@ -62,14 +64,17 @@ interface TodosState {
 
 **Purpose**: Update overall count visibility preference  
 **Parameters**:
+
 - `enabled`: boolean - new visibility state
 
 **Side Effects**:
+
 - Updates `showOverallCount` in store
 - Triggers re-render of subscribed components
 - Persists to localStorage automatically
 
 **Example Usage**:
+
 ```typescript
 // In Settings component
 const { showOverallCount, setShowOverallCount } = useTodos();
@@ -78,7 +83,7 @@ const { showOverallCount, setShowOverallCount } = useTodos();
   pressed={showOverallCount}
   onPressedChange={setShowOverallCount}
   aria-label="Show overall task count"
-/>
+/>;
 ```
 
 ---
@@ -87,14 +92,17 @@ const { showOverallCount, setShowOverallCount } = useTodos();
 
 **Purpose**: Update per-quadrant count visibility preference  
 **Parameters**:
+
 - `enabled`: boolean - new visibility state
 
 **Side Effects**:
+
 - Updates `showQuadrantCounts` in store
 - Triggers re-render of subscribed components
 - Persists to localStorage automatically
 
 **Example Usage**:
+
 ```typescript
 // In Settings component
 const { showQuadrantCounts, setShowQuadrantCounts } = useTodos();
@@ -103,7 +111,7 @@ const { showQuadrantCounts, setShowQuadrantCounts } = useTodos();
   pressed={showQuadrantCounts}
   onPressedChange={setShowQuadrantCounts}
   aria-label="Show per-quadrant task counts"
-/>
+/>;
 ```
 
 ---
@@ -111,6 +119,7 @@ const { showQuadrantCounts, setShowQuadrantCounts } = useTodos();
 ## 2. Component Contract: TaskCountBadge
 
 ### Purpose
+
 Reusable styled badge component for displaying count numbers with icon.
 
 ### Props Interface
@@ -129,7 +138,8 @@ interface TaskCountBadgeProps {
 #### `count: number` (required)
 
 **Purpose**: The numeric count to display  
-**Validation**: 
+**Validation**:
+
 - Must be non-negative integer
 - Displays "0" when zero (not hidden)
 
@@ -141,11 +151,12 @@ interface TaskCountBadgeProps {
 
 **Purpose**: Accessible label for screen readers  
 **Default**: `undefined` (component generates default)  
-**Validation**: String or undefined  
+**Validation**: String or undefined
 
 **Example**: `"Q1 tasks"`, `"Total tasks"`
 
 **Usage**:
+
 ```typescript
 <TaskCountBadge count={5} label="Total tasks" />
 // Renders with aria-label="Total tasks: 5"
@@ -157,7 +168,7 @@ interface TaskCountBadgeProps {
 
 **Purpose**: Icon to display before count number  
 **Default**: `<Hash size={14} />` from lucide-react  
-**Validation**: Valid React element or undefined  
+**Validation**: Valid React element or undefined
 
 **Example**: `<Hash size={14} />`, custom icon component
 
@@ -167,7 +178,7 @@ interface TaskCountBadgeProps {
 
 **Purpose**: Additional Tailwind classes for styling  
 **Default**: `""` (empty string)  
-**Validation**: String  
+**Validation**: String
 
 **Example**: `"bg-blue-500"`, `"text-lg"`
 
@@ -176,17 +187,18 @@ interface TaskCountBadgeProps {
 ### Return Type
 
 ```typescript
-JSX.Element
+JSX.Element;
 ```
 
 **Rendered HTML Structure**:
+
 ```html
-<div 
+<div
   className="inline-flex items-center gap-1.5 rounded-full bg-[rgb(var(--color-surface))] 
              border border-[rgb(var(--color-border))] px-2 py-1 text-xs"
   aria-label="[label]: [count]"
 >
-  <Hash size={14} className="text-[rgb(var(--color-text-muted))]" />
+  <Hash size="{14}" className="text-[rgb(var(--color-text-muted))]" />
   <span className="font-medium text-[rgb(var(--color-text))]">{count}</span>
 </div>
 ```
@@ -216,6 +228,7 @@ import TaskCountBadge from './TaskCountBadge';
 ## 3. Component Contract: OverallTaskCount
 
 ### Purpose
+
 Display overall task count (or Q1 count in focus mode) in the header area.
 
 ### Props Interface
@@ -229,11 +242,13 @@ interface OverallTaskCountProps {
 ### Store Dependencies
 
 **Reads**:
+
 - `tasks: Task[]` - for computing counts
 - `isFocus: boolean` - to determine display mode
 - `showOverallCount: boolean` - to determine visibility
 
 **Computes**:
+
 - Overall count: `tasks.filter(t => t.status === 'active').length`
 - Q1 count: `tasks.filter(t => t.status === 'active' && t.isUrgent && t.isImportant).length`
 
@@ -255,10 +270,11 @@ return <TaskCountBadge count={displayCount} label={label} />;
 ### Return Type
 
 ```typescript
-JSX.Element | null
+JSX.Element | null;
 ```
 
 **Conditions**:
+
 - Returns `null` when `showOverallCount === false`
 - Returns `<TaskCountBadge />` when `showOverallCount === true`
 
@@ -268,32 +284,33 @@ JSX.Element | null
 
 ```typescript
 // In FocusControls.tsx
-import OverallTaskCount from './OverallTaskCount';
+import OverallTaskCount from "./OverallTaskCount";
 
 <div className="flex items-center justify-between gap-2 p-2 mb-1">
   <div className="flex items-center gap-2">
     {/* Focus toggle and mode selector */}
   </div>
   <OverallTaskCount />
-</div>
+</div>;
 ```
 
 ---
 
 ### Behavior Scenarios
 
-| `showOverallCount` | `isFocus` | Display |
-|-------------------|-----------|---------|
-| `false` | `false` | Hidden (returns null) |
-| `false` | `true` | Hidden (returns null) |
-| `true` | `false` | Shows overall count (all active tasks) |
-| `true` | `true` | Shows Q1 count only |
+| `showOverallCount` | `isFocus` | Display                                |
+| ------------------ | --------- | -------------------------------------- |
+| `false`            | `false`   | Hidden (returns null)                  |
+| `false`            | `true`    | Hidden (returns null)                  |
+| `true`             | `false`   | Shows overall count (all active tasks) |
+| `true`             | `true`    | Shows Q1 count only                    |
 
 ---
 
 ## 4. Component Contract: Quadrant (Modified)
 
 ### Purpose
+
 Display a quadrant of the matrix with optional count badge in header.
 
 ### Props Interface (Extended)
@@ -305,9 +322,9 @@ interface QuadrantProps {
   children?: React.ReactNode;
   isEmpty?: boolean;
   emptyMessage?: string;
-  
+
   // NEW: Count-related props
-  quadrantId: 'q1' | 'q2' | 'q3' | 'q4'; // NEW
+  quadrantId: "q1" | "q2" | "q3" | "q4"; // NEW
   tasks: Task[]; // NEW: Pass tasks array for count computation
 }
 ```
@@ -321,6 +338,7 @@ interface QuadrantProps {
 **Usage**: Determines which tasks to count and focus mode visibility
 
 **Mapping**:
+
 - `q1`: Urgent + Important
 - `q2`: Not Urgent + Important
 - `q3`: Urgent + Not Important
@@ -339,6 +357,7 @@ interface QuadrantProps {
 ### Store Dependencies
 
 **Reads**:
+
 - `showQuadrantCounts: boolean` - to determine count visibility
 - `isFocus: boolean` - to hide non-Q1 quadrants
 
@@ -348,13 +367,17 @@ interface QuadrantProps {
 
 ```typescript
 const count = useMemo(() => {
-  const activeTasks = tasks.filter(t => t.status === 'active');
-  
+  const activeTasks = tasks.filter((t) => t.status === "active");
+
   switch (quadrantId) {
-    case 'q1': return activeTasks.filter(t => t.isUrgent && t.isImportant).length;
-    case 'q2': return activeTasks.filter(t => !t.isUrgent && t.isImportant).length;
-    case 'q3': return activeTasks.filter(t => t.isUrgent && !t.isImportant).length;
-    case 'q4': return activeTasks.filter(t => !t.isUrgent && !t.isImportant).length;
+    case "q1":
+      return activeTasks.filter((t) => t.isUrgent && t.isImportant).length;
+    case "q2":
+      return activeTasks.filter((t) => !t.isUrgent && t.isImportant).length;
+    case "q3":
+      return activeTasks.filter((t) => t.isUrgent && !t.isImportant).length;
+    case "q4":
+      return activeTasks.filter((t) => !t.isUrgent && !t.isImportant).length;
   }
 }, [tasks, quadrantId]);
 ```
@@ -364,16 +387,21 @@ const count = useMemo(() => {
 ### Display Logic
 
 ```typescript
-const shouldShowCount = showQuadrantCounts && (!isFocus || quadrantId === 'q1');
+const shouldShowCount = showQuadrantCounts && (!isFocus || quadrantId === "q1");
 
 return (
   <section className="...">
     <header className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-2">
-        <div className="..." style={{ backgroundColor: `rgb(var(${colorVar}))` }} />
+        <div
+          className="..."
+          style={{ backgroundColor: `rgb(var(${colorVar}))` }}
+        />
         <h2 className="text-sm font-medium">{title}</h2>
       </div>
-      {shouldShowCount && <TaskCountBadge count={count} label={`${title} tasks`} />}
+      {shouldShowCount && (
+        <TaskCountBadge count={count} label={`${title} tasks`} />
+      )}
     </header>
     {/* ... body */}
   </section>
@@ -386,7 +414,7 @@ return (
 
 ```typescript
 // In Matrix component
-const tasks = useTodos(state => state.tasks);
+const tasks = useTodos((state) => state.tasks);
 
 <Quadrant
   title="Do First"
@@ -395,27 +423,30 @@ const tasks = useTodos(state => state.tasks);
   tasks={tasks}
   isEmpty={q1Tasks.length === 0}
 >
-  {q1Tasks.map(task => <TodoCard key={task.id} task={task} />)}
-</Quadrant>
+  {q1Tasks.map((task) => (
+    <TodoCard key={task.id} task={task} />
+  ))}
+</Quadrant>;
 ```
 
 ---
 
 ### Behavior Scenarios
 
-| `showQuadrantCounts` | `isFocus` | `quadrantId` | Count Visible? |
-|---------------------|-----------|--------------|----------------|
-| `false` | `false` | Any | No |
-| `false` | `true` | Any | No |
-| `true` | `false` | Any | Yes |
-| `true` | `true` | `q1` | Yes |
-| `true` | `true` | `q2`, `q3`, `q4` | No |
+| `showQuadrantCounts` | `isFocus` | `quadrantId`     | Count Visible? |
+| -------------------- | --------- | ---------------- | -------------- |
+| `false`              | `false`   | Any              | No             |
+| `false`              | `true`    | Any              | No             |
+| `true`               | `false`   | Any              | Yes            |
+| `true`               | `true`    | `q1`             | Yes            |
+| `true`               | `true`    | `q2`, `q3`, `q4` | No             |
 
 ---
 
 ## 5. Component Contract: Settings (Modified)
 
 ### Purpose
+
 Settings modal with organized sections for preferences and task features.
 
 ### Props Interface (Unchanged)
@@ -429,10 +460,12 @@ interface SettingsProps {
 ### Store Dependencies (Extended)
 
 **Reads**:
+
 - Existing: `reducedMotionPref`, `soundEnabled`, `themePreference`
 - NEW: `showOverallCount`, `showQuadrantCounts`
 
 **Writes**:
+
 - Existing: `setReducedMotionPref`, `setSoundEnabled`, `setThemePreference`
 - NEW: `setShowOverallCount`, `setShowQuadrantCounts`
 
@@ -447,7 +480,7 @@ interface SettingsProps {
     <h3 className="text-sm font-semibold mb-2 text-[rgb(var(--color-text))]">
       General
     </h3>
-    
+
     {/* Theme Select */}
     <div className="mb-3">
       <label>Theme</label>
@@ -455,49 +488,52 @@ interface SettingsProps {
         {/* ... options */}
       </Select>
     </div>
-    
+
     {/* Sound Toggle */}
     <div className="flex items-center justify-between mb-3">
       <label>Sound Effects</label>
       <Toggle pressed={soundEnabled} onPressedChange={setSoundEnabled} />
     </div>
-    
+
     {/* Motion Toggle */}
     <div className="flex items-center justify-between">
       <label>Reduced Motion</label>
-      <Toggle pressed={reducedMotionPref} onPressedChange={setReducedMotionPref} />
+      <Toggle
+        pressed={reducedMotionPref}
+        onPressedChange={setReducedMotionPref}
+      />
     </div>
   </section>
-  
+
   {/* Divider */}
   <hr className="my-4 border-[rgb(var(--color-border))]" />
-  
+
   {/* Tasks Section */}
   <section>
     <h3 className="text-sm font-semibold mb-2 text-[rgb(var(--color-text))]">
       Tasks
     </h3>
-    
+
     {/* Overall Count Toggle */}
     <div className="flex items-center justify-between mb-3">
       <label>Show Overall Total</label>
-      <Toggle 
-        pressed={showOverallCount} 
+      <Toggle
+        pressed={showOverallCount}
         onPressedChange={setShowOverallCount}
         aria-label="Show overall task count"
       />
     </div>
-    
+
     {/* Quadrant Counts Toggle */}
     <div className="flex items-center justify-between mb-3">
       <label>Show Per-Quadrant Totals</label>
-      <Toggle 
-        pressed={showQuadrantCounts} 
+      <Toggle
+        pressed={showQuadrantCounts}
         onPressedChange={setShowQuadrantCounts}
         aria-label="Show per-quadrant task counts"
       />
     </div>
-    
+
     {/* Import/Export */}
     <div className="flex items-center justify-between">
       {/* ... existing import/export buttons */}
@@ -519,7 +555,7 @@ export interface Task {
   text: string;
   isUrgent: boolean;
   isImportant: boolean;
-  status: 'active' | 'completed';
+  status: "active" | "completed";
   createdAt: number;
   completedAt: number | null;
 }
@@ -633,7 +669,8 @@ User sees counts increment immediately
 
 **Scenario**: Existing user upgrades, store missing new boolean fields  
 **Handling**: Zustand uses default values from initial state  
-**Behavior**: 
+**Behavior**:
+
 - `showOverallCount` defaults to `false`
 - `showQuadrantCounts` defaults to `false`
 - Counts remain hidden until user opts in
@@ -643,11 +680,13 @@ User sees counts increment immediately
 ### Tasks Array Undefined
 
 **Scenario**: Store not hydrated, tasks array not yet loaded  
-**Handling**: 
+**Handling**:
+
 ```typescript
 const tasks = useTodos(state => state.tasks) ?? [];
 const count = tasks.filter(...).length; // Safe, returns 0 for empty array
 ```
+
 **Behavior**: Displays "0" until hydration complete
 
 ---
@@ -666,7 +705,8 @@ const count = tasks.filter(...).length; // Safe, returns 0 for empty array
 ### Re-render Frequency
 
 **Requirement**: Minimize unnecessary re-renders  
-**Implementation**: 
+**Implementation**:
+
 - Components subscribe only to needed store slices
 - useMemo prevents recalculation on unrelated state changes
 - React.memo not needed (components are small, render is cheap)
@@ -678,9 +718,10 @@ const count = tasks.filter(...).length; // Safe, returns 0 for empty array
 ### Screen Reader Support
 
 **Requirement**: Counts must be announced with context  
-**Implementation**: `aria-label` on count displays  
+**Implementation**: `aria-label` on count displays
 
 **Examples**:
+
 ```typescript
 // Overall count
 aria-label="Total task count: 5"

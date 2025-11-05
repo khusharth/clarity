@@ -89,6 +89,7 @@ app/
 **Output**: [research.md](./research.md)
 
 **Key Decisions**:
+
 - Icon: `Hash` from lucide-react for count displays
 - Layout: Overall count in FocusControls row (top right), per-quadrant in Quadrant headers
 - Settings: Two sections (General, Tasks) with divider
@@ -102,17 +103,20 @@ app/
 
 ## Phase 1: Design (Complete)
 
-**Outputs**: 
+**Outputs**:
+
 - [data-model.md](./data-model.md) - Store extensions and derived counts
 - [contracts/README.md](./contracts/README.md) - Component interfaces and contracts
 - [quickstart.md](./quickstart.md) - Step-by-step implementation guide
 
 **Data Model**:
+
 - Extended `TodosState` with `showOverallCount` and `showQuadrantCounts` booleans
 - Derived counts computed via useMemo (not stored)
 - Focus mode context affects display logic
 
 **Component Contracts**:
+
 - `TaskCountBadge`: Reusable styled badge (count + icon + label)
 - `OverallTaskCount`: Header count with focus mode awareness
 - `Quadrant`: Extended with per-quadrant counts
@@ -136,34 +140,39 @@ app/
 
 **Re-evaluation after Phase 1 design**:
 
-1. ✅ **Clarity over Complexity**: 
+1. ✅ **Clarity over Complexity**:
+
    - Counts optional via settings (default OFF)
    - Simple toggle controls in organized settings
    - No nested menus or complex configuration
 
-2. ✅ **Delight in Motion**: 
+2. ✅ **Delight in Motion**:
+
    - Instant count updates (no animation on change)
    - Respects reduced motion by avoiding transitions
    - <100ms update time (meets performance goal)
 
-3. ✅ **Calm Design**: 
+3. ✅ **Calm Design**:
+
    - Subtle badge styling with borders and neutral backgrounds
    - Uses CSS custom properties for theme support
    - Non-intrusive positioning (header right, quadrant header right)
    - WCAG AA contrast maintained
 
-4. ✅ **Local-First**: 
+4. ✅ **Local-First**:
+
    - All data stored locally via Zustand persist middleware
    - No network requests
    - Works fully offline
    - Preferences synced to localStorage automatically
 
-5. ✅ **Fun Focus**: 
+5. ✅ **Fun Focus**:
+
    - Non-gamified feature (pure utility)
    - No confetti, sounds, or playful elements
    - Maintains calm, professional aesthetic
 
-6. ✅ **Component Reuse**: 
+6. ✅ **Component Reuse**:
    - Reuses existing `Toggle` component from `ui/` directory
    - Reuses `Select` component for dropdowns
    - Follows existing `Modal` pattern for Settings
@@ -171,6 +180,7 @@ app/
    - lucide-react icons already in use (Hash icon consistent with existing usage)
 
 **Architecture & Technology**:
+
 - ✅ Next.js 16.x / React 19.x / Tailwind CSS 4.x (per package.json)
 - ✅ Functional components with hooks (useMemo for performance)
 - ✅ No backend services or external databases
@@ -178,11 +188,13 @@ app/
 - ✅ Keyboard accessible (Toggle components handle keyboard nav)
 
 **Performance**:
+
 - ✅ Count updates <100ms (spec requirement SC-002)
 - ✅ useMemo prevents unnecessary recalculations
 - ✅ No layout shift (fixed positioning strategy)
 
 **Accessibility**:
+
 - ✅ aria-labels on all count displays
 - ✅ Keyboard navigation via Toggle components
 - ✅ WCAG AA contrast ratios maintained
@@ -212,11 +224,13 @@ app/
 ### Settings Organization
 
 **Section 1: General**
+
 - Theme (Select dropdown)
 - Sound Effects (Toggle)
 - Reduced Motion (Toggle)
 
 **Section 2: Tasks**
+
 - Show Overall Total (Toggle) - NEW
 - Show Per-Quadrant Totals (Toggle) - NEW
 - Import/Export (Buttons)
@@ -242,6 +256,7 @@ app/
 ## Risk Assessment
 
 **Low Risk Feature**:
+
 - No database schema changes
 - No breaking changes to existing functionality
 - Purely additive (defaults to OFF)
@@ -249,10 +264,12 @@ app/
 - Uses existing patterns and components
 
 **Potential Issues**:
+
 - ⚠️ Layout shift on small mobile screens (mitigation: test responsive early)
 - ⚠️ Count computation performance with large task lists (mitigation: useMemo optimization)
 
 **Mitigation Strategy**:
+
 - Test on real devices early
 - Profile performance with 100+ tasks
 - Ensure proper memoization to prevent re-renders
@@ -264,6 +281,7 @@ app/
 **No new external dependencies required.**
 
 All features use existing packages:
+
 - `zustand` (already installed: 4.5.5)
 - `lucide-react` (already installed: 0.468.0)
 - `framer-motion` (already installed: 12.x) - not used for this feature

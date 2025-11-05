@@ -18,6 +18,8 @@ interface TodosState {
   reducedMotionPref: boolean;
   soundEnabled: boolean;
   themePreference: "light" | "dark";
+  showOverallCount: boolean;
+  showQuadrantCounts: boolean;
   add: (text: string, isUrgent: boolean, isImportant: boolean) => Promise<void>;
   updateText: (id: string, text: string) => Promise<void>;
   toggleUrgent: (id: string) => Promise<void>;
@@ -39,6 +41,8 @@ interface TodosState {
   setReducedMotionPref: (enabled: boolean) => void;
   setSoundEnabled: (enabled: boolean) => void;
   setThemePreference: (pref: "light" | "dark") => void;
+  setShowOverallCount: (enabled: boolean) => void;
+  setShowQuadrantCounts: (enabled: boolean) => void;
 }
 
 export const useTodos = create<TodosState>()(
@@ -53,6 +57,8 @@ export const useTodos = create<TodosState>()(
       reducedMotionPref: false,
       soundEnabled: true,
       themePreference: "dark",
+      showOverallCount: false,
+      showQuadrantCounts: false,
       hydrate: async () => {
         const tasks = await loadAllTasks();
         set({ tasks, isHydrated: true });
@@ -205,6 +211,8 @@ export const useTodos = create<TodosState>()(
           root.setAttribute("data-theme", "light");
         }
       },
+      setShowOverallCount: (enabled) => set({ showOverallCount: enabled }),
+      setShowQuadrantCounts: (enabled) => set({ showQuadrantCounts: enabled }),
     }),
     {
       name: "clarity.zustand.meta", // minimal metadata; real data in Dexie/localStorage
@@ -213,6 +221,8 @@ export const useTodos = create<TodosState>()(
         themePreference: state.themePreference,
         reducedMotionPref: state.reducedMotionPref,
         soundEnabled: state.soundEnabled,
+        showOverallCount: state.showOverallCount,
+        showQuadrantCounts: state.showQuadrantCounts,
       }),
     }
   )

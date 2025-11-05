@@ -24,11 +24,11 @@ Add to the `TodosState` interface:
 ```typescript
 interface TodosState {
   // ... existing fields
-  
+
   // NEW: Task count visibility settings
   showOverallCount: boolean;
   showQuadrantCounts: boolean;
-  
+
   // NEW: Actions
   setShowOverallCount: (enabled: boolean) => void;
   setShowQuadrantCounts: (enabled: boolean) => void;
@@ -44,22 +44,23 @@ export const useTodos = create<TodosState>()(
   persist(
     (set, get) => ({
       // ... existing state
-      
+
       showOverallCount: false, // Default: OFF per spec
       showQuadrantCounts: false, // Default: OFF per spec
-      
+
       setShowOverallCount: (enabled) => set({ showOverallCount: enabled }),
       setShowQuadrantCounts: (enabled) => set({ showQuadrantCounts: enabled }),
     }),
     {
-      name: 'todos-storage',
+      name: "todos-storage",
       // persist middleware automatically includes new fields
     }
   )
 );
 ```
 
-**Test**: 
+**Test**:
+
 - Verify no TypeScript errors
 - Run `pnpm dev` and check browser console for errors
 - Open DevTools → Application → Local Storage → verify empty values for new fields
@@ -107,11 +108,13 @@ export default function TaskCountBadge({
 ```
 
 **Key Details**:
+
 - `tabular-nums` ensures consistent width for changing numbers
 - Accessibility via `aria-label` with context
 - Uses CSS custom properties for theming support
 
 **Test**:
+
 - Temporarily render in `page.tsx`: `<TaskCountBadge count={5} label="Test" />`
 - Verify it displays correctly in both light and dark themes
 - Remove test render before proceeding
@@ -153,6 +156,7 @@ export default function OverallTaskCount() {
 ```
 
 **Key Details**:
+
 - Returns `null` when setting is OFF (controlled by user preference)
 - Switches between overall and Q1 count based on focus mode
 - useMemo prevents recalculation on unrelated state changes
@@ -168,6 +172,7 @@ export default function OverallTaskCount() {
 **File**: `app/components/FocusControls.tsx`
 
 Add import:
+
 ```typescript
 import OverallTaskCount from "./OverallTaskCount";
 ```
@@ -224,10 +229,12 @@ return (
 ```
 
 **Key Changes**:
+
 - Changed outer div to `justify-between` (from default `justify-start`)
 - Added `<OverallTaskCount />` at the end (right side)
 
-**Test**: 
+**Test**:
+
 - Count won't be visible yet (setting defaults to OFF)
 - Layout should remain unchanged from before
 
@@ -240,6 +247,7 @@ return (
 **File**: `app/components/Quadrant.tsx`
 
 Update imports:
+
 ```typescript
 import { useMemo } from "react";
 import { useTodos } from "../store/todos";
@@ -249,6 +257,7 @@ import EmptyState from "./EmptyState";
 ```
 
 Update props interface:
+
 ```typescript
 export default function Quadrant({
   title,
@@ -315,6 +324,7 @@ export default function Quadrant({
 ```
 
 **Key Changes**:
+
 - Added `quadrantId` and `tasks` props
 - Computes count using useMemo
 - Conditionally renders count badge in header (right side)
@@ -555,6 +565,7 @@ const {
 ```
 
 **Test**: Open Settings modal and verify:
+
 - Two sections: "General" and "Tasks"
 - Clear visual separation (divider between sections)
 - All existing settings work
@@ -595,7 +606,7 @@ const {
 1. Ensure you have at least one Q1 task
 2. Enable both count settings (both ON)
 3. Enter Focus Mode
-4. **Verify**: 
+4. **Verify**:
    - Overall count in header shows Q1 count only (not total)
    - Only Q1 quadrant shows its count (Q2, Q3, Q4 counts hidden)
 5. Exit Focus Mode
@@ -718,6 +729,7 @@ const {
 ## Summary
 
 You've implemented:
+
 - ✅ Zustand store extension with count preferences
 - ✅ Reusable TaskCountBadge component
 - ✅ Overall count display with focus mode awareness
