@@ -46,8 +46,15 @@ interface TodosState {
   setShowOverallCount: (enabled: boolean) => void;
   setShowQuadrantCounts: (enabled: boolean) => void;
   // Drag and drop
-  reorderTaskWithinQuadrant: (taskId: string, newIndex: number) => Promise<void>;
-  moveTaskToQuadrant: (taskId: string, targetQuadrant: QuadrantId, targetIndex: number) => Promise<void>;
+  reorderTaskWithinQuadrant: (
+    taskId: string,
+    newIndex: number
+  ) => Promise<void>;
+  moveTaskToQuadrant: (
+    taskId: string,
+    targetQuadrant: QuadrantId,
+    targetIndex: number
+  ) => Promise<void>;
 }
 
 export const useTodos = create<TodosState>()(
@@ -237,7 +244,9 @@ export const useTodos = create<TodosState>()(
             }
             if (a.sortOrder !== null) return -1;
             if (b.sortOrder !== null) return 1;
-            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+            return (
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
           });
 
         // Calculate new sortOrder
@@ -248,12 +257,15 @@ export const useTodos = create<TodosState>()(
           newSortOrder = firstSortOrder / 2;
         } else if (newIndex >= quadrantTasks.length) {
           // Insert at end
-          const lastSortOrder = quadrantTasks[quadrantTasks.length - 1]?.sortOrder ?? 0;
+          const lastSortOrder =
+            quadrantTasks[quadrantTasks.length - 1]?.sortOrder ?? 0;
           newSortOrder = lastSortOrder + 1;
         } else {
           // Insert between two tasks
-          const prevSortOrder = quadrantTasks[newIndex - 1]?.sortOrder ?? newIndex - 1;
-          const nextSortOrder = quadrantTasks[newIndex]?.sortOrder ?? newIndex + 1;
+          const prevSortOrder =
+            quadrantTasks[newIndex - 1]?.sortOrder ?? newIndex - 1;
+          const nextSortOrder =
+            quadrantTasks[newIndex]?.sortOrder ?? newIndex + 1;
           newSortOrder = (prevSortOrder + nextSortOrder) / 2;
         }
 
@@ -296,7 +308,9 @@ export const useTodos = create<TodosState>()(
             }
             if (a.sortOrder !== null) return -1;
             if (b.sortOrder !== null) return 1;
-            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+            return (
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
           });
 
         // Calculate new sortOrder in target quadrant
@@ -305,15 +319,23 @@ export const useTodos = create<TodosState>()(
           const firstSortOrder = targetTasks[0]?.sortOrder ?? 1;
           newSortOrder = firstSortOrder / 2;
         } else if (targetIndex >= targetTasks.length) {
-          const lastSortOrder = targetTasks[targetTasks.length - 1]?.sortOrder ?? 0;
+          const lastSortOrder =
+            targetTasks[targetTasks.length - 1]?.sortOrder ?? 0;
           newSortOrder = lastSortOrder + 1;
         } else {
-          const prevSortOrder = targetTasks[targetIndex - 1]?.sortOrder ?? targetIndex - 1;
-          const nextSortOrder = targetTasks[targetIndex]?.sortOrder ?? targetIndex + 1;
+          const prevSortOrder =
+            targetTasks[targetIndex - 1]?.sortOrder ?? targetIndex - 1;
+          const nextSortOrder =
+            targetTasks[targetIndex]?.sortOrder ?? targetIndex + 1;
           newSortOrder = (prevSortOrder + nextSortOrder) / 2;
         }
 
-        const updated = { ...task, isUrgent, isImportant, sortOrder: newSortOrder };
+        const updated = {
+          ...task,
+          isUrgent,
+          isImportant,
+          sortOrder: newSortOrder,
+        };
         await saveTask(updated);
         set({
           tasks: tasks.map((t) => (t.id === taskId ? updated : t)),

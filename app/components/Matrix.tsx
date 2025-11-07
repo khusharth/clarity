@@ -46,7 +46,7 @@ export default function Matrix() {
 
   const handleDragEnd = async () => {
     const state = dragAndDrop.onDragEnd();
-    
+
     if (!state.draggedTaskId || !state.targetQuadrant) {
       // Drag cancelled (dropped outside quadrants) - no action needed
       // Framer Motion will return the element to its original position
@@ -64,7 +64,11 @@ export default function Matrix() {
     if (sourceQuadrant === targetQuadrant) {
       await reorderTaskWithinQuadrant(state.draggedTaskId, targetIndex);
     } else {
-      await moveTaskToQuadrant(state.draggedTaskId, targetQuadrant, targetIndex);
+      await moveTaskToQuadrant(
+        state.draggedTaskId,
+        targetQuadrant,
+        targetIndex
+      );
     }
   };
 
@@ -102,19 +106,31 @@ export default function Matrix() {
   );
 
   const q1 = useMemo(
-    () => active.filter((t) => t.isUrgent && t.isImportant).sort(sortByOrderThenDate),
+    () =>
+      active
+        .filter((t) => t.isUrgent && t.isImportant)
+        .sort(sortByOrderThenDate),
     [active]
   );
   const q2 = useMemo(
-    () => active.filter((t) => !t.isUrgent && t.isImportant).sort(sortByOrderThenDate),
+    () =>
+      active
+        .filter((t) => !t.isUrgent && t.isImportant)
+        .sort(sortByOrderThenDate),
     [active]
   );
   const q3 = useMemo(
-    () => active.filter((t) => t.isUrgent && !t.isImportant).sort(sortByOrderThenDate),
+    () =>
+      active
+        .filter((t) => t.isUrgent && !t.isImportant)
+        .sort(sortByOrderThenDate),
     [active]
   );
   const q4 = useMemo(
-    () => active.filter((t) => !t.isUrgent && !t.isImportant).sort(sortByOrderThenDate),
+    () =>
+      active
+        .filter((t) => !t.isUrgent && !t.isImportant)
+        .sort(sortByOrderThenDate),
     [active]
   );
 
@@ -142,7 +158,9 @@ export default function Matrix() {
                       const item = activeTaskId
                         ? q1.find((t) => t.id === activeTaskId)
                         : q1[0];
-                      const itemIndex = item ? q1.findIndex((t) => t.id === item.id) : 0;
+                      const itemIndex = item
+                        ? q1.findIndex((t) => t.id === item.id)
+                        : 0;
                       return item ? (
                         <TodoCard
                           key={item.id}
@@ -265,7 +283,10 @@ export default function Matrix() {
                   {dragAndDrop.dragState.isDragging &&
                     dragAndDrop.dragState.targetQuadrant === "Q1" &&
                     dragAndDrop.dragState.targetIndex === q1.length && (
-                      <div key="gap-end" className="h-1 bg-blue-500 rounded-full animate-pulse" />
+                      <div
+                        key="gap-end"
+                        className="h-1 bg-blue-500 rounded-full animate-pulse"
+                      />
                     )}
                 </AnimatePresence>
               </motion.div>
@@ -309,7 +330,10 @@ export default function Matrix() {
                   {dragAndDrop.dragState.isDragging &&
                     dragAndDrop.dragState.targetQuadrant === "Q2" &&
                     dragAndDrop.dragState.targetIndex === q2.length && (
-                      <div key="gap-end" className="h-1 bg-blue-500 rounded-full animate-pulse" />
+                      <div
+                        key="gap-end"
+                        className="h-1 bg-blue-500 rounded-full animate-pulse"
+                      />
                     )}
                 </AnimatePresence>
               </motion.div>
@@ -353,7 +377,10 @@ export default function Matrix() {
                   {dragAndDrop.dragState.isDragging &&
                     dragAndDrop.dragState.targetQuadrant === "Q3" &&
                     dragAndDrop.dragState.targetIndex === q3.length && (
-                      <div key="gap-end" className="h-1 bg-blue-500 rounded-full animate-pulse" />
+                      <div
+                        key="gap-end"
+                        className="h-1 bg-blue-500 rounded-full animate-pulse"
+                      />
                     )}
                 </AnimatePresence>
               </motion.div>
@@ -397,7 +424,10 @@ export default function Matrix() {
                   {dragAndDrop.dragState.isDragging &&
                     dragAndDrop.dragState.targetQuadrant === "Q4" &&
                     dragAndDrop.dragState.targetIndex === q4.length && (
-                      <div key="gap-end" className="h-1 bg-blue-500 rounded-full animate-pulse" />
+                      <div
+                        key="gap-end"
+                        className="h-1 bg-blue-500 rounded-full animate-pulse"
+                      />
                     )}
                 </AnimatePresence>
               </motion.div>

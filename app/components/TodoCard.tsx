@@ -55,7 +55,7 @@ export default function TodoCard({
 
   return (
     <>
-                  <motion.div
+      <motion.div
         drag
         dragSnapToOrigin
         dragMomentum={false}

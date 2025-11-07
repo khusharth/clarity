@@ -24,13 +24,16 @@ export function useDragAndDrop() {
   const [dragState, setDragState] = useState<DragState>(initialDragState);
   const quadrantRefs = useRef<Map<QuadrantId, HTMLElement>>(new Map());
 
-  const setQuadrantRef = useCallback((id: QuadrantId, el: HTMLElement | null) => {
-    if (el) {
-      quadrantRefs.current.set(id, el);
-    } else {
-      quadrantRefs.current.delete(id);
-    }
-  }, []);
+  const setQuadrantRef = useCallback(
+    (id: QuadrantId, el: HTMLElement | null) => {
+      if (el) {
+        quadrantRefs.current.set(id, el);
+      } else {
+        quadrantRefs.current.delete(id);
+      }
+    },
+    []
+  );
 
   const onDragStart = useCallback(
     (taskId: string, quadrant: QuadrantId, index: number) => {
@@ -65,10 +68,12 @@ export function useDragAndDrop() {
           newTargetQuadrant = quadrantId;
           // Calculate target index based on vertical position within quadrant
           // Exclude the currently dragged task from the calculation
-          const taskElements = Array.from(element.querySelectorAll('[data-task-id]')).filter(
-            (el) => el.getAttribute('data-task-id') !== dragState.draggedTaskId
+          const taskElements = Array.from(
+            element.querySelectorAll("[data-task-id]")
+          ).filter(
+            (el) => el.getAttribute("data-task-id") !== dragState.draggedTaskId
           );
-          
+
           if (taskElements.length === 0) {
             newTargetIndex = 0;
           } else {
