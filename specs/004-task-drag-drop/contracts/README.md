@@ -17,6 +17,7 @@ Since Clarity is a local-first application with no backend, this document define
 **Purpose**: Update task's `sortOrder` when reordered within the same quadrant.
 
 **Signature**:
+
 ```typescript
 reorderTaskWithinQuadrant(
   taskId: string,
@@ -25,10 +26,12 @@ reorderTaskWithinQuadrant(
 ```
 
 **Input**:
+
 - `taskId`: UUID of the task being reordered
 - `newIndex`: Target position in the quadrant's task list (0-based)
 
 **Behavior**:
+
 1. Find task by ID
 2. Get current quadrant's task list (filtered by `isUrgent`/`isImportant`)
 3. Calculate new `sortOrder`:
@@ -40,15 +43,18 @@ reorderTaskWithinQuadrant(
 6. Trigger re-render
 
 **Preconditions**:
+
 - Task exists and is `status === "active"`
 - `newIndex` is valid (>= 0 and <= task count)
 
 **Postconditions**:
+
 - Task has new `sortOrder`
 - Task appears at `newIndex` in sorted list
 - Change persisted to IndexedDB
 
 **Error Handling**:
+
 - If task not found: log error, no-op
 - If persistence fails: show toast notification
 
@@ -59,6 +65,7 @@ reorderTaskWithinQuadrant(
 **Purpose**: Move task to a different quadrant, updating urgency/importance flags and sortOrder.
 
 **Signature**:
+
 ```typescript
 moveTaskToQuadrant(
   taskId: string,
@@ -68,11 +75,13 @@ moveTaskToQuadrant(
 ```
 
 **Input**:
+
 - `taskId`: UUID of the task being moved
 - `targetQuadrant`: Destination quadrant ID
 - `targetIndex`: Position in the target quadrant's task list (0-based)
 
 **Behavior**:
+
 1. Find task by ID
 2. Determine new `isUrgent` and `isImportant` from `targetQuadrant`:
    - Q1: `{ isUrgent: true, isImportant: true }`
@@ -86,16 +95,19 @@ moveTaskToQuadrant(
 7. Trigger re-render
 
 **Preconditions**:
+
 - Task exists and is `status === "active"`
 - `targetQuadrant` is valid ("Q1" | "Q2" | "Q3" | "Q4")
 - `targetIndex` is valid for target quadrant
 
 **Postconditions**:
+
 - Task has new urgency/importance flags
 - Task appears in target quadrant at `targetIndex`
 - Change persisted to IndexedDB
 
 **Error Handling**:
+
 - If task not found: log error, no-op
 - If persistence fails: show toast notification
 - If no actual change (same quadrant): treat as `reorderTaskWithinQuadrant`
@@ -107,6 +119,7 @@ moveTaskToQuadrant(
 **Purpose**: Reset any temporary drag state without persisting changes.
 
 **Signature**:
+
 ```typescript
 cancelDrag(): void
 ```
@@ -114,6 +127,7 @@ cancelDrag(): void
 **Input**: None
 
 **Behavior**:
+
 1. Reset drag state in `useDragAndDrop` hook
 2. Animate task back to original position (via Framer Motion)
 3. No database writes
@@ -121,7 +135,8 @@ cancelDrag(): void
 
 **Preconditions**: Drag operation is active
 
-**Postconditions**: 
+**Postconditions**:
+
 - UI returns to pre-drag state
 - No data changes
 
@@ -136,6 +151,7 @@ cancelDrag(): void
 **Purpose**: Manage drag state and provide drag event handlers.
 
 **Signature**:
+
 ```typescript
 function useDragAndDrop(): {
   dragState: DragState;
@@ -143,10 +159,11 @@ function useDragAndDrop(): {
   onDrag: (x: number, y: number) => void;
   onDragEnd: () => void;
   setQuadrantRef: (quadrant: QuadrantId, ref: HTMLElement) => void;
-}
+};
 ```
 
 **Return Value**:
+
 - `dragState`: Current drag state (see data-model.md)
 - `onDragStart`: Called when user initiates drag
 - `onDrag`: Called on every pointer move during drag
@@ -154,9 +171,10 @@ function useDragAndDrop(): {
 - `setQuadrantRef`: Register quadrant DOM element for drop zone detection
 
 **State Updates**:
+
 - `onDragStart`: Set `isDragging = true`, capture source quadrant/index
 - `onDrag`: Update pointer coordinates, calculate target quadrant/index
-- `onDragEnd`: 
+- `onDragEnd`:
   - If valid drop: call `moveTaskToQuadrant` or `reorderTaskWithinQuadrant`
   - If invalid drop: call `cancelDrag`
   - Play appropriate sound effects
@@ -171,18 +189,22 @@ function useDragAndDrop(): {
 **New Methods**:
 
 #### dragStart()
+
 ```typescript
 dragStart(): void
 ```
+
 - Plays `/sounds/drag-start.mp3` (or beep fallback)
 - Volume: 0.3
 - Duration: ~100ms
 - Triggered: On `onDragStart` after 300ms hold threshold
 
 #### dragDrop()
+
 ```typescript
 dragDrop(): void
 ```
+
 - Plays `/sounds/drag-drop.mp3` (or beep fallback)
 - Volume: 0.35
 - Duration: ~120ms
@@ -199,11 +221,13 @@ dragDrop(): void
 **Changes**: Now persists `sortOrder` field.
 
 **Signature** (unchanged):
+
 ```typescript
-async function saveTask(task: Task): Promise<void>
+async function saveTask(task: Task): Promise<void>;
 ```
 
 **New Behavior**:
+
 - Writes `sortOrder` to IndexedDB tasks table
 - Null values are allowed and stored as `null`
 
@@ -216,16 +240,18 @@ async function saveTask(task: Task): Promise<void>
 ### TodoCard (Enhanced)
 
 **New Props**:
+
 ```typescript
 interface TodoCardProps {
   task: Task;
   quadrant: QuadrantId;
-  index: number;  // Position in quadrant's sorted list
+  index: number; // Position in quadrant's sorted list
   className?: string;
 }
 ```
 
 **New Behavior**:
+
 - Wraps existing `motion.div` with `drag` prop
 - Calls `useDragAndDrop().onDragStart` on pointer down + 300ms hold
 - Visual feedback: apply `scale(1.05)` and elevated shadow while dragging
@@ -236,16 +262,18 @@ interface TodoCardProps {
 ### Quadrant (Enhanced)
 
 **New Props**:
+
 ```typescript
 interface QuadrantProps {
   // Existing props...
   onDropZoneEnter?: (quadrantId: QuadrantId) => void;
   onDropZoneLeave?: () => void;
-  isDropTarget?: boolean;  // Highlight when dragged task is over this quadrant
+  isDropTarget?: boolean; // Highlight when dragged task is over this quadrant
 }
 ```
 
 **New Behavior**:
+
 - Registers ref with `useDragAndDrop().setQuadrantRef`
 - Applies highlight class when `isDropTarget === true`
 - Renders gap indicator at target index during in-quadrant reorder
@@ -256,6 +284,7 @@ interface QuadrantProps {
 ### Matrix (Enhanced)
 
 **New Responsibility**:
+
 - Orchestrates drag state across all quadrants
 - Provides `useDragAndDrop` context to children
 - Handles global drag cancellation (Escape key)

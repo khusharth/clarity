@@ -8,6 +8,7 @@
 ## Summary
 
 Implement drag-and-drop functionality for tasks in the Eisenhower Matrix, enabling users to:
+
 1. Move tasks between quadrants to reclassify urgency/importance
 2. Reorder tasks within quadrants to set priority
 3. Perform drag operations on mobile via touch gestures
@@ -17,7 +18,8 @@ Technical approach uses Framer Motion's drag capabilities with custom drop zone 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x with React 19.x  
-**Primary Dependencies**: 
+**Primary Dependencies**:
+
 - Next.js 16.x (app framework)
 - Framer Motion 12.x (drag-and-drop animations)
 - Zustand 4.5.5 (state management)
@@ -29,18 +31,21 @@ Technical approach uses Framer Motion's drag capabilities with custom drop zone 
 **Testing**: Manual testing (no automated test suite currently)  
 **Target Platform**: Web browsers (desktop + mobile), responsive design  
 **Project Type**: Single Next.js web application  
-**Performance Goals**: 
+**Performance Goals**:
+
 - Drag operations feel responsive (<16ms frame time for 60fps)
 - Audio feedback <100ms latency
 - Animations 150-250ms per constitution
 
-**Constraints**: 
+**Constraints**:
+
 - Offline-capable (no network calls)
 - Reduced-motion support required
 - Touch gestures must not conflict with scrolling
 - Local persistence only
 
-**Scale/Scope**: 
+**Scale/Scope**:
+
 - Single-user application
 - Hundreds of tasks per quadrant maximum
 - 4 quadrants with independent task lists

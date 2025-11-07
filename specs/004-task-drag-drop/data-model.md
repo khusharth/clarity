@@ -17,26 +17,27 @@ This feature extends the existing Task entity with ordering capabilities and int
 Represents a task item in the Eisenhower Matrix with drag-and-drop ordering support.
 
 **Persistent Fields**:
+
 ```typescript
 interface Task {
   // Existing fields (unchanged)
-  id: string;                  // UUID
-  text: string;                // Task description
-  isUrgent: boolean;           // Urgency classification
-  isImportant: boolean;        // Importance classification
-  status: TaskStatus;          // "active" | "completed"
-  createdAt: string;           // ISO timestamp
-  completedAt: string | null;  // ISO timestamp or null
-  
+  id: string; // UUID
+  text: string; // Task description
+  isUrgent: boolean; // Urgency classification
+  isImportant: boolean; // Importance classification
+  status: TaskStatus; // "active" | "completed"
+  createdAt: string; // ISO timestamp
+  completedAt: string | null; // ISO timestamp or null
+
   // NEW: Drag-and-drop ordering
-  sortOrder: number | null;    // Fractional index for custom ordering
-                               // null = use createdAt for sorting (backward compatible)
+  sortOrder: number | null; // Fractional index for custom ordering
+  // null = use createdAt for sorting (backward compatible)
 }
 ```
 
 **Field Details**:
 
-- **sortOrder**: 
+- **sortOrder**:
   - Type: `number | null`
   - Purpose: Defines task position within a quadrant after manual reordering
   - Range: Any positive floating-point number (typically 0.5 to N+1)
@@ -48,17 +49,20 @@ interface Task {
     - Between tasks with null sortOrder: assign new fractional values based on position
 
 **Sorting Logic**:
+
 ```sql
-ORDER BY 
+ORDER BY
   sortOrder ASC NULLS LAST,  -- Manual order takes precedence
   createdAt ASC              -- Fall back to creation time
 ```
 
 **Validation Rules**:
+
 - `sortOrder` must be positive if not null
 - `sortOrder` uniqueness not enforced (allows duplicates; ties broken by `createdAt`)
 
 **Relationships**:
+
 - Belongs to one quadrant (computed via `computeQuadrant(isUrgent, isImportant)`)
 - No explicit foreign keys (denormalized design)
 
@@ -71,30 +75,33 @@ ORDER BY
 Represents the current drag operation in progress. Lives in component state; never persisted.
 
 **Interface**:
+
 ```typescript
 interface DragState {
-  isDragging: boolean;           // Whether any drag is active
-  draggedTaskId: string | null;  // ID of task being dragged
+  isDragging: boolean; // Whether any drag is active
+  draggedTaskId: string | null; // ID of task being dragged
   sourceQuadrant: QuadrantId | null; // "Q1" | "Q2" | "Q3" | "Q4"
-  sourceIndex: number | null;    // Original position in source quadrant
+  sourceIndex: number | null; // Original position in source quadrant
   targetQuadrant: QuadrantId | null; // Current drop zone (updates on drag)
-  targetIndex: number | null;    // Insertion index in target quadrant
-  pointerX: number;              // Current pointer X coordinate
-  pointerY: number;              // Current pointer Y coordinate
+  targetIndex: number | null; // Insertion index in target quadrant
+  pointerX: number; // Current pointer X coordinate
+  pointerY: number; // Current pointer Y coordinate
 }
 
 type QuadrantId = "Q1" | "Q2" | "Q3" | "Q4";
 ```
 
 **Lifecycle**:
+
 1. **Drag Start**: Initialize with source quadrant/index, `isDragging = true`
 2. **Drag Move**: Update `targetQuadrant`, `targetIndex`, `pointerX`, `pointerY`
-3. **Drag End**: 
+3. **Drag End**:
    - If valid drop: commit changes to Task entity (update `isUrgent`, `isImportant`, `sortOrder`)
    - If cancelled: reset state
 4. **Reset**: All fields return to null/false
 
-**State Management**: 
+**State Management**:
+
 - Managed by `useDragAndDrop` custom hook
 - Shared across `TodoCard`, `Quadrant`, and `Matrix` components via context or prop drilling
 
@@ -105,14 +112,16 @@ type QuadrantId = "Q1" | "Q2" | "Q3" | "Q4";
 ### Database Migration
 
 **Dexie Schema Update** (IndexedDB):
+
 ```typescript
 // In app/lib/db.ts
 db.version(2).stores({
-  tasks: "id, status, createdAt, sortOrder" // Add sortOrder to indexes
+  tasks: "id, status, createdAt, sortOrder", // Add sortOrder to indexes
 });
 ```
 
 **Migration Strategy**:
+
 - All existing tasks have `sortOrder = null` by default
 - No data loss; backward compatible
 - First drag operation on a task assigns initial `sortOrder`
@@ -124,6 +133,7 @@ db.version(2).stores({
 ### Quadrant Assignment
 
 **Function** (existing, unchanged):
+
 ```typescript
 function computeQuadrant(task: Task): QuadrantId {
   if (task.isUrgent && task.isImportant) return "Q1";
@@ -133,7 +143,8 @@ function computeQuadrant(task: Task): QuadrantId {
 }
 ```
 
-**Usage**: 
+**Usage**:
+
 - Called when task moves between quadrants to update `isUrgent`/`isImportant`
 - Drop zone determines new quadrant, which sets flags
 
@@ -165,7 +176,7 @@ Determine target quadrant flags:
   ↓
 Calculate sortOrder based on drop position in Q3
   ↓
-Update Task: { 
+Update Task: {
   isUrgent: true,
   isImportant: false,
   sortOrder: calculated_value
@@ -183,15 +194,18 @@ Remove from Q1, add to Q3 in UI
 ### Client-Side Validation
 
 **On Drag Start**:
+
 - Task must have `status === "active"` (no dragging completed tasks)
 - Task must exist in current quadrant list
 
 **On Drop**:
+
 - Target quadrant must be valid ("Q1" | "Q2" | "Q3" | "Q4")
 - Target index must be >= 0 and <= taskCount
 - If cross-quadrant drop, new `isUrgent`/`isImportant` must differ from current
 
 **sortOrder Calculation**:
+
 - Must produce positive number
 - Handle edge cases (first/last position, null neighbors)
 
@@ -210,7 +224,7 @@ Remove from Q1, add to Q3 in UI
   "status": "active",
   "createdAt": "2025-11-07T10:00:00Z",
   "completedAt": null,
-  "sortOrder": null  // Falls back to createdAt for sorting
+  "sortOrder": null // Falls back to createdAt for sorting
 }
 ```
 
@@ -225,7 +239,7 @@ Remove from Q1, add to Q3 in UI
   "status": "active",
   "createdAt": "2025-11-07T10:00:00Z",
   "completedAt": null,
-  "sortOrder": 1.5  // Between task at 1.0 and 2.0
+  "sortOrder": 1.5 // Between task at 1.0 and 2.0
 }
 ```
 
@@ -235,12 +249,12 @@ Remove from Q1, add to Q3 in UI
 {
   "id": "abc123",
   "text": "Review PRs",
-  "isUrgent": false,      // Changed from true
-  "isImportant": true,    // Unchanged
+  "isUrgent": false, // Changed from true
+  "isImportant": true, // Unchanged
   "status": "active",
   "createdAt": "2025-11-07T10:00:00Z",
   "completedAt": null,
-  "sortOrder": 0.5  // Dropped at first position in Q2
+  "sortOrder": 0.5 // Dropped at first position in Q2
 }
 ```
 
@@ -265,11 +279,11 @@ tasks.sort((a, b) => {
   if (a.sortOrder !== null && b.sortOrder !== null) {
     return a.sortOrder - b.sortOrder;
   }
-  
+
   // Priority 2: Tasks with sortOrder come first
   if (a.sortOrder !== null) return -1;
   if (b.sortOrder !== null) return 1;
-  
+
   // Priority 3: Fall back to createdAt
   return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
 });

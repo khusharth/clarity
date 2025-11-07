@@ -5,7 +5,7 @@
 **Status**: Draft  
 **Input**: User description: "I want to add a drag and drop feature for Tasks. A user should be able to move a task from one quad to another smoothly. A user should be also above to move a task up and down within a quad. Picking and dropping should give proper sound feedback. Should work smoothly on mobile too"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Move Tasks Between Quadrants (Priority: P1)
 
@@ -60,15 +60,15 @@ A mobile user can tap-and-hold to pick up a task, drag it with their finger to a
 
 ### Edge Cases
 
-- What happens when a user drags a task over a quadrant that is empty? *(The quadrant should highlight to indicate readiness to receive the task; the task should drop into the first position)*
-- What happens when network connectivity is lost mid-drag? *(The feature is local-first, so this should not affect drag-and-drop; changes persist locally)*
-- What happens when a user attempts to drag a completed task from the completed tasks view? *(Assume completed tasks are in a separate view/list; if drag is enabled there, specify separate behavior or disable dragging for completed tasks)*
-- What happens when drag-and-drop gestures conflict with other interactions (e.g., selecting text, scrolling)? *(Dragging should be initiated only after a clear threshold (e.g., 300ms hold on desktop, 500ms on mobile, or 5px movement) to avoid conflicts)*
-- What happens when animations are disabled (reduced-motion preference)? *(Drag-and-drop still functions; visual state changes happen instantly without transitions; audio feedback remains optional)*
-- What happens when sound is muted or disabled in settings? *(Visual feedback must be sufficient; audio is enhancement only, not required for usability)*
-- What happens when a user drags very quickly or performs rapid successive drags? *(Each drag operation must complete or cancel before the next begins; debounce rapid interactions to prevent state conflicts)*
+- What happens when a user drags a task over a quadrant that is empty? _(The quadrant should highlight to indicate readiness to receive the task; the task should drop into the first position)_
+- What happens when network connectivity is lost mid-drag? _(The feature is local-first, so this should not affect drag-and-drop; changes persist locally)_
+- What happens when a user attempts to drag a completed task from the completed tasks view? _(Assume completed tasks are in a separate view/list; if drag is enabled there, specify separate behavior or disable dragging for completed tasks)_
+- What happens when drag-and-drop gestures conflict with other interactions (e.g., selecting text, scrolling)? _(Dragging should be initiated only after a clear threshold (e.g., 300ms hold on desktop, 500ms on mobile, or 5px movement) to avoid conflicts)_
+- What happens when animations are disabled (reduced-motion preference)? _(Drag-and-drop still functions; visual state changes happen instantly without transitions; audio feedback remains optional)_
+- What happens when sound is muted or disabled in settings? _(Visual feedback must be sufficient; audio is enhancement only, not required for usability)_
+- What happens when a user drags very quickly or performs rapid successive drags? _(Each drag operation must complete or cancel before the next begins; debounce rapid interactions to prevent state conflicts)_
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -94,7 +94,7 @@ A mobile user can tap-and-hold to pick up a task, drag it with their finger to a
 - **Quadrant**: Represents one of the four Eisenhower Matrix quadrants (Urgent & Important, Not Urgent & Important, Urgent & Not Important, Not Urgent & Not Important); contains an ordered list of tasks
 - **Drag State**: Represents the current state of a drag operation including the task being dragged, source quadrant, source position, current pointer position, and target drop location
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
