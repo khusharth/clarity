@@ -11,6 +11,10 @@ export class ClarityDatabase extends Dexie {
       tasks: "id, createdAt, status",
       preferences: "&id",
     });
+    this.version(2).stores({
+      tasks: "id, createdAt, status, sortOrder",
+      preferences: "&id",
+    });
   }
 }
 

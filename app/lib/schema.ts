@@ -8,6 +8,7 @@ export interface Task {
   status: TaskStatus;
   createdAt: string; // ISO string
   completedAt: string | null;
+  sortOrder: number | null; // Fractional index for drag-and-drop ordering
 }
 
 export interface Preferences {

@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Task } from "../lib/schema";
 import { loadAllTasks, saveTask, deleteTask } from "../lib/persistence";
+import type { QuadrantId } from "../hooks/useDragAndDrop";
+import { computeQuadrant } from "../lib/schema";
 
 type ImportExportBundle = { tasks: Task[] };
 
@@ -43,6 +45,9 @@ interface TodosState {
   setThemePreference: (pref: "light" | "dark") => void;
   setShowOverallCount: (enabled: boolean) => void;
   setShowQuadrantCounts: (enabled: boolean) => void;
+  // Drag and drop
+  reorderTaskWithinQuadrant: (taskId: string, newIndex: number) => Promise<void>;
+  moveTaskToQuadrant: (taskId: string, targetQuadrant: QuadrantId, targetIndex: number) => Promise<void>;
 }
 
 export const useTodos = create<TodosState>()(
@@ -77,6 +82,7 @@ export const useTodos = create<TodosState>()(
           status: "active",
           createdAt: new Date().toISOString(),
           completedAt: null,
+          sortOrder: null,
         };
         await saveTask(task);
         set({ tasks: [task, ...get().tasks] });
@@ -213,6 +219,106 @@ export const useTodos = create<TodosState>()(
       },
       setShowOverallCount: (enabled) => set({ showOverallCount: enabled }),
       setShowQuadrantCounts: (enabled) => set({ showQuadrantCounts: enabled }),
+      reorderTaskWithinQuadrant: async (taskId, newIndex) => {
+        const tasks = get().tasks;
+        const task = tasks.find((t) => t.id === taskId);
+        if (!task || task.status !== "active") return;
+
+        // Get tasks in the same quadrant, sorted by sortOrder/createdAt
+        const quadrant = computeQuadrant(task);
+        const quadrantTasks = tasks
+          .filter((t) => {
+            const q = computeQuadrant(t);
+            return q === quadrant && t.status === "active" && t.id !== taskId;
+          })
+          .sort((a, b) => {
+            if (a.sortOrder !== null && b.sortOrder !== null) {
+              return a.sortOrder - b.sortOrder;
+            }
+            if (a.sortOrder !== null) return -1;
+            if (b.sortOrder !== null) return 1;
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          });
+
+        // Calculate new sortOrder
+        let newSortOrder: number;
+        if (newIndex === 0) {
+          // Insert at beginning
+          const firstSortOrder = quadrantTasks[0]?.sortOrder ?? 1;
+          newSortOrder = firstSortOrder / 2;
+        } else if (newIndex >= quadrantTasks.length) {
+          // Insert at end
+          const lastSortOrder = quadrantTasks[quadrantTasks.length - 1]?.sortOrder ?? 0;
+          newSortOrder = lastSortOrder + 1;
+        } else {
+          // Insert between two tasks
+          const prevSortOrder = quadrantTasks[newIndex - 1]?.sortOrder ?? newIndex - 1;
+          const nextSortOrder = quadrantTasks[newIndex]?.sortOrder ?? newIndex + 1;
+          newSortOrder = (prevSortOrder + nextSortOrder) / 2;
+        }
+
+        const updated = { ...task, sortOrder: newSortOrder };
+        await saveTask(updated);
+        set({
+          tasks: tasks.map((t) => (t.id === taskId ? updated : t)),
+        });
+      },
+      moveTaskToQuadrant: async (taskId, targetQuadrant, targetIndex) => {
+        const tasks = get().tasks;
+        const task = tasks.find((t) => t.id === taskId);
+        if (!task || task.status !== "active") return;
+
+        // Map quadrant to flags
+        const quadrantMap = {
+          Q1: { isUrgent: true, isImportant: true },
+          Q2: { isUrgent: false, isImportant: true },
+          Q3: { isUrgent: true, isImportant: false },
+          Q4: { isUrgent: false, isImportant: false },
+        };
+
+        const { isUrgent, isImportant } = quadrantMap[targetQuadrant];
+
+        // If same quadrant, just reorder
+        const currentQuadrant = computeQuadrant(task);
+        if (currentQuadrant === targetQuadrant) {
+          return get().reorderTaskWithinQuadrant(taskId, targetIndex);
+        }
+
+        // Get tasks in target quadrant
+        const targetTasks = tasks
+          .filter((t) => {
+            const q = computeQuadrant(t);
+            return q === targetQuadrant && t.status === "active";
+          })
+          .sort((a, b) => {
+            if (a.sortOrder !== null && b.sortOrder !== null) {
+              return a.sortOrder - b.sortOrder;
+            }
+            if (a.sortOrder !== null) return -1;
+            if (b.sortOrder !== null) return 1;
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          });
+
+        // Calculate new sortOrder in target quadrant
+        let newSortOrder: number;
+        if (targetTasks.length === 0 || targetIndex === 0) {
+          const firstSortOrder = targetTasks[0]?.sortOrder ?? 1;
+          newSortOrder = firstSortOrder / 2;
+        } else if (targetIndex >= targetTasks.length) {
+          const lastSortOrder = targetTasks[targetTasks.length - 1]?.sortOrder ?? 0;
+          newSortOrder = lastSortOrder + 1;
+        } else {
+          const prevSortOrder = targetTasks[targetIndex - 1]?.sortOrder ?? targetIndex - 1;
+          const nextSortOrder = targetTasks[targetIndex]?.sortOrder ?? targetIndex + 1;
+          newSortOrder = (prevSortOrder + nextSortOrder) / 2;
+        }
+
+        const updated = { ...task, isUrgent, isImportant, sortOrder: newSortOrder };
+        await saveTask(updated);
+        set({
+          tasks: tasks.map((t) => (t.id === taskId ? updated : t)),
+        });
+      },
     }),
     {
       name: "clarity.zustand.meta", // minimal metadata; real data in Dexie/localStorage

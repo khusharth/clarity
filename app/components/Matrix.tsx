@@ -11,8 +11,18 @@ import FocusControls from "./FocusControls";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import AddTodoModal from "./AddTodoModal";
+import { useDragAndDrop } from "../hooks/useDragAndDrop";
+import type { QuadrantId } from "../hooks/useDragAndDrop";
+import { useSfx } from "../hooks/useSfx";
 
-function sortOldest(a: Task, b: Task) {
+function sortByOrderThenDate(a: Task, b: Task) {
+  // sortOrder takes precedence (nulls last)
+  if (a.sortOrder !== null && b.sortOrder !== null) {
+    return a.sortOrder - b.sortOrder;
+  }
+  if (a.sortOrder !== null) return -1;
+  if (b.sortOrder !== null) return 1;
+  // Fall back to createdAt for tasks without sortOrder
   return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
 }
 
@@ -28,7 +38,35 @@ export default function Matrix() {
     nextFocusTask,
     prevFocusTask,
     setActiveTask,
+    moveTaskToQuadrant,
+    reorderTaskWithinQuadrant,
   } = useTodos();
+  const sfx = useSfx();
+  const dragAndDrop = useDragAndDrop();
+
+  const handleDragEnd = async () => {
+    const state = dragAndDrop.onDragEnd();
+    
+    if (!state.draggedTaskId || !state.targetQuadrant) {
+      // Drag cancelled (dropped outside quadrants) - no action needed
+      // Framer Motion will return the element to its original position
+      return;
+    }
+
+    const sourceQuadrant = state.sourceQuadrant;
+    const targetQuadrant = state.targetQuadrant;
+    const targetIndex = state.targetIndex ?? 0;
+
+    // Play sound on successful drop
+    sfx.dragDrop();
+
+    // Determine if cross-quadrant or same-quadrant reorder
+    if (sourceQuadrant === targetQuadrant) {
+      await reorderTaskWithinQuadrant(state.draggedTaskId, targetIndex);
+    } else {
+      await moveTaskToQuadrant(state.draggedTaskId, targetQuadrant, targetIndex);
+    }
+  };
 
   const [modalState, setModalState] = useState<{
     open: boolean;
@@ -64,19 +102,19 @@ export default function Matrix() {
   );
 
   const q1 = useMemo(
-    () => active.filter((t) => t.isUrgent && t.isImportant).sort(sortOldest),
+    () => active.filter((t) => t.isUrgent && t.isImportant).sort(sortByOrderThenDate),
     [active]
   );
   const q2 = useMemo(
-    () => active.filter((t) => !t.isUrgent && t.isImportant).sort(sortOldest),
+    () => active.filter((t) => !t.isUrgent && t.isImportant).sort(sortByOrderThenDate),
     [active]
   );
   const q3 = useMemo(
-    () => active.filter((t) => t.isUrgent && !t.isImportant).sort(sortOldest),
+    () => active.filter((t) => t.isUrgent && !t.isImportant).sort(sortByOrderThenDate),
     [active]
   );
   const q4 = useMemo(
-    () => active.filter((t) => !t.isUrgent && !t.isImportant).sort(sortOldest),
+    () => active.filter((t) => !t.isUrgent && !t.isImportant).sort(sortByOrderThenDate),
     [active]
   );
 
@@ -104,8 +142,17 @@ export default function Matrix() {
                       const item = activeTaskId
                         ? q1.find((t) => t.id === activeTaskId)
                         : q1[0];
+                      const itemIndex = item ? q1.findIndex((t) => t.id === item.id) : 0;
                       return item ? (
-                        <TodoCard key={item.id} task={item} />
+                        <TodoCard
+                          key={item.id}
+                          task={item}
+                          quadrant="Q1"
+                          index={itemIndex}
+                          onDragStart={dragAndDrop.onDragStart}
+                          onDrag={dragAndDrop.onDrag}
+                          onDragEnd={handleDragEnd}
+                        />
                       ) : null;
                     })()}
                   </AnimatePresence>
@@ -158,8 +205,17 @@ export default function Matrix() {
                   animate="animate"
                 >
                   <AnimatePresence initial={false}>
-                    {q1.map((t) => (
-                      <TodoCard key={t.id} task={t} className="mb-1.5" />
+                    {q1.map((t, index) => (
+                      <TodoCard
+                        key={t.id}
+                        task={t}
+                        quadrant="Q1"
+                        index={index}
+                        onDragStart={dragAndDrop.onDragStart}
+                        onDrag={dragAndDrop.onDrag}
+                        onDragEnd={handleDragEnd}
+                        className="mb-1.5"
+                      />
                     ))}
                   </AnimatePresence>
                 </motion.div>
@@ -175,6 +231,8 @@ export default function Matrix() {
               emptyMessage="Nothing urgent and important right now"
               quadrantId="q1"
               tasks={q1}
+              isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q1"}
+              setQuadrantRef={dragAndDrop.setQuadrantRef}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: true, important: true })
               }
@@ -184,9 +242,31 @@ export default function Matrix() {
                 animate="animate"
               >
                 <AnimatePresence initial={false}>
-                  {q1.map((t) => (
-                    <TodoCard key={t.id} task={t} className="mb-1.5" />
+                  {q1.map((t, index) => (
+                    <div key={t.id}>
+                      {/* Show gap indicator when dragging over this position */}
+                      {dragAndDrop.dragState.isDragging &&
+                        dragAndDrop.dragState.targetQuadrant === "Q1" &&
+                        dragAndDrop.dragState.targetIndex === index && (
+                          <div className="h-1 bg-blue-500 rounded-full mb-1.5 animate-pulse" />
+                        )}
+                      <TodoCard
+                        task={t}
+                        quadrant="Q1"
+                        index={index}
+                        onDragStart={dragAndDrop.onDragStart}
+                        onDrag={dragAndDrop.onDrag}
+                        onDragEnd={handleDragEnd}
+                        className="mb-1.5"
+                      />
+                    </div>
                   ))}
+                  {/* Show gap at end if dropping after all tasks */}
+                  {dragAndDrop.dragState.isDragging &&
+                    dragAndDrop.dragState.targetQuadrant === "Q1" &&
+                    dragAndDrop.dragState.targetIndex === q1.length && (
+                      <div key="gap-end" className="h-1 bg-blue-500 rounded-full animate-pulse" />
+                    )}
                 </AnimatePresence>
               </motion.div>
             </Quadrant>
@@ -197,6 +277,8 @@ export default function Matrix() {
               emptyMessage="Plan important tasks without urgency"
               quadrantId="q2"
               tasks={q2}
+              isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q2"}
+              setQuadrantRef={dragAndDrop.setQuadrantRef}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: false, important: true })
               }
@@ -206,9 +288,29 @@ export default function Matrix() {
                 animate="animate"
               >
                 <AnimatePresence initial={false}>
-                  {q2.map((t) => (
-                    <TodoCard key={t.id} task={t} className="mb-1.5" />
+                  {q2.map((t, index) => (
+                    <div key={t.id}>
+                      {dragAndDrop.dragState.isDragging &&
+                        dragAndDrop.dragState.targetQuadrant === "Q2" &&
+                        dragAndDrop.dragState.targetIndex === index && (
+                          <div className="h-1 bg-blue-500 rounded-full mb-1.5 animate-pulse" />
+                        )}
+                      <TodoCard
+                        task={t}
+                        quadrant="Q2"
+                        index={index}
+                        onDragStart={dragAndDrop.onDragStart}
+                        onDrag={dragAndDrop.onDrag}
+                        onDragEnd={handleDragEnd}
+                        className="mb-1.5"
+                      />
+                    </div>
                   ))}
+                  {dragAndDrop.dragState.isDragging &&
+                    dragAndDrop.dragState.targetQuadrant === "Q2" &&
+                    dragAndDrop.dragState.targetIndex === q2.length && (
+                      <div key="gap-end" className="h-1 bg-blue-500 rounded-full animate-pulse" />
+                    )}
                 </AnimatePresence>
               </motion.div>
             </Quadrant>
@@ -219,6 +321,8 @@ export default function Matrix() {
               emptyMessage="Urgent but not important—delegate if possible"
               quadrantId="q3"
               tasks={q3}
+              isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q3"}
+              setQuadrantRef={dragAndDrop.setQuadrantRef}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: true, important: false })
               }
@@ -228,9 +332,29 @@ export default function Matrix() {
                 animate="animate"
               >
                 <AnimatePresence initial={false}>
-                  {q3.map((t) => (
-                    <TodoCard key={t.id} task={t} className="mb-1.5" />
+                  {q3.map((t, index) => (
+                    <div key={t.id}>
+                      {dragAndDrop.dragState.isDragging &&
+                        dragAndDrop.dragState.targetQuadrant === "Q3" &&
+                        dragAndDrop.dragState.targetIndex === index && (
+                          <div className="h-1 bg-blue-500 rounded-full mb-1.5 animate-pulse" />
+                        )}
+                      <TodoCard
+                        task={t}
+                        quadrant="Q3"
+                        index={index}
+                        onDragStart={dragAndDrop.onDragStart}
+                        onDrag={dragAndDrop.onDrag}
+                        onDragEnd={handleDragEnd}
+                        className="mb-1.5"
+                      />
+                    </div>
                   ))}
+                  {dragAndDrop.dragState.isDragging &&
+                    dragAndDrop.dragState.targetQuadrant === "Q3" &&
+                    dragAndDrop.dragState.targetIndex === q3.length && (
+                      <div key="gap-end" className="h-1 bg-blue-500 rounded-full animate-pulse" />
+                    )}
                 </AnimatePresence>
               </motion.div>
             </Quadrant>
@@ -241,6 +365,8 @@ export default function Matrix() {
               emptyMessage="Not urgent and not important—consider dropping"
               quadrantId="q4"
               tasks={q4}
+              isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q4"}
+              setQuadrantRef={dragAndDrop.setQuadrantRef}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: false, important: false })
               }
@@ -250,9 +376,29 @@ export default function Matrix() {
                 animate="animate"
               >
                 <AnimatePresence initial={false}>
-                  {q4.map((t) => (
-                    <TodoCard key={t.id} task={t} className="mb-1.5" />
+                  {q4.map((t, index) => (
+                    <div key={t.id}>
+                      {dragAndDrop.dragState.isDragging &&
+                        dragAndDrop.dragState.targetQuadrant === "Q4" &&
+                        dragAndDrop.dragState.targetIndex === index && (
+                          <div className="h-1 bg-blue-500 rounded-full mb-1.5 animate-pulse" />
+                        )}
+                      <TodoCard
+                        task={t}
+                        quadrant="Q4"
+                        index={index}
+                        onDragStart={dragAndDrop.onDragStart}
+                        onDrag={dragAndDrop.onDrag}
+                        onDragEnd={handleDragEnd}
+                        className="mb-1.5"
+                      />
+                    </div>
                   ))}
+                  {dragAndDrop.dragState.isDragging &&
+                    dragAndDrop.dragState.targetQuadrant === "Q4" &&
+                    dragAndDrop.dragState.targetIndex === q4.length && (
+                      <div key="gap-end" className="h-1 bg-blue-500 rounded-full animate-pulse" />
+                    )}
                 </AnimatePresence>
               </motion.div>
             </Quadrant>

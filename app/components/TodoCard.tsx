@@ -19,12 +19,23 @@ import EditTodoModal from "./EditTodoModal";
 import DeleteTodoModal from "./DeleteTodoModal";
 import { useReward } from "react-rewards";
 import { CONFETTI_ID } from "./Confetti";
+import type { QuadrantId } from "../hooks/useDragAndDrop";
 
 export default function TodoCard({
   task,
+  quadrant,
+  index,
+  onDragStart,
+  onDrag,
+  onDragEnd,
   className = "",
 }: {
   task: Task;
+  quadrant: QuadrantId;
+  index: number;
+  onDragStart?: (taskId: string, quadrant: QuadrantId, index: number) => void;
+  onDrag?: (x: number, y: number) => void;
+  onDragEnd?: () => void;
   className?: string;
 }) {
   const { toggleUrgent, toggleImportant, complete, remove, celebrate } =
@@ -35,6 +46,7 @@ export default function TodoCard({
   const [hovered, setHovered] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const { reward } = useReward(CONFETTI_ID, "confetti", {
     lifetime: 3000,
     angle: 270,
@@ -43,8 +55,40 @@ export default function TodoCard({
 
   return (
     <>
-      <motion.div
-        layout
+                  <motion.div
+        drag
+        dragSnapToOrigin
+        dragMomentum={false}
+        dragTransition={{ bounceStiffness: 600, bounceDamping: 30 }}
+        onDragStart={() => {
+          setIsDragging(true);
+          if (onDragStart) {
+            onDragStart(task.id, quadrant, index);
+            sfx.dragStart();
+          }
+        }}
+        onDrag={(_event, info) => {
+          if (onDrag) {
+            onDrag(info.point.x, info.point.y);
+          }
+        }}
+        onDragEnd={() => {
+          if (onDragEnd) {
+            onDragEnd();
+          }
+          // Delay resetting isDragging to prevent onClick from firing
+          setTimeout(() => setIsDragging(false), 100);
+        }}
+        whileDrag={
+          reduced
+            ? undefined
+            : {
+                scale: 1.05,
+                boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+                zIndex: 1000,
+              }
+        }
+        data-task-id={task.id}
         tabIndex={0}
         onKeyDown={async (e) => {
           if (e.key.toLowerCase() === "c") {
@@ -68,7 +112,11 @@ export default function TodoCard({
         whileHover={reduced ? undefined : { scale: 1.01 }}
         onHoverStart={() => setHovered(true)}
         onHoverEnd={() => setHovered(false)}
-        onClick={() => setEditOpen(true)}
+        onClick={() => {
+          if (!isDragging) {
+            setEditOpen(true);
+          }
+        }}
         className={`group flex items-center justify-between rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-[var(--shadow-soft)] transition-colors cursor-pointer ${className}`}
       >
         <div className="min-w-0 pr-2">

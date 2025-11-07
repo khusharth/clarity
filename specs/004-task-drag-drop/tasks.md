@@ -19,10 +19,10 @@
 
 ### Schema & Database Migration
 
-- [ ] **T001** [P] [Setup] Extend Task interface with `sortOrder: number | null` field in `app/lib/schema.ts`
-- [ ] **T002** [P] [Setup] Update Dexie schema to v2 with `sortOrder` index in `app/lib/db.ts`
-- [ ] **T003** [P] [Setup] Verify schema migration in IndexedDB using browser DevTools
-- [ ] **T004** [P] [Setup] Create placeholder sound files `public/sounds/drag-start.mp3` and `public/sounds/drag-drop.mp3` (add actual audio later)
+- [X] **T001** [P] [Setup] Extend Task interface with `sortOrder: number | null` field in `app/lib/schema.ts`
+- [X] **T002** [P] [Setup] Update Dexie schema to v2 with `sortOrder` index in `app/lib/db.ts`
+- [X] **T003** [P] [Setup] Verify schema migration in IndexedDB using browser DevTools
+- [X] **T004** [P] [Setup] Create placeholder sound files `public/sounds/drag-start.mp3` and `public/sounds/drag-drop.mp3` (add actual audio later)
 
 ---
 
@@ -30,26 +30,26 @@
 
 ### Sound System
 
-- [ ] **T005** [P] [Foundation] Extend `useSfx` hook with `dragStart()` method playing `/sounds/drag-start.mp3` (volume: 0.3, duration: ~100ms) in `app/hooks/useSfx.ts`
-- [ ] **T006** [P] [Foundation] Extend `useSfx` hook with `dragDrop()` method playing `/sounds/drag-drop.mp3` (volume: 0.35, duration: ~120ms) in `app/hooks/useSfx.ts`
-- [ ] **T007** [Foundation] Add beep fallback for both sound effects using existing beep() function in `app/hooks/useSfx.ts`
+- [X] **T005** [P] [Foundation] Extend `useSfx` hook with `dragStart()` method playing `/sounds/drag-start.mp3` (volume: 0.3, duration: ~100ms) in `app/hooks/useSfx.ts`
+- [X] **T006** [P] [Foundation] Extend `useSfx` hook with `dragDrop()` method playing `/sounds/drag-drop.mp3` (volume: 0.35, duration: ~120ms) in `app/hooks/useSfx.ts`
+- [X] **T007** [Foundation] Add beep fallback for both sound effects using existing beep() function in `app/hooks/useSfx.ts`
 
 ### Drag State Management
 
-- [ ] **T008** [P] [Foundation] Create `useDragAndDrop` hook with DragState interface in `app/hooks/useDragAndDrop.ts`
-- [ ] **T009** [P] [Foundation] Implement `onDragStart`, `onDrag`, `onDragEnd` handlers with quadrant ref tracking in `app/hooks/useDragAndDrop.ts`
-- [ ] **T010** [P] [Foundation] Implement drop zone detection using bounding box intersection logic in `app/hooks/useDragAndDrop.ts`
+- [X] **T008** [P] [Foundation] Create `useDragAndDrop` hook with DragState interface in `app/hooks/useDragAndDrop.ts`
+- [X] **T009** [P] [Foundation] Implement `onDragStart`, `onDrag`, `onDragEnd` handlers with quadrant ref tracking in `app/hooks/useDragAndDrop.ts`
+- [X] **T010** [P] [Foundation] Implement drop zone detection using bounding box intersection logic in `app/hooks/useDragAndDrop.ts`
 
 ### Store Actions
 
-- [ ] **T011** [P] [Foundation] Implement `reorderTaskWithinQuadrant(taskId, newIndex)` action with fractional indexing in `app/store/todos.ts`
-- [ ] **T012** [P] [Foundation] Implement `moveTaskToQuadrant(taskId, targetQuadrant, targetIndex)` action with urgency/importance mapping in `app/store/todos.ts`
-- [ ] **T013** [Foundation] Implement `cancelDrag()` action to reset drag state without persisting in `app/store/todos.ts`
-- [ ] **T014** [P] [Foundation] Update `saveTask()` to persist `sortOrder` field to IndexedDB in `app/lib/persistence.ts`
+- [X] **T011** [P] [Foundation] Implement `reorderTaskWithinQuadrant(taskId, newIndex)` action with fractional indexing in `app/store/todos.ts`
+- [X] **T012** [P] [Foundation] Implement `moveTaskToQuadrant(taskId, targetQuadrant, targetIndex)` action with urgency/importance mapping in `app/store/todos.ts`
+- [X] **T013** [Foundation] Implement `cancelDrag()` action to reset drag state without persisting in `app/store/todos.ts`
+- [X] **T014** [P] [Foundation] Update `saveTask()` to persist `sortOrder` field to IndexedDB in `app/lib/persistence.ts`
 
 ### Sorting Logic
 
-- [ ] **T015** [P] [Foundation] Update task sorting logic to `ORDER BY sortOrder ASC NULLS LAST, createdAt ASC` in `app/store/todos.ts`
+- [X] **T015** [P] [Foundation] Update task sorting logic to `ORDER BY sortOrder ASC NULLS LAST, createdAt ASC` in `app/store/todos.ts`
 
 ---
 
@@ -57,28 +57,28 @@
 
 ### Component Enhancements
 
-- [ ] **T016** [P] [US1] Add `drag`, `dragMomentum={false}`, `dragElastic={0}` props to TodoCard motion.div in `app/components/TodoCard.tsx`
-- [ ] **T017** [P] [US1] Implement `onDragStart` handler calling `useDragAndDrop().onDragStart()` and `sfx.dragStart()` in `app/components/TodoCard.tsx`
-- [ ] **T018** [P] [US1] Implement `onDrag` handler calling `useDragAndDrop().onDrag(x, y)` in `app/components/TodoCard.tsx`
-- [ ] **T019** [P] [US1] Implement `onDragEnd` handler calling `moveTaskToQuadrant()` and `sfx.dragDrop()` in `app/components/TodoCard.tsx`
-- [ ] **T020** [P] [US1] Add `whileDrag` animation with scale: 1.05, boxShadow, zIndex: 1000 in `app/components/TodoCard.tsx`
+- [X] **T016** [P] [US1] Add `drag`, `dragMomentum={false}`, `dragElastic={0}` props to TodoCard motion.div in `app/components/TodoCard.tsx`
+- [X] **T017** [P] [US1] Implement `onDragStart` handler calling `useDragAndDrop().onDragStart()` and `sfx.dragStart()` in `app/components/TodoCard.tsx`
+- [X] **T018** [P] [US1] Implement `onDrag` handler calling `useDragAndDrop().onDrag(x, y)` in `app/components/TodoCard.tsx`
+- [X] **T019** [P] [US1] Implement `onDragEnd` handler calling `moveTaskToQuadrant()` and `sfx.dragDrop()` in `app/components/TodoCard.tsx`
+- [X] **T020** [P] [US1] Add `whileDrag` animation with scale: 1.05, boxShadow, zIndex: 1000 in `app/components/TodoCard.tsx`
 
 ### Drop Zone Visual Feedback
 
-- [ ] **T021** [P] [US1] Add quadrantRef registration in Quadrant component using `useDragAndDrop().setQuadrantRef()` in `app/components/Quadrant.tsx`
-- [ ] **T022** [P] [US1] Apply highlight styles (ring-2, ring-blue-500) when `isDropTarget === true` in `app/components/Quadrant.tsx`
-- [ ] **T023** [US1] Handle empty quadrant drop case by highlighting entire quadrant area in `app/components/Quadrant.tsx`
+- [X] **T021** [P] [US1] Add quadrantRef registration in Quadrant component using `useDragAndDrop().setQuadrantRef()` in `app/components/Quadrant.tsx`
+- [X] **T022** [P] [US1] Apply highlight styles (ring-2, ring-blue-500) when `isDropTarget === true` in `app/components/Quadrant.tsx`
+- [X] **T023** [US1] Handle empty quadrant drop case by highlighting entire quadrant area in `app/components/Quadrant.tsx`
 
 ### Orchestration
 
-- [ ] **T024** [P] [US1] Integrate `useDragAndDrop` hook in Matrix component in `app/components/Matrix.tsx`
-- [ ] **T025** [P] [US1] Pass `dragState` to all 4 Quadrant components for drop target detection in `app/components/Matrix.tsx`
-- [ ] **T026** [US1] Implement drag cancellation when released outside all quadrants in `app/components/Matrix.tsx`
+- [X] **T024** [P] [US1] Integrate `useDragAndDrop` hook in Matrix component in `app/components/Matrix.tsx`
+- [X] **T025** [P] [US1] Pass `dragState` to all 4 Quadrant components for drop target detection in `app/components/Matrix.tsx`
+- [X] **T026** [US1] Implement drag cancellation when released outside all quadrants in `app/components/Matrix.tsx`
 
 ### Accessibility
 
-- [ ] **T027** [P] [US1] Respect `useAppReducedMotion()` preference: disable animations, keep drag-and-drop functional in `app/components/TodoCard.tsx`
-- [ ] **T028** [US1] Ensure drag state changes happen instantly when reduced-motion is active in `app/components/TodoCard.tsx`
+- [X] **T027** [P] [US1] Respect `useAppReducedMotion()` preference: disable animations, keep drag-and-drop functional in `app/components/TodoCard.tsx`
+- [X] **T028** [US1] Ensure drag state changes happen instantly when reduced-motion is active in `app/components/TodoCard.tsx`
 
 ---
 
@@ -86,14 +86,14 @@
 
 ### Gap Indicators
 
-- [ ] **T029** [US2] Calculate `targetIndex` during drag over same quadrant in `app/hooks/useDragAndDrop.ts`
-- [ ] **T030** [US2] Render gap indicator (2px blue bar) at target insertion position in `app/components/Quadrant.tsx`
-- [ ] **T031** [US2] Update gap position dynamically as drag moves within quadrant in `app/components/Quadrant.tsx`
+- [X] **T029** [US2] Calculate `targetIndex` during drag over same quadrant in `app/hooks/useDragAndDrop.ts`
+- [X] **T030** [US2] Render gap indicator (2px blue bar) at target insertion position in `app/components/Quadrant.tsx`
+- [X] **T031** [US2] Update gap position dynamically as drag moves within quadrant in `app/components/Quadrant.tsx`
 
 ### Reorder Logic
 
-- [ ] **T032** [US2] Call `reorderTaskWithinQuadrant()` on drop within same quadrant in `app/components/TodoCard.tsx`
-- [ ] **T033** [US2] Animate surrounding tasks smoothly to make space for dropped task in `app/components/Quadrant.tsx`
+- [X] **T032** [US2] Call `reorderTaskWithinQuadrant()` on drop within same quadrant in `app/components/TodoCard.tsx`
+- [X] **T033** [US2] Animate surrounding tasks smoothly to make space for dropped task in `app/components/Quadrant.tsx`
 
 ### Auto-Scroll
 
@@ -127,10 +127,10 @@
 
 ### Edge Case Handling
 
-- [ ] **T044** [Edge Cases] Handle null `sortOrder` values by assigning fractional index on first reorder in `app/store/todos.ts`
-- [ ] **T045** [Edge Cases] Prevent multiple simultaneous drag operations using drag state lock in `app/hooks/useDragAndDrop.ts`
-- [ ] **T046** [Edge Cases] Handle rapid successive drags with debouncing logic in `app/components/TodoCard.tsx`
-- [ ] **T047** [Edge Cases] Return task to original position with animation when cancelled in `app/components/TodoCard.tsx`
+- [X] **T044** [Edge Cases] Handle null `sortOrder` values by assigning fractional index on first reorder in `app/store/todos.ts`
+- [X] **T045** [Edge Cases] Prevent multiple simultaneous drag operations using drag state lock in `app/hooks/useDragAndDrop.ts`
+- [X] **T046** [Edge Cases] Handle rapid successive drags with debouncing logic in `app/components/TodoCard.tsx`
+- [X] **T047** [Edge Cases] Return task to original position with animation when cancelled in `app/components/TodoCard.tsx`
 
 ### Performance Optimization
 
