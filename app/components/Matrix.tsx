@@ -93,6 +93,8 @@ export default function Matrix() {
                   colorVar="--q1"
                   isEmpty={q1.length === 0}
                   emptyMessage="Nothing urgent and important right now"
+                  quadrantId="q1"
+                  tasks={q1}
                   onEmptyClick={() =>
                     openModalWithPreset({ urgent: true, important: true })
                   }
@@ -145,6 +147,8 @@ export default function Matrix() {
                 colorVar="--q1"
                 isEmpty={q1.length === 0}
                 emptyMessage="Nothing urgent and important right now"
+                quadrantId="q1"
+                tasks={q1}
                 onEmptyClick={() =>
                   openModalWithPreset({ urgent: true, important: true })
                 }
@@ -169,6 +173,8 @@ export default function Matrix() {
               colorVar="--q1"
               isEmpty={q1.length === 0}
               emptyMessage="Nothing urgent and important right now"
+              quadrantId="q1"
+              tasks={q1}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: true, important: true })
               }
@@ -189,6 +195,8 @@ export default function Matrix() {
               colorVar="--q2"
               isEmpty={q2.length === 0}
               emptyMessage="Plan important tasks without urgency"
+              quadrantId="q2"
+              tasks={q2}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: false, important: true })
               }
@@ -209,6 +217,8 @@ export default function Matrix() {
               colorVar="--q3"
               isEmpty={q3.length === 0}
               emptyMessage="Urgent but not important—delegate if possible"
+              quadrantId="q3"
+              tasks={q3}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: true, important: false })
               }
@@ -229,6 +239,8 @@ export default function Matrix() {
               colorVar="--q4"
               isEmpty={q4.length === 0}
               emptyMessage="Not urgent and not important—consider dropping"
+              quadrantId="q4"
+              tasks={q4}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: false, important: false })
               }

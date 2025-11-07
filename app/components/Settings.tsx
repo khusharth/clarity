@@ -22,6 +22,10 @@ export default function Settings(props: { className?: string }) {
     setSoundEnabled,
     themePreference,
     setThemePreference,
+    showOverallCount,
+    setShowOverallCount,
+    showQuadrantCounts,
+    setShowQuadrantCounts,
     exportJSON,
     importJSON,
   } = useTodos();
@@ -58,43 +62,84 @@ export default function Settings(props: { className?: string }) {
         title="Settings"
         description="Configure your preferences"
       >
-        <div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-3 items-center text-sm">
-          <span>Theme</span>
-          <Select
-            value={themePreference}
-            onValueChange={(value: string) =>
-              setThemePreference(value as "light" | "dark")
-            }
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="space-y-6">
+          {/* General Section */}
+          <div>
+            <h3 className="text-sm font-semibold mb-3 text-[rgb(var(--color-text))]">
+              General
+            </h3>
+            <div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-3 items-center text-sm">
+              <span>Theme</span>
+              <Select
+                value={themePreference}
+                onValueChange={(value: string) =>
+                  setThemePreference(value as "light" | "dark")
+                }
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                </SelectContent>
+              </Select>
 
-          <span>Reduce motion</span>
-          <div className="flex justify-end">
-            <Toggle
-              pressed={reducedMotionPref}
-              onPressedChange={setReducedMotionPref}
-              size="sm"
-              aria-label="Toggle reduced motion"
-            />
+              <span>Reduce motion</span>
+              <div className="flex justify-end">
+                <Toggle
+                  pressed={reducedMotionPref}
+                  onPressedChange={setReducedMotionPref}
+                  size="sm"
+                  aria-label="Toggle reduced motion"
+                />
+              </div>
+
+              <span>Sound effects</span>
+              <div className="flex justify-end">
+                <Toggle
+                  pressed={soundEnabled}
+                  onPressedChange={setSoundEnabled}
+                  size="sm"
+                  aria-label="Toggle sound effects"
+                />
+              </div>
+            </div>
           </div>
 
-          <span>Sound effects</span>
-          <div className="flex justify-end">
-            <Toggle
-              pressed={soundEnabled}
-              onPressedChange={setSoundEnabled}
-              size="sm"
-              aria-label="Toggle sound effects"
-            />
+          {/* Divider */}
+          <div className="border-t border-[rgb(var(--color-border))]" />
+
+          {/* Tasks Section */}
+          <div>
+            <h3 className="text-sm font-semibold mb-3 text-[rgb(var(--color-text))]">
+              Tasks
+            </h3>
+            <div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-3 items-center text-sm">
+              <span>Show Overall Total</span>
+              <div className="flex justify-end">
+                <Toggle
+                  pressed={showOverallCount}
+                  onPressedChange={setShowOverallCount}
+                  size="sm"
+                  aria-label="Toggle overall task count"
+                />
+              </div>
+
+              <span>Show Per-Quadrant Totals</span>
+              <div className="flex justify-end">
+                <Toggle
+                  pressed={showQuadrantCounts}
+                  onPressedChange={setShowQuadrantCounts}
+                  size="sm"
+                  aria-label="Toggle per-quadrant task counts"
+                />
+              </div>
+            </div>
           </div>
-          <div className="col-span-2 mt-2 flex items-center justify-between">
+
+          {/* Import/Export Section */}
+          <div className="border-t border-[rgb(var(--color-border))] pt-4 flex items-center justify-between">
             <Button
               variant="outline"
               size="sm"
@@ -139,7 +184,9 @@ export default function Settings(props: { className?: string }) {
               </Button>
             </div>
           </div>
-          <div className="col-span-2 mt-2 flex justify-end">
+
+          {/* Close Button */}
+          <div className="flex justify-end pt-2">
             <Button variant="outline" size="sm" onClick={() => setOpen(false)}>
               Close
             </Button>
