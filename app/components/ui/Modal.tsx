@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as RadixDialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSfx } from "../../hooks/useSfx";
 import { useIsMobile } from "../../hooks/useMediaQuery";
 import { useAppReducedMotion } from "../../hooks/useAppReducedMotion";
@@ -92,7 +92,6 @@ export function Modal({
   const reducedMotion = useAppReducedMotion();
   const isBottomSheet =
     variant === "bottomsheet" || (variant === "auto" && isMobile);
-  const dragConstraintsRef = useRef<HTMLDivElement>(null);
 
   // Play sound effect on open
   useEffect(() => {
@@ -131,7 +130,6 @@ export function Modal({
             <div className="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center pointer-events-none">
               <RadixDialog.Content asChild forceMount>
                 <motion.div
-                  ref={dragConstraintsRef}
                   className={cn(
                     "w-full max-w-md rounded-t-xl sm:rounded-xl p-6 pointer-events-auto",
                     "bg-[rgb(var(--color-surface))] text-[rgb(var(--color-fg))]",
@@ -165,7 +163,8 @@ export function Modal({
                   }}
                   {...(isBottomSheet && {
                     drag: "y",
-                    dragConstraints: dragConstraintsRef,
+                    dragConstraints: { top: 0, bottom: 0 },
+                    dragElastic: { top: 0, bottom: 0.2 },
                     onDragEnd: (e, info) => {
                       if (info.offset.y > DRAG_THRESHOLD) {
                         onClose();
