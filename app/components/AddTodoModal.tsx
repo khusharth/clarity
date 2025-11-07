@@ -8,27 +8,32 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 
-type AddTodoModalProps = { open: boolean; onCloseAction: () => void };
+type AddTodoModalProps = {
+  open: boolean;
+  onCloseAction: () => void;
+  initialUrgent?: boolean;
+  initialImportant?: boolean;
+};
 
 export default function AddTodoModal(props: AddTodoModalProps) {
-  const { open, onCloseAction } = props;
+  const { open, onCloseAction, initialUrgent, initialImportant } = props;
   const { add } = useTodos();
   const sfx = useSfx();
   const toast = useToast();
   const [text, setText] = useState("");
-  const [urgent, setUrgent] = useState(false);
-  const [important, setImportant] = useState(false);
+  const [urgent, setUrgent] = useState(initialUrgent ?? false);
+  const [important, setImportant] = useState(initialImportant ?? false);
 
   // Reset fields when opened (deferred to next frame to satisfy lint rules)
   useEffect(() => {
     if (!open) return;
     const id = requestAnimationFrame(() => {
       setText("");
-      setUrgent(false);
-      setImportant(false);
+      setUrgent(initialUrgent ?? false);
+      setImportant(initialImportant ?? false);
     });
     return () => cancelAnimationFrame(id);
-  }, [open]);
+  }, [open, initialUrgent, initialImportant]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 

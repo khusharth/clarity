@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Quadrant from "./Quadrant";
 import TodoCard from "./TodoCard";
 import { useTodos } from "../store/todos";
@@ -10,6 +10,7 @@ import { useReducedMotion } from "../hooks/useReducedMotion";
 import FocusControls from "./FocusControls";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import AddTodoModal from "./AddTodoModal";
 
 function sortOldest(a: Task, b: Task) {
   return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
@@ -28,6 +29,30 @@ export default function Matrix() {
     prevFocusTask,
     setActiveTask,
   } = useTodos();
+
+  const [modalState, setModalState] = useState<{
+    open: boolean;
+    urgent: boolean;
+    important: boolean;
+  }>({
+    open: false,
+    urgent: false,
+    important: false,
+  });
+
+  const openModalWithPreset = ({
+    urgent,
+    important,
+  }: {
+    urgent: boolean;
+    important: boolean;
+  }) => {
+    setModalState({ open: true, urgent, important });
+  };
+
+  const closeModal = () => {
+    setModalState({ open: false, urgent: false, important: false });
+  };
 
   useEffect(() => {
     if (!isHydrated) void hydrate();
@@ -68,6 +93,9 @@ export default function Matrix() {
                   colorVar="--q1"
                   isEmpty={q1.length === 0}
                   emptyMessage="Nothing urgent and important right now"
+                  onEmptyClick={() =>
+                    openModalWithPreset({ urgent: true, important: true })
+                  }
                 >
                   <AnimatePresence mode="wait" initial={false}>
                     {(() => {
@@ -117,6 +145,9 @@ export default function Matrix() {
                 colorVar="--q1"
                 isEmpty={q1.length === 0}
                 emptyMessage="Nothing urgent and important right now"
+                onEmptyClick={() =>
+                  openModalWithPreset({ urgent: true, important: true })
+                }
               >
                 <motion.div
                   variants={reduced ? undefined : listVariants}
@@ -138,6 +169,9 @@ export default function Matrix() {
               colorVar="--q1"
               isEmpty={q1.length === 0}
               emptyMessage="Nothing urgent and important right now"
+              onEmptyClick={() =>
+                openModalWithPreset({ urgent: true, important: true })
+              }
             >
               <motion.div
                 variants={reduced ? undefined : listVariants}
@@ -155,6 +189,9 @@ export default function Matrix() {
               colorVar="--q2"
               isEmpty={q2.length === 0}
               emptyMessage="Plan important tasks without urgency"
+              onEmptyClick={() =>
+                openModalWithPreset({ urgent: false, important: true })
+              }
             >
               <motion.div
                 variants={reduced ? undefined : listVariants}
@@ -172,6 +209,9 @@ export default function Matrix() {
               colorVar="--q3"
               isEmpty={q3.length === 0}
               emptyMessage="Urgent but not important—delegate if possible"
+              onEmptyClick={() =>
+                openModalWithPreset({ urgent: true, important: false })
+              }
             >
               <motion.div
                 variants={reduced ? undefined : listVariants}
@@ -189,6 +229,9 @@ export default function Matrix() {
               colorVar="--q4"
               isEmpty={q4.length === 0}
               emptyMessage="Not urgent and not important—consider dropping"
+              onEmptyClick={() =>
+                openModalWithPreset({ urgent: false, important: false })
+              }
             >
               <motion.div
                 variants={reduced ? undefined : listVariants}
@@ -204,6 +247,12 @@ export default function Matrix() {
           </div>
         )}
       </motion.div>
+      <AddTodoModal
+        open={modalState.open}
+        onCloseAction={closeModal}
+        initialUrgent={modalState.urgent}
+        initialImportant={modalState.important}
+      />
     </div>
   );
 }
