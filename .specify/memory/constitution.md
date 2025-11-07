@@ -1,12 +1,12 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.0 → 1.1.0
+- Version change: 1.1.0 → 1.2.0
 - Modified principles: none
-- Added sections: Core Principles VI (Component Reuse & Composition)
+- Added sections: Core Principles VII (Clean Code & Maintainability)
 - Removed sections: none
 - Templates requiring updates:
   ✅ .specify/templates/plan-template.md (Constitution gates aligned)
-  ✅ .specify/templates/tasks-template.md (Component reuse guidance added)
+  ✅ .specify/templates/tasks-template.md (Clean code and refactoring guidance added)
   ✅ .specify/templates/spec-template.md (no change needed)
   ✅ .specify/templates/agent-file-template.md (no change needed)
 - Follow-up TODOs: none
@@ -78,6 +78,23 @@ Build on existing foundations; avoid reinventing primitives.
   consistent patterns. Reuse reduces bundle size, ensures accessibility, and maintains
   a coherent component library without duplicating primitives.
 
+### VII. Clean Code & Maintainability
+
+Code MUST be readable, reusable, and easy to modify.
+
+- Functions and components MUST have a single, clear responsibility.
+- Functions using multiple parameters SHOULD consider using parameter objects for clarity.
+- Naming MUST be descriptive and self‑documenting; avoid abbreviations unless standard.
+- Duplicated logic MUST be extracted into reusable functions, hooks, or utilities.
+- Complex logic MUST be broken into smaller, testable units; avoid deeply nested code.
+- Magic numbers and strings MUST be replaced with named constants or configuration.
+- File organization MUST follow clear patterns: utilities in `lib/`, hooks in `hooks/`.
+- Code changes MUST be localized; refactor to minimize the blast radius of edits.
+- Comments SHOULD explain _why_, not _what_; code itself should be self‑explanatory.
+- Rationale: Readable code reduces cognitive load and onboarding time. Reusable
+  patterns prevent bugs by centralizing logic. Easy‑to‑edit code enables rapid
+  iteration without fear of breaking existing functionality.
+
 ## Architecture & Technology Constraints
 
 **Stack**: Next.js, React, Tailwind CSS (use versions pinned in the lockfile/package.json)
@@ -109,10 +126,11 @@ Build on existing foundations; avoid reinventing primitives.
 **Quality Gates**
 
 - Lint and typecheck MUST pass (`eslint`, `typescript`).
-- UI conforms to Core Principles I–VI; reviewers MUST verify against this constitution.
+- UI conforms to Core Principles I–VII; reviewers MUST verify against this constitution.
 - Animations validated: duration ranges, easing, and reduced‑motion behavior.
 - Accessibility checks for keyboard and contrast MUST pass.
 - Component reuse verified: no duplicate primitives; Radix UI via shadcn for new components.
+- Code readability validated: clear naming, single responsibilities, minimal nesting.
 
 **Workflow**
 
@@ -144,4 +162,4 @@ Build on existing foundations; avoid reinventing primitives.
 
 - Quarterly review for alignment with user needs; out‑of‑cycle amendments as needed.
 
-**Version**: 1.1.0 | **Ratified**: 2025-11-02 | **Last Amended**: 2025-11-06
+**Version**: 1.2.0 | **Ratified**: 2025-11-02 | **Last Amended**: 2025-11-07

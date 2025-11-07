@@ -39,6 +39,7 @@ Derived from `.specify/memory/constitution.md` (Clarity):
 - Local‑First: No network calls in core flows; local persistence; import/export JSON.
 - Fun Focus: Gamification optional (confetti/sound/streaks) with clear toggles.
 - Component Reuse: Check existing components first; build on Radix UI via shadcn patterns.
+- Clean Code: Readable, reusable code; single responsibilities; clear naming; localized changes.
 
 ## Project Structure
 

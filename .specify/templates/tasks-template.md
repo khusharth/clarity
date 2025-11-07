@@ -16,6 +16,9 @@ description: "Task list template for feature implementation"
 > accessibility checks (keyboard, contrast, reduced motion), and JSON import/export.
 > Before creating components, check `app/components/` for existing ones. Build new UI
 > components in `app/components/ui/` using Radix UI primitives via shadcn patterns.
+> Follow clean code practices: use descriptive names, single responsibilities, extract
+> reusable logic into `utils/` utilities or `hooks/`, avoid duplication, minimize nesting,
+> and ensure changes are localized to reduce refactoring impact.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -156,7 +159,7 @@ Examples of foundational tasks (adjust based on your project):
 **Purpose**: Improvements that affect multiple user stories
 
 - [ ] TXXX [P] Documentation updates in docs/
-- [ ] TXXX Code cleanup and refactoring
+- [ ] TXXX Code cleanup and refactoring (extract duplicated logic, improve naming, reduce nesting)
 - [ ] TXXX Performance optimization across all stories
 - [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
 - [ ] TXXX Security hardening
