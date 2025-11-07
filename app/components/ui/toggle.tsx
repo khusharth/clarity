@@ -35,7 +35,7 @@ export const Toggle = React.forwardRef<
     <RadixToggle.Root
       ref={ref}
       className={cn(
-        "relative inline-flex shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--color-accent))]/30 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer",
+        "relative inline-flex shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2  disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer",
         "data-[state=on]:bg-[rgb(var(--color-accent))] data-[state=off]:bg-[rgb(var(--color-border))]",
         sizes[size],
         className

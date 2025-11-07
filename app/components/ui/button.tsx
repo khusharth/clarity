@@ -32,13 +32,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background cursor-pointer";
     const variants: Record<Variant, string> = {
       default:
-        "bg-[rgb(var(--color-fg))] text-[rgb(var(--color-bg))] hover:bg-[rgb(var(--color-fg))]/90",
-      accent: "bg-[rgb(var(--color-accent))] text-white hover:brightness-110",
+        "bg-[rgb(var(--color-fg))] text-[rgb(var(--color-bg))] hover:bg-[rgb(var(--color-fg))]/90 focus-visible:ring-[rgb(var(--color-accent))]",
+      accent:
+        "bg-[rgb(var(--color-accent))] text-white hover:brightness-110 focus-visible:ring-[rgb(var(--color-fg))]",
       outline:
-        "border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] hover:brightness-95",
+        "border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] hover:brightness-95 focus-visible:ring-[rgb(var(--color-accent))]",
       destructive:
-        "bg-[rgb(var(--color-error))]/90 text-white hover:bg-[rgb(var(--color-error))]/80",
-      ghost: "bg-transparent hover:bg-[rgb(var(--color-surface))]/60",
+        "bg-[rgb(var(--color-error))]/90 text-white hover:bg-[rgb(var(--color-error))]/80 focus-visible:ring-[rgb(var(--color-error))]",
+      ghost:
+        "bg-transparent hover:bg-[rgb(var(--color-surface))]/60 focus-visible:ring-[rgb(var(--color-accent))]",
     };
 
     const isIconOnly = contentType === "icon-only";
