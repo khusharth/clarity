@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2025-11-06
 
 ## Active Technologies
+- TypeScript 5.x with React 19.x (004-task-drag-drop)
+- IndexedDB via Dexie for local task persistence (004-task-drag-drop)
 
 - TypeScript 5.x / React 19.x / Next.js 16.x + Zustand 4.5.5 (state), lucide-react 0.468.0 (icons), Framer Motion 12.x (animations), Tailwind CSS 4.x (styling) (003-task-count-display)
 
@@ -22,6 +24,7 @@ npm test && npm run lint
 TypeScript 5.x / React 19.x / Next.js 16.x: Follow standard conventions
 
 ## Recent Changes
+- 004-task-drag-drop: Added TypeScript 5.x with React 19.x
 
 - 003-task-count-display: Added TypeScript 5.x / React 19.x / Next.js 16.x + Zustand 4.5.5 (state), lucide-react 0.468.0 (icons), Framer Motion 12.x (animations), Tailwind CSS 4.x (styling)
 
