@@ -59,6 +59,7 @@ export default function TodoCard({
         drag
         dragSnapToOrigin
         dragMomentum={false}
+        dragElastic={0}
         dragTransition={{ bounceStiffness: 600, bounceDamping: 30 }}
         onDragStart={() => {
           setIsDragging(true);
@@ -106,7 +107,9 @@ export default function TodoCard({
           }
         }}
         initial={reduced ? false : { opacity: 0, y: 8 }}
-        animate={reduced ? undefined : { opacity: 1, y: 0 }}
+        // Explicit x and y 0 ensures on drag end animation, the card returns to correct position
+        // (in some edge cases framer-motion can miscalculate the final position - like dropping at edges of quad)
+        animate={reduced ? { x: 0, y: 0 } : { opacity: 1, x: 0, y: 0 }}
         exit={reduced ? undefined : { opacity: 0, y: -8 }}
         transition={{ duration: reduced ? 0 : 0.18 }}
         whileHover={reduced ? undefined : { scale: 1.01 }}
