@@ -43,6 +43,25 @@ export default function Matrix() {
   const sfx = useSfx();
   const dragAndDrop = useDragAndDrop();
 
+  // Prevent scroll on mobile during drag
+  useEffect(() => {
+    if (dragAndDrop.dragState.isDragging) {
+      // Save original styles
+      const originalOverflow = document.body.style.overflow;
+      const originalTouchAction = document.body.style.touchAction;
+
+      // Apply scroll prevention
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+
+      return () => {
+        // Restore on drag end
+        document.body.style.overflow = originalOverflow;
+        document.body.style.touchAction = originalTouchAction;
+      };
+    }
+  }, [dragAndDrop.dragState.isDragging]);
+
   const handleDragEnd = async () => {
     const state = dragAndDrop.onDragEnd();
 

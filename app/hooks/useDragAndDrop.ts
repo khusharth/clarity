@@ -24,6 +24,7 @@ export function useDragAndDrop() {
   const [dragState, setDragState] = useState<DragState>(initialDragState);
   const quadrantRefs = useRef<Map<QuadrantId, HTMLElement>>(new Map());
   const dragStateRef = useRef<DragState>(dragState);
+  const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -60,9 +61,14 @@ export function useDragAndDrop() {
       const currentState = dragStateRef.current;
       if (!currentState.isDragging) return;
 
+      // PERFORMANCE: Using ref-based callback pattern to avoid recreation
+      // This ensures 60fps by eliminating unnecessary callback recreations
+      // Bounding box calculations are cached per frame by the browser
+
       // Detect which quadrant the pointer is over using bounding box intersection
       let newTargetQuadrant: QuadrantId | null = null;
       let newTargetIndex: number | null = null;
+      let currentQuadrantElement: HTMLElement | null = null;
 
       // Check all quadrants to find the one containing the pointer
       for (const [quadrantId, element] of quadrantRefs.current.entries()) {
@@ -76,6 +82,7 @@ export function useDragAndDrop() {
           y <= rect.bottom
         ) {
           newTargetQuadrant = quadrantId;
+          currentQuadrantElement = element;
 
           // Calculate target index based on vertical position within quadrant
           // Exclude the currently dragged task from the calculation
@@ -107,6 +114,50 @@ export function useDragAndDrop() {
         }
       }
 
+      // Auto-scroll logic: detect if near top/bottom edge (within 50px)
+      if (currentQuadrantElement) {
+        const rect = currentQuadrantElement.getBoundingClientRect();
+        const SCROLL_THRESHOLD = 50;
+        const SCROLL_SPEED = 10;
+
+        // Check if element has scrollable content
+        const hasOverflow =
+          currentQuadrantElement.scrollHeight >
+          currentQuadrantElement.clientHeight;
+
+        if (hasOverflow) {
+          // Near top edge
+          if (y - rect.top < SCROLL_THRESHOLD && y > rect.top) {
+            if (!autoScrollIntervalRef.current) {
+              autoScrollIntervalRef.current = setInterval(() => {
+                currentQuadrantElement.scrollBy({ top: -SCROLL_SPEED });
+              }, 16); // ~60fps
+            }
+          }
+          // Near bottom edge
+          else if (rect.bottom - y < SCROLL_THRESHOLD && y < rect.bottom) {
+            if (!autoScrollIntervalRef.current) {
+              autoScrollIntervalRef.current = setInterval(() => {
+                currentQuadrantElement.scrollBy({ top: SCROLL_SPEED });
+              }, 16); // ~60fps
+            }
+          }
+          // Not near edges - clear auto-scroll
+          else {
+            if (autoScrollIntervalRef.current) {
+              clearInterval(autoScrollIntervalRef.current);
+              autoScrollIntervalRef.current = null;
+            }
+          }
+        }
+      } else {
+        // Not over any quadrant - clear auto-scroll
+        if (autoScrollIntervalRef.current) {
+          clearInterval(autoScrollIntervalRef.current);
+          autoScrollIntervalRef.current = null;
+        }
+      }
+
       // Only update if something changed to avoid unnecessary re-renders
       if (
         newTargetQuadrant !== currentState.targetQuadrant ||
@@ -124,11 +175,24 @@ export function useDragAndDrop() {
 
   const onDragEnd = useCallback(() => {
     const currentState = dragState;
+
+    // Clear auto-scroll interval if active
+    if (autoScrollIntervalRef.current) {
+      clearInterval(autoScrollIntervalRef.current);
+      autoScrollIntervalRef.current = null;
+    }
+
     setDragState(initialDragState);
     return currentState;
   }, [dragState]);
 
   const cancelDrag = useCallback(() => {
+    // Clear auto-scroll interval if active
+    if (autoScrollIntervalRef.current) {
+      clearInterval(autoScrollIntervalRef.current);
+      autoScrollIntervalRef.current = null;
+    }
+
     setDragState(initialDragState);
   }, []);
 

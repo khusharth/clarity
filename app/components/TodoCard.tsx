@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
@@ -47,11 +47,62 @@ export default function TodoCard({
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isLongPressing, setIsLongPressing] = useState(false);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isMobileDevice = useRef(
+    typeof window !== "undefined" &&
+      window.matchMedia("(pointer: coarse)").matches
+  );
   const { reward } = useReward(CONFETTI_ID, "confetti", {
     lifetime: 3000,
     angle: 270,
     spread: 180,
   });
+
+  // Cleanup long press timer on unmount
+  useEffect(() => {
+    return () => {
+      const timer = longPressTimerRef.current;
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, []);
+
+  const handleTouchStart = () => {
+    if (!isMobileDevice.current) return;
+
+    // Start 500ms timer for long press
+    longPressTimerRef.current = setTimeout(() => {
+      setIsLongPressing(true);
+      // Trigger visual lift effect
+      sfx.dragStart();
+    }, 500);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isMobileDevice.current) return;
+
+    // Cancel long press timer if touch ends before threshold
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    setIsLongPressing(false);
+  };
+
+  const handleTouchMove = () => {
+    // Touch move should not cancel the long press on mobile
+    // This allows drag to continue after the hold threshold
+
+    // However, if dragging hasn't started yet and user scrolls,
+    // cancel the long press timer
+    if (longPressTimerRef.current && !isDragging) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+      setIsLongPressing(false);
+    }
+  };
 
   return (
     <>
@@ -61,11 +112,18 @@ export default function TodoCard({
         dragMomentum={false}
         dragElastic={0}
         dragTransition={{ bounceStiffness: 600, bounceDamping: 30 }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
         onDragStart={() => {
           setIsDragging(true);
           if (onDragStart) {
             onDragStart(task.id, quadrant, index);
             sfx.dragStart();
+            // Haptic feedback on mobile
+            if (isMobileDevice.current && navigator.vibrate) {
+              navigator.vibrate([10, 50, 10]);
+            }
           }
         }}
         onDrag={(_event, info) => {
@@ -76,6 +134,10 @@ export default function TodoCard({
         onDragEnd={() => {
           if (onDragEnd) {
             onDragEnd();
+            // Haptic feedback on successful drop (mobile)
+            if (isMobileDevice.current && navigator.vibrate) {
+              navigator.vibrate([20]);
+            }
           }
           // Delay resetting isDragging to prevent onClick from firing
           setTimeout(() => setIsDragging(false), 100);
@@ -92,6 +154,13 @@ export default function TodoCard({
         style={{
           pointerEvents: isDragging ? "none" : "auto",
           position: isDragging ? "relative" : "static",
+          // Add visual lift effect for mobile long press
+          ...(isLongPressing && !reduced
+            ? {
+                transform: "scale(1.03)",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
+              }
+            : {}),
         }}
         data-task-id={task.id}
         tabIndex={0}
@@ -128,7 +197,7 @@ export default function TodoCard({
             setEditOpen(true);
           }
         }}
-        className={`group flex items-center justify-between rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-[var(--shadow-soft)] transition-colors cursor-pointer ${className}`}
+        className={`group flex items-center justify-between rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-(--shadow-soft) transition-colors cursor-pointer ${className}`}
       >
         <div className="min-w-0 pr-2">
           <p className="truncate text-sm">{task.text}</p>
