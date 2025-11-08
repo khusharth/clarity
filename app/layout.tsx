@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 const OG_META = {
   TITLE: "Clarity — Clear Tasks. Calm Mind.",
   DESCRIPTION: "Quiet the clutter. Focus on what truly matters.",
-  URL: "https://claritytodo.vercel.app/",
+  URL: "https://clarity.khusharth.dev",
 };
 
 export const metadata: Metadata = {
