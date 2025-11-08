@@ -89,6 +89,10 @@ export default function TodoCard({
                 zIndex: 1000,
               }
         }
+        style={{
+          pointerEvents: isDragging ? "none" : "auto",
+          position: isDragging ? "relative" : "static",
+        }}
         data-task-id={task.id}
         tabIndex={0}
         onKeyDown={async (e) => {
@@ -128,11 +132,13 @@ export default function TodoCard({
             <button
               className="inline-flex items-center gap-1 hover:underline cursor-pointer"
               onClick={async (e) => {
+                if (isDragging) return;
                 e.stopPropagation();
                 sfx.toggle();
                 await toggleUrgent(task.id);
               }}
               aria-label="Toggle urgent"
+              disabled={isDragging}
             >
               {task.isUrgent ? (
                 <>
@@ -148,11 +154,13 @@ export default function TodoCard({
             <button
               className="inline-flex items-center gap-1 hover:underline cursor-pointer"
               onClick={async (e) => {
+                if (isDragging) return;
                 e.stopPropagation();
                 sfx.toggle();
                 await toggleImportant(task.id);
               }}
               aria-label="Toggle important"
+              disabled={isDragging}
             >
               {task.isImportant ? (
                 <>
@@ -176,6 +184,7 @@ export default function TodoCard({
             size="sm"
             contentType="icon-only"
             onClick={async () => {
+              if (isDragging) return;
               sfx.complete();
               celebrate();
               await complete(task.id);
@@ -186,17 +195,22 @@ export default function TodoCard({
             aria-label="Complete"
             title="Complete"
             icon={<CheckCircle2 size={16} />}
+            disabled={isDragging}
           />
 
           <Button
             variant="ghost"
             size="sm"
             contentType="icon-only"
-            onClick={() => setDeleteOpen(true)}
+            onClick={() => {
+              if (isDragging) return;
+              setDeleteOpen(true);
+            }}
             className="rounded-md hover:bg-[rgb(var(--color-error))]/20! text-[rgb(var(--color-error))]"
             aria-label="Delete"
             title="Delete"
             icon={<Trash2 size={16} />}
+            disabled={isDragging}
           />
         </div>
       </motion.div>
