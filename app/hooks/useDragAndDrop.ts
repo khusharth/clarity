@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 export type QuadrantId = "Q1" | "Q2" | "Q3" | "Q4";
 
@@ -23,6 +23,12 @@ const initialDragState: DragState = {
 export function useDragAndDrop() {
   const [dragState, setDragState] = useState<DragState>(initialDragState);
   const quadrantRefs = useRef<Map<QuadrantId, HTMLElement>>(new Map());
+  const dragStateRef = useRef<DragState>(dragState);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    dragStateRef.current = dragState;
+  }, [dragState]);
 
   const setQuadrantRef = useCallback(
     (id: QuadrantId, el: HTMLElement | null) => {
@@ -51,14 +57,18 @@ export function useDragAndDrop() {
 
   const onDrag = useCallback(
     (x: number, y: number) => {
-      if (!dragState.isDragging) return;
+      const currentState = dragStateRef.current;
+      if (!currentState.isDragging) return;
 
       // Detect which quadrant the pointer is over using bounding box intersection
       let newTargetQuadrant: QuadrantId | null = null;
       let newTargetIndex: number | null = null;
 
+      // Check all quadrants to find the one containing the pointer
       for (const [quadrantId, element] of quadrantRefs.current.entries()) {
         const rect = element.getBoundingClientRect();
+
+        // Check if pointer is within this quadrant's bounds
         if (
           x >= rect.left &&
           x <= rect.right &&
@@ -66,12 +76,14 @@ export function useDragAndDrop() {
           y <= rect.bottom
         ) {
           newTargetQuadrant = quadrantId;
+
           // Calculate target index based on vertical position within quadrant
           // Exclude the currently dragged task from the calculation
           const taskElements = Array.from(
             element.querySelectorAll("[data-task-id]")
           ).filter(
-            (el) => el.getAttribute("data-task-id") !== dragState.draggedTaskId
+            (el) =>
+              el.getAttribute("data-task-id") !== currentState.draggedTaskId
           );
 
           if (taskElements.length === 0) {
@@ -90,17 +102,24 @@ export function useDragAndDrop() {
             }
             newTargetIndex = insertIndex;
           }
+          // Found the quadrant, no need to check others
           break;
         }
       }
 
-      setDragState((prev) => ({
-        ...prev,
-        targetQuadrant: newTargetQuadrant,
-        targetIndex: newTargetIndex,
-      }));
+      // Only update if something changed to avoid unnecessary re-renders
+      if (
+        newTargetQuadrant !== currentState.targetQuadrant ||
+        newTargetIndex !== currentState.targetIndex
+      ) {
+        setDragState((prev) => ({
+          ...prev,
+          targetQuadrant: newTargetQuadrant,
+          targetIndex: newTargetIndex,
+        }));
+      }
     },
-    [dragState.isDragging, dragState.draggedTaskId]
+    [] // No dependencies - uses ref for stable callback
   );
 
   const onDragEnd = useCallback(() => {
