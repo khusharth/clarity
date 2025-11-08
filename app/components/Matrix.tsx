@@ -12,7 +12,6 @@ import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import AddTodoModal from "./AddTodoModal";
 import { useDragAndDrop } from "../hooks/useDragAndDrop";
-import type { QuadrantId } from "../hooks/useDragAndDrop";
 import { useSfx } from "../hooks/useSfx";
 
 function sortByOrderThenDate(a: Task, b: Task) {
@@ -214,6 +213,8 @@ export default function Matrix() {
                 emptyMessage="Nothing urgent and important right now"
                 quadrantId="q1"
                 tasks={q1}
+                isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q1"}
+                setQuadrantRef={dragAndDrop.setQuadrantRef}
                 onEmptyClick={() =>
                   openModalWithPreset({ urgent: true, important: true })
                 }
@@ -224,17 +225,33 @@ export default function Matrix() {
                 >
                   <AnimatePresence initial={false}>
                     {q1.map((t, index) => (
-                      <TodoCard
-                        key={t.id}
-                        task={t}
-                        quadrant="Q1"
-                        index={index}
-                        onDragStart={dragAndDrop.onDragStart}
-                        onDrag={dragAndDrop.onDrag}
-                        onDragEnd={handleDragEnd}
-                        className="mb-1.5"
-                      />
+                      <div key={t.id} className="w-full">
+                        {/* Show gap indicator when dragging over this position */}
+                        {dragAndDrop.dragState.isDragging &&
+                          dragAndDrop.dragState.targetQuadrant === "Q1" &&
+                          dragAndDrop.dragState.targetIndex === index && (
+                            <div className="h-1 bg-blue-500 rounded-full mb-1.5 animate-pulse" />
+                          )}
+                        <TodoCard
+                          task={t}
+                          quadrant="Q1"
+                          index={index}
+                          onDragStart={dragAndDrop.onDragStart}
+                          onDrag={dragAndDrop.onDrag}
+                          onDragEnd={handleDragEnd}
+                          className="mb-1.5"
+                        />
+                      </div>
                     ))}
+                    {/* Show gap at end if dropping after all tasks */}
+                    {dragAndDrop.dragState.isDragging &&
+                      dragAndDrop.dragState.targetQuadrant === "Q1" &&
+                      dragAndDrop.dragState.targetIndex === q1.length && (
+                        <div
+                          key="gap-end"
+                          className="h-1 w-full bg-blue-500 rounded-full animate-pulse"
+                        />
+                      )}
                   </AnimatePresence>
                 </motion.div>
               </Quadrant>
