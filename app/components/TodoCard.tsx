@@ -113,7 +113,7 @@ export default function TodoCard({
         initial={reduced ? false : { opacity: 0, y: 8 }}
         // Explicit x and y 0 ensures on drag end animation, the card returns to correct position
         // (in some edge cases framer-motion can miscalculate the final position - like dropping at edges of quad)
-        animate={reduced ? { x: 0, y: 0 } : { opacity: 1, x: 0, y: 0 }}
+        animate={reduced ? { x: 0, y: 0, scale: 1 } : { opacity: 1, x: 0, y: 0, scale: 1 }}
         exit={reduced ? undefined : { opacity: 0, y: -8 }}
         transition={{ duration: reduced ? 0 : 0.18 }}
         whileHover={reduced ? undefined : { scale: 1.01 }}
