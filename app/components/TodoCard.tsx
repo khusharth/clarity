@@ -49,8 +49,9 @@ export default function TodoCard({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isLongPressing, setIsLongPressing] = useState(false);
+  const [dragEnabled, setDragEnabled] = useState(false); // Controls if drag listener is active
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const isMobileDevice = useRef(
+  const [isMobile] = useState(
     typeof window !== "undefined" &&
       window.matchMedia("(pointer: coarse)").matches
   );
@@ -71,18 +72,19 @@ export default function TodoCard({
   }, []);
 
   const handleTouchStart = () => {
-    if (!isMobileDevice.current) return;
+    if (!isMobile) return;
 
-    // Start 500ms timer for long press
+    // Start 1000ms (1 second) timer for long press
     longPressTimerRef.current = setTimeout(() => {
       setIsLongPressing(true);
+      setDragEnabled(true); // Enable drag listener after long press
       // Trigger visual lift effect
       sfx.dragStart();
-    }, 500);
+    }, 1000);
   };
 
   const handleTouchEnd = () => {
-    if (!isMobileDevice.current) return;
+    if (!isMobile) return;
 
     // Cancel long press timer if touch ends before threshold
     if (longPressTimerRef.current) {
@@ -109,6 +111,7 @@ export default function TodoCard({
     <>
       <motion.div
         drag
+        dragListener={isMobile ? dragEnabled : true}
         dragSnapToOrigin
         dragMomentum={false}
         dragElastic={0}
@@ -122,7 +125,7 @@ export default function TodoCard({
             onDragStart(task.id, quadrant, index);
             sfx.dragStart();
             // Haptic feedback on mobile
-            if (isMobileDevice.current && navigator.vibrate) {
+            if (isMobile && navigator.vibrate) {
               navigator.vibrate([10, 50, 10]);
             }
           }
@@ -136,12 +139,15 @@ export default function TodoCard({
           if (onDragEnd) {
             onDragEnd();
             // Haptic feedback on successful drop (mobile)
-            if (isMobileDevice.current && navigator.vibrate) {
+            if (isMobile && navigator.vibrate) {
               navigator.vibrate([20]);
             }
           }
-          // Delay resetting isDragging to prevent onClick from firing
-          setTimeout(() => setIsDragging(false), 100);
+          // Reset states after drag ends
+          setTimeout(() => {
+            setIsDragging(false);
+            setDragEnabled(false); // Reset for next drag on mobile
+          }, 100);
         }}
         whileDrag={
           reduced
