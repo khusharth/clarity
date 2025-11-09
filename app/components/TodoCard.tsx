@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
 import {
@@ -10,6 +10,7 @@ import {
   ZapOffIcon,
   StarIcon,
   StarOffIcon,
+  GripVertical,
 } from "lucide-react";
 import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 import { useSfx } from "../hooks/useSfx";
@@ -197,9 +198,29 @@ export default function TodoCard({
             setEditOpen(true);
           }
         }}
-        className={`group flex items-center justify-between rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-(--shadow-soft) transition-colors cursor-pointer ${className}`}
+        className={`group flex items-center rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-(--shadow-soft) transition-colors cursor-pointer ${className}`}
       >
-        <div className="min-w-0 pr-2">
+        {/* Drag indicator - shows when dragging with smooth animation */}
+        <AnimatePresence>
+          {isDragging && (
+            <motion.div
+              initial={{ opacity: 0, x: -10, width: 0 }}
+              animate={{ opacity: 1, x: 0, width: "auto" }}
+              exit={{ opacity: 0, x: -10, width: 0 }}
+              transition={{ duration: 0.15 }}
+              className="flex items-center mr-2 text-[rgb(var(--color-fg-muted))]"
+            >
+              <GripVertical size={16} className="opacity-50" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <motion.div 
+          className="min-w-0 pr-2 flex-1"
+          initial={false}
+          animate={isDragging ? { x: 0 } : { x: 0 }}
+          transition={{ duration: 0.15 }}
+        >
           <p className="truncate text-sm">{task.text}</p>
           <div className="mt-2 sm:mt-1 flex items-center gap-2 text-xs text-[rgb(var(--color-fg-muted))]">
             <button
@@ -247,10 +268,13 @@ export default function TodoCard({
               )}
             </button>
           </div>
-        </div>
-        <div
+        </motion.div>
+        <motion.div
           className="flex shrink-0 items-center gap-0.5 opacity-80"
           onClick={(e) => e.stopPropagation()}
+          initial={false}
+          animate={isDragging ? { x: 0 } : { x: 0 }}
+          transition={{ duration: 0.15 }}
         >
           <Button
             variant="ghost"
@@ -285,7 +309,7 @@ export default function TodoCard({
             icon={<Trash2 size={16} />}
             disabled={isDragging}
           />
-        </div>
+        </motion.div>
       </motion.div>
       <EditTodoModal
         task={task}
