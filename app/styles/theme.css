@@ -3,7 +3,8 @@
   
   /* CSS variables for use in arbitrary values like rgb(var(--color-bg)) */
   --color-bg: 248 250 252;          /* base background (slate-50) */
-  --color-surface: 255 255 255;     /* cards, panels */
+  --color-surface: 249 250 251;     /* cards, panels - slightly off-white */
+  --color-surface-elevated: 255 255 255; /* elevated cards like todos - pure white */
   --color-border: 224 231 255;      /* soft indigo border */
   --color-fg: 15 23 42;             /* primary text */
   --color-fg-muted: 71 85 105;      /* secondary text */
@@ -31,7 +32,8 @@
   /* Tailwind color tokens - RGB triplets for utility classes */
   /* Define colors without --color- prefix to create bg-bg, text-fg, etc. */
   --color-bg: 248 250 252;          /* base background (slate-50) -> bg-bg */
-  --color-surface: 255 255 255;     /* cards, panels -> bg-surface */
+  --color-surface: 249 250 251;     /* cards, panels -> bg-surface - slightly off-white */
+  --color-surface-elevated: 255 255 255; /* elevated cards like todos - pure white */
   --color-border: 224 231 255;      /* soft indigo border -> border-border */
   --color-fg: 15 23 42;             /* primary text -> text-fg */
   --color-fg-muted: 71 85 105;      /* secondary text -> text-fg-muted */
@@ -52,7 +54,8 @@
 /* Manual dark theme override */
 [data-theme="dark"] {
   --color-bg: 2 6 23;
-  --color-surface: 15 23 42;
+  --color-surface: 15 23 42; /* original slate-900 */
+  --color-surface-elevated: 21 31 55; /* darker cards for better text contrast */
   --color-border: 51 65 85;
   --color-fg: 226 232 240;
   --color-fg-muted: 148 163 184;
@@ -66,7 +69,8 @@
 /* Manual light theme override */
 [data-theme="light"] {
   --color-bg: 248 250 252;
-  --color-surface: 255 255 255;
+  --color-surface: 249 250 251; /* slightly off-white for quadrants */
+  --color-surface-elevated: 255 255 255; /* pure white for cards */
   --color-border: 224 231 255;
   --color-fg: 15 23 42;
   --color-fg-muted: 71 85 105;
@@ -77,7 +81,8 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     --color-bg: 2 6 23;
-    --color-surface: 15 23 42;
+    --color-surface: 15 23 42; /* original slate-900 */
+    --color-surface-elevated: 21 31 55; /* darker cards for better text contrast */
     --color-border: 51 65 85;
     --color-fg: 226 232 240;
     --color-fg-muted: 148 163 184;

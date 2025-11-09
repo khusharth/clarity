@@ -196,7 +196,7 @@ export default function TodoCard({
             setEditOpen(true);
           }
         }}
-        className={`group flex items-center rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] px-3 py-2 shadow-(--shadow-soft) transition-colors cursor-pointer select-none sm:select-auto ${className}`}
+        className={`group flex items-center rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface-elevated))] px-3 py-2 shadow-sm hover:shadow-md transition-all cursor-pointer select-none sm:select-auto ${className}`}
       >
         {/* Drag indicator - shows when dragging with smooth animation */}
         <AnimatePresence>
