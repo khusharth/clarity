@@ -3,13 +3,12 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
-import { CheckCircle2, Trash2, GripVertical } from "lucide-react";
+import { CheckCircle2, GripVertical } from "lucide-react";
 import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 import { useSfx } from "../hooks/useSfx";
 import { useToast } from "../store/toast";
 import { Button } from "./ui/button";
-import EditTodoModal from "./EditTodoModal";
-import DeleteTodoModal from "./DeleteTodoModal";
+import ViewTodoModal from "./ViewTodoModal";
 import { useReward } from "react-rewards";
 import { CONFETTI_ID } from "./Confetti";
 import type { QuadrantId } from "../hooks/useDragAndDrop";
@@ -36,9 +35,7 @@ export default function TodoCard({
   const reduced = useAppReducedMotion();
   const sfx = useSfx();
   const toast = useToast();
-  const [hovered, setHovered] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isLongPressing, setIsLongPressing] = useState(false);
   const [dragEnabled, setDragEnabled] = useState(false); // Controls if drag listener is active
@@ -175,7 +172,7 @@ export default function TodoCard({
             await toggleImportant(task.id);
           } else if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            setEditOpen(true);
+            setViewOpen(true);
           }
         }}
         initial={reduced ? false : { opacity: 0, y: 8 }}
@@ -189,11 +186,9 @@ export default function TodoCard({
         exit={reduced ? undefined : { opacity: 0, y: -8 }}
         transition={{ duration: reduced ? 0 : 0.18 }}
         whileHover={reduced ? undefined : { scale: 1.01 }}
-        onHoverStart={() => setHovered(true)}
-        onHoverEnd={() => setHovered(false)}
         onClick={() => {
           if (!isDragging) {
-            setEditOpen(true);
+            setViewOpen(true);
           }
         }}
         className={`group flex items-center rounded-sm border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface-elevated))] px-3 py-2 shadow-sm hover:shadow-md transition-all cursor-pointer select-none sm:select-auto ${className}`}
@@ -246,32 +241,12 @@ export default function TodoCard({
             icon={<CheckCircle2 size={16} />}
             disabled={isDragging}
           />
-
-          <Button
-            variant="ghost"
-            size="sm"
-            contentType="icon-only"
-            onClick={() => {
-              if (isDragging) return;
-              setDeleteOpen(true);
-            }}
-            className="rounded-md hover:bg-[rgb(var(--color-error))]/20! text-[rgb(var(--color-error))]"
-            aria-label="Delete"
-            title="Delete"
-            icon={<Trash2 size={16} />}
-            disabled={isDragging}
-          />
         </motion.div>
       </motion.div>
-      <EditTodoModal
+      <ViewTodoModal
         task={task}
-        open={editOpen}
-        onCloseAction={() => setEditOpen(false)}
-      />
-      <DeleteTodoModal
-        task={task}
-        open={deleteOpen}
-        onCloseAction={() => setDeleteOpen(false)}
+        open={viewOpen}
+        onCloseAction={() => setViewOpen(false)}
       />
     </>
   );

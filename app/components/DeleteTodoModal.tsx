@@ -10,10 +10,11 @@ type DeleteTodoModalProps = {
   task: Task | null;
   open: boolean;
   onCloseAction: () => void;
+  onDeleteSuccessAction?: () => void;
 };
 
 export default function DeleteTodoModal(props: DeleteTodoModalProps) {
-  const { task, open, onCloseAction } = props;
+  const { task, open, onCloseAction, onDeleteSuccessAction } = props;
   const { remove } = useTodos();
   const sfx = useSfx();
   const toast = useToast();
@@ -24,6 +25,9 @@ export default function DeleteTodoModal(props: DeleteTodoModalProps) {
     sfx.remove();
     toast.push({ type: "success", message: "Task deleted" });
     onCloseAction();
+    if (onDeleteSuccessAction) {
+      onDeleteSuccessAction();
+    }
   }
 
   if (!task) return null;
