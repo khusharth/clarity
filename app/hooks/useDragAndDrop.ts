@@ -25,6 +25,8 @@ export function useDragAndDrop() {
   const quadrantRefs = useRef<Map<QuadrantId, HTMLElement>>(new Map());
   const dragStateRef = useRef<DragState>(dragState);
   const autoScrollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const rafIdRef = useRef<number | null>(null);
+  const pendingPositionRef = useRef<{ x: number; y: number } | null>(null);
 
   // Keep ref in sync with state
   useEffect(() => {
@@ -61,120 +63,142 @@ export function useDragAndDrop() {
       const currentState = dragStateRef.current;
       if (!currentState.isDragging) return;
 
-      // PERFORMANCE: Using ref-based callback pattern to avoid recreation
-      // This ensures 60fps by eliminating unnecessary callback recreations
-      // Bounding box calculations are cached per frame by the browser
+      // Store the latest position
+      pendingPositionRef.current = { x, y };
 
-      // Detect which quadrant the pointer is over using bounding box intersection
-      let newTargetQuadrant: QuadrantId | null = null;
-      let newTargetIndex: number | null = null;
-      let currentQuadrantElement: HTMLElement | null = null;
+      // Skip if we already have a pending RAF
+      if (rafIdRef.current !== null) return;
 
-      // Check all quadrants to find the one containing the pointer
-      for (const [quadrantId, element] of quadrantRefs.current.entries()) {
-        const rect = element.getBoundingClientRect();
+      // Schedule update on next animation frame
+      rafIdRef.current = requestAnimationFrame(() => {
+        rafIdRef.current = null;
+        const position = pendingPositionRef.current;
+        if (!position) return;
 
-        // Check if pointer is within this quadrant's bounds
-        if (
-          x >= rect.left &&
-          x <= rect.right &&
-          y >= rect.top &&
-          y <= rect.bottom
-        ) {
-          newTargetQuadrant = quadrantId;
-          currentQuadrantElement = element;
+        const { x, y } = position;
 
-          // Calculate target index based on vertical position within quadrant
-          // Exclude the currently dragged task from the calculation
-          const taskElements = Array.from(
-            element.querySelectorAll("[data-task-id]")
-          ).filter(
-            (el) =>
-              el.getAttribute("data-task-id") !== currentState.draggedTaskId
-          );
+        // Detect which quadrant the pointer is over using bounding box intersection
+        let newTargetQuadrant: QuadrantId | null = null;
+        let newTargetIndex: number | null = null;
+        let currentQuadrantElement: HTMLElement | null = null;
 
-          if (taskElements.length === 0) {
-            newTargetIndex = 0;
-          } else {
-            // Find insertion point based on Y position
-            let insertIndex = 0;
-            for (let i = 0; i < taskElements.length; i++) {
-              const taskRect = taskElements[i].getBoundingClientRect();
-              const taskMiddle = taskRect.top + taskRect.height / 2;
-              if (y > taskMiddle) {
-                insertIndex = i + 1;
-              } else {
-                break;
+        // Check all quadrants to find the one containing the pointer
+        for (const [quadrantId, element] of quadrantRefs.current.entries()) {
+          const rect = element.getBoundingClientRect();
+
+          // Check if pointer is within this quadrant's bounds
+          if (
+            x >= rect.left &&
+            x <= rect.right &&
+            y >= rect.top &&
+            y <= rect.bottom
+          ) {
+            newTargetQuadrant = quadrantId;
+            currentQuadrantElement = element;
+
+            // Calculate target index based on vertical position within quadrant
+            // Exclude the currently dragged task from the calculation
+            const taskElements = Array.from(
+              element.querySelectorAll("[data-task-id]")
+            ).filter(
+              (el) =>
+                el.getAttribute("data-task-id") !==
+                dragStateRef.current.draggedTaskId
+            );
+
+            if (taskElements.length === 0) {
+              newTargetIndex = 0;
+            } else {
+              // Find insertion point based on Y position
+              let insertIndex = 0;
+              for (let i = 0; i < taskElements.length; i++) {
+                const taskRect = taskElements[i].getBoundingClientRect();
+                const taskMiddle = taskRect.top + taskRect.height / 2;
+                if (y > taskMiddle) {
+                  insertIndex = i + 1;
+                } else {
+                  break;
+                }
+              }
+              newTargetIndex = insertIndex;
+            }
+            // Found the quadrant, no need to check others
+            break;
+          }
+        }
+
+        // Auto-scroll logic: detect if near top/bottom edge (within 50px)
+        if (currentQuadrantElement) {
+          const rect = currentQuadrantElement.getBoundingClientRect();
+          const SCROLL_THRESHOLD = 50;
+          const SCROLL_SPEED = 10;
+
+          // Check if element has scrollable content
+          const hasOverflow =
+            currentQuadrantElement.scrollHeight >
+            currentQuadrantElement.clientHeight;
+
+          if (hasOverflow) {
+            // Near top edge
+            if (y - rect.top < SCROLL_THRESHOLD && y > rect.top) {
+              if (!autoScrollIntervalRef.current) {
+                autoScrollIntervalRef.current = setInterval(() => {
+                  currentQuadrantElement.scrollBy({ top: -SCROLL_SPEED });
+                }, 16); // ~60fps
               }
             }
-            newTargetIndex = insertIndex;
-          }
-          // Found the quadrant, no need to check others
-          break;
-        }
-      }
-
-      // Auto-scroll logic: detect if near top/bottom edge (within 50px)
-      if (currentQuadrantElement) {
-        const rect = currentQuadrantElement.getBoundingClientRect();
-        const SCROLL_THRESHOLD = 50;
-        const SCROLL_SPEED = 10;
-
-        // Check if element has scrollable content
-        const hasOverflow =
-          currentQuadrantElement.scrollHeight >
-          currentQuadrantElement.clientHeight;
-
-        if (hasOverflow) {
-          // Near top edge
-          if (y - rect.top < SCROLL_THRESHOLD && y > rect.top) {
-            if (!autoScrollIntervalRef.current) {
-              autoScrollIntervalRef.current = setInterval(() => {
-                currentQuadrantElement.scrollBy({ top: -SCROLL_SPEED });
-              }, 16); // ~60fps
+            // Near bottom edge
+            else if (rect.bottom - y < SCROLL_THRESHOLD && y < rect.bottom) {
+              if (!autoScrollIntervalRef.current) {
+                autoScrollIntervalRef.current = setInterval(() => {
+                  currentQuadrantElement.scrollBy({ top: SCROLL_SPEED });
+                }, 16); // ~60fps
+              }
+            }
+            // Not near edges - clear auto-scroll
+            else {
+              if (autoScrollIntervalRef.current) {
+                clearInterval(autoScrollIntervalRef.current);
+                autoScrollIntervalRef.current = null;
+              }
             }
           }
-          // Near bottom edge
-          else if (rect.bottom - y < SCROLL_THRESHOLD && y < rect.bottom) {
-            if (!autoScrollIntervalRef.current) {
-              autoScrollIntervalRef.current = setInterval(() => {
-                currentQuadrantElement.scrollBy({ top: SCROLL_SPEED });
-              }, 16); // ~60fps
-            }
-          }
-          // Not near edges - clear auto-scroll
-          else {
-            if (autoScrollIntervalRef.current) {
-              clearInterval(autoScrollIntervalRef.current);
-              autoScrollIntervalRef.current = null;
-            }
+        } else {
+          // Not over any quadrant - clear auto-scroll
+          if (autoScrollIntervalRef.current) {
+            clearInterval(autoScrollIntervalRef.current);
+            autoScrollIntervalRef.current = null;
           }
         }
-      } else {
-        // Not over any quadrant - clear auto-scroll
-        if (autoScrollIntervalRef.current) {
-          clearInterval(autoScrollIntervalRef.current);
-          autoScrollIntervalRef.current = null;
-        }
-      }
 
-      // Only update if something changed to avoid unnecessary re-renders
-      if (
-        newTargetQuadrant !== currentState.targetQuadrant ||
-        newTargetIndex !== currentState.targetIndex
-      ) {
-        setDragState((prev) => ({
-          ...prev,
-          targetQuadrant: newTargetQuadrant,
-          targetIndex: newTargetIndex,
-        }));
-      }
+        // Only update if something changed to avoid unnecessary re-renders
+        const prevState = dragStateRef.current;
+        if (
+          newTargetQuadrant !== prevState.targetQuadrant ||
+          newTargetIndex !== prevState.targetIndex
+        ) {
+          setDragState((prev) => ({
+            ...prev,
+            targetQuadrant: newTargetQuadrant,
+            targetIndex: newTargetIndex,
+          }));
+        }
+      });
     },
     [] // No dependencies - uses ref for stable callback
   );
 
   const onDragEnd = useCallback(() => {
     const currentState = dragState;
+
+    // Cancel any pending RAF
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+
+    // Clear pending position
+    pendingPositionRef.current = null;
 
     // Clear auto-scroll interval if active
     if (autoScrollIntervalRef.current) {
@@ -187,6 +211,15 @@ export function useDragAndDrop() {
   }, [dragState]);
 
   const cancelDrag = useCallback(() => {
+    // Cancel any pending RAF
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+
+    // Clear pending position
+    pendingPositionRef.current = null;
+
     // Clear auto-scroll interval if active
     if (autoScrollIntervalRef.current) {
       clearInterval(autoScrollIntervalRef.current);
