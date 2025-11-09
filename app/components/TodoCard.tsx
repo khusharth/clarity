@@ -3,15 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
-import {
-  CheckCircle2,
-  Trash2,
-  ZapIcon,
-  ZapOffIcon,
-  StarIcon,
-  StarOffIcon,
-  GripVertical,
-} from "lucide-react";
+import { CheckCircle2, Trash2, GripVertical } from "lucide-react";
 import { useAppReducedMotion } from "../hooks/useAppReducedMotion";
 import { useSfx } from "../hooks/useSfx";
 import { useToast } from "../store/toast";
@@ -221,59 +213,13 @@ export default function TodoCard({
           )}
         </AnimatePresence>
 
-        <motion.div 
+        <motion.div
           className="min-w-0 pr-2 flex-1"
           initial={false}
           animate={isDragging ? { x: 0 } : { x: 0 }}
           transition={{ duration: 0.15 }}
         >
           <p className="truncate text-sm">{task.text}</p>
-          <div className="mt-2 sm:mt-1 flex items-center gap-2 text-xs text-[rgb(var(--color-fg-muted))]">
-            <button
-              className="inline-flex items-center gap-1 hover:underline cursor-pointer"
-              onClick={async (e) => {
-                if (isDragging) return;
-                e.stopPropagation();
-                sfx.toggle();
-                await toggleUrgent(task.id);
-              }}
-              aria-label="Toggle urgent"
-              disabled={isDragging}
-            >
-              {task.isUrgent ? (
-                <>
-                  <ZapIcon size={13} /> <span>Urgent</span>
-                </>
-              ) : (
-                <>
-                  <ZapOffIcon size={13} /> <span>Not urgent</span>
-                </>
-              )}
-            </button>
-            <span>•</span>
-            <button
-              className="inline-flex items-center gap-1 hover:underline cursor-pointer"
-              onClick={async (e) => {
-                if (isDragging) return;
-                e.stopPropagation();
-                sfx.toggle();
-                await toggleImportant(task.id);
-              }}
-              aria-label="Toggle important"
-              disabled={isDragging}
-            >
-              {task.isImportant ? (
-                <>
-                  <StarIcon size={13} /> <span>Important</span>
-                </>
-              ) : (
-                <>
-                  <StarOffIcon size={13} />
-                  <span>Not important</span>
-                </>
-              )}
-            </button>
-          </div>
         </motion.div>
         <motion.div
           className="flex shrink-0 items-center gap-0.5 opacity-80"
