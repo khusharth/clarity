@@ -107,7 +107,7 @@
 ### Touch Gestures
 
 - [x] **T036** [P] [US3] Detect mobile device using `window.matchMedia("(pointer: coarse)")` in `app/components/TodoCard.tsx`
-- [x] **T037** [P] [US3] Implement 1000ms (1 second) tap-and-hold threshold before enabling drag on mobile in `app/components/TodoCard.tsx`
+- [x] **T037** [P] [US3] Implement 500ms tap-and-hold threshold before enabling drag on mobile in `app/components/TodoCard.tsx`
 - [x] **T038** [P] [US3] Add visual lift effect (elevation, shadow) after hold threshold is reached in `app/components/TodoCard.tsx`
 
 ### Haptic Feedback
