@@ -185,7 +185,7 @@ export default function TodoCard({
         }
         exit={reduced ? undefined : { opacity: 0, y: -8 }}
         transition={{ duration: reduced ? 0 : 0.18 }}
-        whileHover={reduced ? undefined : { scale: 1.01 }}
+        whileHover={reduced ? undefined : { scale: 1.02 }}
         onClick={() => {
           if (!isDragging) {
             setViewOpen(true);
