@@ -22,6 +22,7 @@ interface TodosState {
   themePreference: "light" | "dark";
   showOverallCount: boolean;
   showQuadrantCounts: boolean;
+  showCompanion: boolean;
   add: (text: string, isUrgent: boolean, isImportant: boolean) => Promise<void>;
   updateText: (id: string, text: string) => Promise<void>;
   toggleUrgent: (id: string) => Promise<void>;
@@ -45,6 +46,7 @@ interface TodosState {
   setThemePreference: (pref: "light" | "dark") => void;
   setShowOverallCount: (enabled: boolean) => void;
   setShowQuadrantCounts: (enabled: boolean) => void;
+  setShowCompanion: (enabled: boolean) => void;
   // Drag and drop
   reorderTaskWithinQuadrant: (
     taskId: string,
@@ -71,6 +73,7 @@ export const useTodos = create<TodosState>()(
       themePreference: "dark",
       showOverallCount: false,
       showQuadrantCounts: false,
+      showCompanion: true,
       hydrate: async () => {
         const tasks = await loadAllTasks();
         set({ tasks, isHydrated: true });
@@ -226,6 +229,15 @@ export const useTodos = create<TodosState>()(
       },
       setShowOverallCount: (enabled) => set({ showOverallCount: enabled }),
       setShowQuadrantCounts: (enabled) => set({ showQuadrantCounts: enabled }),
+      setShowCompanion: (enabled) => {
+        set({ showCompanion: enabled });
+        // Sync with companion store (dynamic import to avoid circular dependency)
+        if (typeof window !== "undefined") {
+          import("./companion").then(({ useCompanionStore }) => {
+            useCompanionStore.getState().setEnabled(enabled);
+          });
+        }
+      },
       reorderTaskWithinQuadrant: async (taskId, newIndex) => {
         const tasks = get().tasks;
         const task = tasks.find((t) => t.id === taskId);
@@ -351,7 +363,16 @@ export const useTodos = create<TodosState>()(
         soundEnabled: state.soundEnabled,
         showOverallCount: state.showOverallCount,
         showQuadrantCounts: state.showQuadrantCounts,
+        showCompanion: state.showCompanion,
       }),
     }
   )
 );
+
+// Initialize companion state sync on app load
+if (typeof window !== "undefined") {
+  const { showCompanion } = useTodos.getState();
+  import("./companion").then(({ useCompanionStore }) => {
+    useCompanionStore.getState().setEnabled(showCompanion);
+  });
+}
