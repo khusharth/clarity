@@ -26,6 +26,8 @@ export default function Settings(props: { className?: string }) {
     setShowOverallCount,
     showQuadrantCounts,
     setShowQuadrantCounts,
+    showCompanion,
+    setShowCompanion,
     exportJSON,
     importJSON,
   } = useTodos();
@@ -102,6 +104,16 @@ export default function Settings(props: { className?: string }) {
                   onPressedChange={setSoundEnabled}
                   size="sm"
                   aria-label="Toggle sound effects"
+                />
+              </div>
+
+              <span>Show Companion</span>
+              <div className="flex justify-end">
+                <Toggle
+                  pressed={showCompanion}
+                  onPressedChange={setShowCompanion}
+                  size="sm"
+                  aria-label="Toggle companion character"
                 />
               </div>
             </div>

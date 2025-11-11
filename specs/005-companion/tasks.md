@@ -26,9 +26,9 @@
 
 **Purpose**: Prepare sprite assets and verify project structure for companion implementation
 
-- [ ] T001 Verify dog sprite sheets exist at `/Users/khusharth/home/projects/clarity/public/dog-light.png` and `/Users/khusharth/home/projects/clarity/public/dog-dark.png`
-- [ ] T002 Validate sprite sheet dimensions (128x320px, 10 rows × 4 columns, 32x32px sprites)
-- [ ] T003 Test sprite sheet loading in browser to ensure proper rendering with `imageRendering: pixelated`
+- [x] T001 Verify dog sprite sheets exist at `/Users/khusharth/home/projects/clarity/public/dog-light.png` and `/Users/khusharth/home/projects/clarity/public/dog-dark.png`
+- [x] T002 Validate sprite sheet dimensions (128x320px, 10 rows × 4 columns, 32x32px sprites)
+- [x] T003 Test sprite sheet loading in browser to ensure proper rendering with `imageRendering: pixelated`
 
 ---
 
@@ -38,9 +38,9 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 [P] Create companion animation utilities in `app/lib/companion-animations.ts` with sprite map, state animation map, and getSpritePosition function
-- [ ] T005 [P] Create companion Zustand store in `app/store/companion.ts` with CompanionState interface and state machine transitions
-- [ ] T006 Create useCompanion hook in `app/hooks/useCompanion.ts` with sprite position calculation and theme sync logic
+- [x] T004 [P] Create companion animation utilities in `app/lib/companion-animations.ts` with sprite map, state animation map, and getSpritePosition function
+- [x] T005 [P] Create companion Zustand store in `app/store/companion.ts` with CompanionState interface and state machine transitions
+- [x] T006 Create useCompanion hook in `app/hooks/useCompanion.ts` with sprite position calculation and theme sync logic
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -54,33 +54,33 @@
 
 ### Implementation for User Story 5
 
-- [ ] T007 [US5] Update Settings component in `app/components/Settings.tsx` to add "Show Companion" toggle using existing Toggle UI component
-- [ ] T008 [US5] Add showCompanion property to todos store in `app/store/todos.ts` with persist configuration for IndexedDB storage
-- [ ] T009 [US5] Create sync logic in `app/store/todos.ts` to connect showCompanion state with useCompanionStore.setEnabled on app initialization
-- [ ] T010 [US5] Implement setShowCompanion action in `app/store/todos.ts` that updates both todos store and companion store
+- [x] T007 [US5] Update Settings component in `app/components/Settings.tsx` to add "Show Companion" toggle using existing Toggle UI component
+- [x] T008 [US5] Add showCompanion property to todos store in `app/store/todos.ts` with persist configuration for IndexedDB storage
+- [x] T009 [US5] Create sync logic in `app/store/todos.ts` to connect showCompanion state with useCompanionStore.setEnabled on app initialization
+- [x] T010 [US5] Implement setShowCompanion action in `app/store/todos.ts` that updates both todos store and companion store
 
 **Checkpoint**: At this point, companion can be toggled on/off with persistence, providing user control over the feature
 
 ---
 
-## Phase 4: User Story 1 - Companion Idle Presence (Priority: P1) 🎯 MVP Core
+## Phase 4: User Story 1 - Idle Presence (Priority: P1) 🎯 MVP Core
 
-**Goal**: Display a subtle companion character that stays quietly in the corner with small idle animations, creating calm non-intrusive presence
+**Goal**: Display companion character in bottom corner with basic idle animations and theme support
 
-**Independent Test**: Open app with companion enabled and observe idle animations cycling through front/side/back poses without blocking UI
+**Independent Test**: Open app and verify companion appears in corner with idle animations cycling between front/side/back variations, then toggle dark/light theme and verify sprite sheet changes
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Create Companion component in `app/components/Companion.tsx` with fixed positioning (top-4 right-4 on mobile, top-6 left-24 on desktop)
-- [ ] T012 [US1] Implement sprite rendering in `app/components/Companion.tsx` using CSS background-position with 64x64px display size (2x scale)
-- [ ] T013 [US1] Add theme detection in useCompanion hook in `app/hooks/useCompanion.ts` using MutationObserver on document.documentElement class changes
-- [ ] T014 [US1] Implement idle animation cycling logic in `app/components/Companion.tsx` using useEffect with frame intervals based on spriteMap durations
-- [ ] T015 [US1] Add Framer Motion wrapper in `app/components/Companion.tsx` with initial fade-in animation (opacity 0→1, scale 0.8→1, 300ms duration)
-- [ ] T016 [US1] Integrate Companion component into root layout at `app/layout.tsx` after Footer and Toasts components
-- [ ] T017 [US1] Add reduced motion detection in `app/components/Companion.tsx` using useReducedMotion hook from app/hooks/useReducedMotion.ts
-- [ ] T018 [US1] Implement static sprite fallback in `app/components/Companion.tsx` when reduced motion is enabled (show single idle frame)
+- [x] T011 [US1] Create Companion component in `app/components/Companion.tsx` with fixed positioning (top-4 right-4 mobile, top-6 left-24 desktop)
+- [x] T012 [US1] Implement sprite rendering using CSS background-position with calculated offsets (64x64px display size via SPRITE_SCALE)
+- [x] T013 [US1] Integrate theme detection from useCompanion hook to dynamically load companion-light.png or companion-dark.png
+- [x] T014 [US1] Implement idle animation cycling with setInterval to update frame index, picking random idle animations on loop completion
+- [x] T015 [US1] Add Framer Motion AnimatePresence wrapper with fade-in/scale animation on mount (0.3s duration)
+- [x] T016 [US1] Integrate Companion into `app/layout.tsx` after Toasts component for global visibility
+- [x] T017 [US1] Add reduced motion detection using existing `useReducedMotion` hook to disable animations when user prefers reduced motion
+- [x] T018 [US1] Implement static sprite fallback for reduced motion users (shows first frame of idle animation)
 
-**Checkpoint**: At this point, companion appears in corner with cycling idle animations and respects accessibility preferences
+**Checkpoint**: At this point, companion is visible with idle animations, respects theme and accessibility preferences
 
 ---
 
@@ -92,11 +92,11 @@
 
 ### Implementation for User Story 2
 
-- [ ] T019 [US2] Add todo subscription logic in useCompanion hook in `app/hooks/useCompanion.ts` using useTodos.subscribe to detect task completions
-- [ ] T020 [US2] Implement task completion detection in `app/hooks/useCompanion.ts` by comparing completed task counts between state updates
-- [ ] T021 [US2] Add transitionTo('motivated') call in useCompanion hook when new task completions detected and companion is enabled
-- [ ] T022 [US2] Implement updateLastTaskTime action in companion store at `app/store/companion.ts` to track timestamp of last completion
-- [ ] T023 [US2] Add animation completion handler in `app/components/Companion.tsx` to transition back to idle after motivated animation finishes
+- [x] T019 [US2] Add todo subscription logic in useCompanion hook in `app/hooks/useCompanion.ts` using useTodos.subscribe to detect task completions
+- [x] T020 [US2] Implement task completion detection in `app/hooks/useCompanion.ts` by comparing completed task counts between state updates
+- [x] T021 [US2] Add transitionTo('motivated') call in useCompanion hook when new task completions detected and companion is enabled
+- [x] T022 [US2] Implement updateLastTaskTime action in companion store at `app/store/companion.ts` to track timestamp of last completion
+- [x] T023 [US2] Add animation completion handler in `app/components/Companion.tsx` to transition back to idle after motivated animation finishes
 
 **Checkpoint**: At this point, companion reacts to individual task completions with brief motivated animation
 
@@ -110,11 +110,11 @@
 
 ### Implementation for User Story 3
 
-- [ ] T024 [US3] Add quadrant detection logic in useCompanion hook in `app/hooks/useCompanion.ts` to check if all tasks in a quadrant are completed
-- [ ] T025 [US3] Implement quadrant completion check in `app/hooks/useCompanion.ts` by comparing lastCompleted task's quadrant (important/urgent) with all tasks in that quadrant
-- [ ] T026 [US3] Add conditional transition logic in `app/hooks/useCompanion.ts` to call transitionTo('celebrating') instead of 'motivated' when quadrant is cleared
-- [ ] T027 [US3] Implement animation sequencing in `app/components/Companion.tsx` to play runDiaUp animation followed by wuff animation when in celebrating state
-- [ ] T028 [US3] Add brief pause (100ms) between celebration animations in `app/components/Companion.tsx` using setTimeout before playing next animation
+- [x] T024 [US3] Add quadrant detection logic in useCompanion hook in `app/hooks/useCompanion.ts` to check if all tasks in a quadrant are completed
+- [x] T025 [US3] Implement quadrant completion check in `app/hooks/useCompanion.ts` by comparing lastCompleted task's quadrant (important/urgent) with all tasks in that quadrant
+- [x] T026 [US3] Add conditional transition logic in `app/hooks/useCompanion.ts` to call transitionTo('celebrating') instead of 'motivated' when quadrant is cleared
+- [x] T027 [US3] Implement animation sequencing in `app/components/Companion.tsx` to play runDiaUp animation followed by wuff animation when in celebrating state
+- [x] T028 [US3] Add brief pause (100ms) between celebration animations in `app/components/Companion.tsx` using setTimeout before playing next animation
 
 **Checkpoint**: At this point, companion distinguishes between individual task completion and quadrant clear with appropriate animations
 
@@ -128,14 +128,14 @@
 
 ### Implementation for User Story 6
 
-- [ ] T029 [US6] Add click tracking state to companion store in `app/store/companion.ts` with lastClickTime and clickCount properties
-- [ ] T030 [US6] Implement handleClick action in `app/store/companion.ts` with 500ms cooldown check and click count increment
-- [ ] T031 [US6] Add reaction state selection logic in `app/store/companion.ts` handleClick that cycles through happy/curious/playful based on clickCount modulo 3
-- [ ] T032 [US6] Add onClick handler in `app/components/Companion.tsx` that calls handleClick from useCompanion hook
-- [ ] T033 [US6] Implement animation blocking logic in `app/store/companion.ts` handleClick to prevent clicks during motivated or celebrating states
-- [ ] T034 [US6] Add pointer-events-auto class and cursor-pointer class to companion div in `app/components/Companion.tsx`
-- [ ] T035 [US6] Add Framer Motion whileHover scale 1.1 and whileTap scale 0.95 to companion div in `app/components/Companion.tsx` (respecting reduced motion)
-- [ ] T036 [US6] Add ARIA attributes to companion div in `app/components/Companion.tsx` with role="img" and aria-label="Companion character"
+- [x] T029 [US6] Add click tracking state to companion store in `app/store/companion.ts` with lastClickTime and clickCount properties
+- [x] T030 [US6] Implement handleClick action in `app/store/companion.ts` with 500ms cooldown check and click count increment
+- [x] T031 [US6] Add reaction state selection logic in `app/store/companion.ts` handleClick that cycles through happy/curious/playful based on clickCount modulo 3
+- [x] T032 [US6] Add onClick handler in `app/components/Companion.tsx` that calls handleClick from useCompanion hook
+- [x] T033 [US6] Implement animation blocking logic in `app/store/companion.ts` handleClick to prevent clicks during motivated or celebrating states
+- [x] T034 [US6] Add pointer-events-auto class and cursor-pointer class to companion div in `app/components/Companion.tsx`
+- [x] T035 [US6] Add Framer Motion whileHover scale 1.1 and whileTap scale 0.95 to companion div in `app/components/Companion.tsx` (respecting reduced motion)
+- [x] T036 [US6] Add ARIA attributes to companion div in `app/components/Companion.tsx` with role="img" and aria-label="Companion character"
 
 **Checkpoint**: At this point, companion is fully interactive with click/tap reactions and proper accessibility support
 
@@ -149,10 +149,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] T037 [US4] Add checkInactivity method in companion store at `app/store/companion.ts` that calculates elapsed time since lastTaskCompletionTime
-- [ ] T038 [US4] Implement 2-hour threshold check (2 _ 60 _ 60 \* 1000 milliseconds) in checkInactivity method with transition to tired state
-- [ ] T039 [US4] Add useEffect timer in useCompanion hook in `app/hooks/useCompanion.ts` that calls checkInactivity every 60 seconds (60000ms)
-- [ ] T040 [US4] Implement wake-up transition logic in useCompanion todo subscription to check if current state is tired and transition to motivated on task completion
+- [x] T037 [US4] Add checkInactivity method in companion store at `app/store/companion.ts` that calculates elapsed time since lastTaskCompletionTime
+- [x] T038 [US4] Implement 2-hour threshold check (2 * 60 * 60 * 1000 milliseconds) in checkInactivity method with transition to tired state
+- [x] T039 [US4] Add useEffect timer in useCompanion hook in `app/hooks/useCompanion.ts` that calls checkInactivity every 60 seconds (60000ms)
+- [x] T040 [US4] Implement wake-up transition logic in useCompanion todo subscription to check if current state is tired and transition to motivated on task completion
 - [ ] T041 [US4] Add wakeUp animation support in `app/components/Companion.tsx` to play wakeUp sprite animation before transitioning to motivated state
 
 **Checkpoint**: At this point, all user stories are independently functional with complete state machine coverage
