@@ -99,11 +99,8 @@ export const stateAnimationMap: Record<CompanionStateType, AnimationType[]> = {
     "idleSide",
     "idleDiaUp",
     "idleBack",
-    "idleDiaUp",
-    "idleSide",
-    "idleDiaDown",
     "idleFront",
-  ], // Full 360° spin + bark
+  ], // Spin: front → down-right → right → up-right → back → front
   tired: ["sleep"], // Sleeping loop for inactivity
   waking: ["wakeUp", "idleFront"], // Wake up animation then settle into idle
   focusing: ["runSide", "runSide", "runSide"], // Run to the left (toward logo)

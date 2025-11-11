@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useCompanion } from "../hooks/useCompanion";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import { useSfx } from "../hooks/useSfx";
 import { useTodos } from "../store/todos";
 import { useCompanionStore } from "../store/companion";
 import {
@@ -26,6 +27,7 @@ export default function Companion() {
   const { theme } = useCompanion();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useMediaQuery("(max-width: 768px)"); // Detect mobile viewport
+  const sfx = useSfx();
 
   const [currentFrame, setCurrentFrame] = useState(0);
   const [idleSequenceIndex, setIdleSequenceIndex] = useState(0); // Track position in idle sequence (360° rotation)
@@ -33,6 +35,15 @@ export default function Companion() {
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isInFocusPosition, setIsInFocusPosition] = useState(false); // Track if companion is at focus position
+
+  // Wrapper for handleClick that plays sound only when awake
+  const handleClickWithSound = () => {
+    // Play howl sound only when dog is awake (not tired)
+    if (companionState !== "tired") {
+      sfx.dogHowl();
+    }
+    handleClick();
+  };
 
   // Only render on client to avoid SSR hydration mismatch
   useEffect(() => {
@@ -254,7 +265,7 @@ export default function Companion() {
     return (
       <div
         className="fixed top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-auto cursor-pointer"
-        onClick={handleClick}
+        onClick={handleClickWithSound}
         role="img"
         aria-label="Companion character"
       >
@@ -312,7 +323,7 @@ export default function Companion() {
             scale: { duration: 0.2, ease: "easeOut" },
           }}
           className="fixed top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-auto cursor-pointer"
-          onClick={handleClick}
+          onClick={handleClickWithSound}
           role="img"
           aria-label="Companion character"
         >
@@ -330,12 +341,7 @@ export default function Companion() {
                   ? "scaleX(-1)" // Flip left when moving to focus position
                   : companionState === "unfocusing"
                   ? "scaleX(1)" // Face right when returning from focus
-                  : companionState === "celebrating" &&
-                    (animationIndex === 5 ||
-                      animationIndex === 6 ||
-                      animationIndex === 7)
-                  ? "scaleX(-1)" // Flip back-left half of rotation (frames 5-7: diagUp, side, diagDown on left)
-                  : "scaleX(1)", // Normal orientation for right side and front/back
+                  : "scaleX(1)", // Normal orientation (no flip for celebrating)
               transition: "transform 0.2s ease-out",
             }}
           />

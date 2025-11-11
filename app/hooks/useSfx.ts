@@ -53,6 +53,10 @@ export function useSfx() {
     volume: 0.35,
     soundEnabled: enabled,
   });
+  const [playDogHowl] = useSound("/sounds/dog-howl.mp3", {
+    volume: 0.4,
+    soundEnabled: enabled,
+  });
 
   return {
     add: () => (enabled ? playAdd?.() ?? beep(100, 660) : undefined),
@@ -63,5 +67,6 @@ export function useSfx() {
     dragStart: () =>
       enabled ? playDragStart?.() ?? beep(100, 660) : undefined,
     dragDrop: () => (enabled ? playDragDrop?.() ?? beep(120, 520) : undefined),
+    dogHowl: () => (enabled ? playDogHowl?.() ?? beep(150, 300) : undefined),
   };
 }

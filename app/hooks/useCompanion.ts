@@ -87,22 +87,12 @@ export function useCompanion(): UseCompanionReturn {
           })[0];
 
         if (lastCompleted) {
-          // Check if entire quadrant is cleared
-          const quadrantTasks = tasks.filter(
-            (t: Task) =>
-              t.isImportant === lastCompleted.isImportant &&
-              t.isUrgent === lastCompleted.isUrgent
-          );
-          const quadrantCleared = quadrantTasks.every(
-            (t: Task) => t.status === "completed"
-          );
-
-          // Wake up if tired, otherwise celebrate or react
+          // Always celebrate on task completion (360° spin)
+          // Wake up if tired, otherwise always celebrate
           if (store.state === "tired") {
-            store.transitionTo("motivated");
+            store.transitionTo("celebrating");
           } else {
-            const targetState = quadrantCleared ? "celebrating" : "motivated";
-            store.transitionTo(targetState);
+            store.transitionTo("celebrating");
           }
         }
 
