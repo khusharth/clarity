@@ -109,7 +109,7 @@ interface CompanionStore {
  */
 export const useCompanionStore = create<CompanionStore>((set, get) => ({
   // Initial state
-  state: "idle",
+  state: "entering",
   enabled: true,
   lastTaskCompletionTime: Date.now(),
   currentAnimation: null,
@@ -124,8 +124,15 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
   transitionTo: (newState) => {
     const currentState = get().state;
 
+    // Allow force transitions for enter/exit flow:
+    // - exiting → idle (reset after hiding)
+    // - any state → entering (force entering on show, even from exiting/persisted state)
+    const isForceTransition =
+      (currentState === "exiting" && newState === "idle") ||
+      newState === "entering";
+
     // Validate transition
-    if (!canTransition(currentState, newState)) {
+    if (!isForceTransition && !canTransition(currentState, newState)) {
       console.warn(
         `Invalid companion state transition: ${currentState} → ${newState}`
       );
@@ -152,10 +159,10 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
       return;
     }
 
-    // Wake up if sleeping
+    // Wake up if sleeping - play wakeUp animation then runFront
     if (state === "tired") {
-      get().transitionTo("idle");
-      set({ 
+      get().transitionTo("waking");
+      set({
         lastClickTime: now,
         lastTaskCompletionTime: now, // Reset inactivity timer
       });
@@ -165,9 +172,7 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
     // Block clicks during high-priority animations
     if ((state === "motivated" || state === "celebrating") && isAnimating) {
       return;
-    }
-
-    // Cycle through 3 reaction states: happy → curious → playful
+    } // Cycle through 3 reaction states: happy → curious → playful
     const reactions: CompanionStateType[] = ["happy", "curious", "playful"];
     const nextReaction = reactions[clickCount % reactions.length];
 
@@ -196,10 +201,10 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
     if (!lastTaskCompletionTime) return;
 
     const elapsed = Date.now() - lastTaskCompletionTime;
-    const tenSeconds = 10 * 1000; // 10000ms (for testing)
+    const fifteenSeconds = 15 * 1000; // 15000ms
 
-    // Transition to tired if inactive for 10 seconds and not already tired
-    if (elapsed >= tenSeconds && state !== "tired") {
+    // Transition to tired if inactive for 15 seconds and not already tired
+    if (elapsed >= fifteenSeconds && state !== "tired") {
       get().transitionTo("tired");
     }
   },

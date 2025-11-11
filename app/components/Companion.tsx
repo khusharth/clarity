@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCompanion } from "../hooks/useCompanion";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { useTodos } from "../store/todos";
@@ -67,7 +67,6 @@ export default function Companion() {
   // Cycle through animation frames
   useEffect(() => {
     // Reset frame counter when animation changes to ensure clean start
-    // This is intentional synchronization with external state machine
     setCurrentFrame(0);
 
     if (!showCompanion || !enabled || prefersReducedMotion) {
@@ -115,13 +114,22 @@ export default function Companion() {
               animationIntervalRef.current = null;
             }
 
+            // Smooth transition for waking state (no pause), brief pause for others
+            const pauseDuration = companionState === "waking" ? 0 : 100;
+
             setTimeout(() => {
               setAnimationIndex(nextIndex);
               setCurrentFrame(0);
-            }, 100); // 100ms pause between celebration animations
+            }, pauseDuration);
           } else {
-            // Sequence complete - transition back to idle
-            useCompanionStore.getState().transitionTo("idle");
+            // Sequence complete - transition back to idle (but not for exiting state)
+            if (companionState !== "exiting" && companionState !== "entering") {
+              useCompanionStore.getState().transitionTo("idle");
+            } else if (companionState === "entering") {
+              // Entering animation finished, now go to idle
+              useCompanionStore.getState().transitionTo("idle");
+            }
+            // For exiting, don't transition - let the unmount happen
           }
         }
       }
@@ -151,8 +159,22 @@ export default function Companion() {
     idleAnimations.length,
   ]);
 
+  // Handle showing/hiding companion with proper animations
+  useEffect(() => {
+    if (enabled && showCompanion && isMounted) {
+      // Show: force entering animation (bypasses state machine validation)
+      useCompanionStore.getState().transitionTo("entering");
+    } else if ((!enabled || !showCompanion) && isMounted) {
+      // Hide: trigger exiting animation
+      const currentState = useCompanionStore.getState().state;
+      if (currentState !== "exiting") {
+        useCompanionStore.getState().transitionTo("exiting");
+      }
+    }
+  }, [enabled, showCompanion, isMounted]);
+
   // Don't render during SSR to avoid hydration mismatch
-  if (!isMounted || !showCompanion || !enabled) {
+  if (!isMounted) {
     return null;
   }
 
@@ -185,31 +207,44 @@ export default function Companion() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={!prefersReducedMotion ? { scale: 1.1 } : undefined}
-      whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
-      transition={{
-        opacity: { duration: 0.3 },
-        scale: { duration: 0.2, ease: "easeOut" },
+    <AnimatePresence
+      mode="wait"
+      onExitComplete={() => {
+        // Reset to idle after exit animation completes
+        useCompanionStore.getState().transitionTo("idle");
       }}
-      className="fixed top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-auto cursor-pointer"
-      onClick={handleClick}
-      role="img"
-      aria-label="Companion character"
     >
-      <div
-        className="bg-center bg-no-repeat"
-        style={{
-          width: `${SPRITE_SIZE * SPRITE_SCALE}px`,
-          height: `${SPRITE_SIZE * SPRITE_SCALE}px`,
-          backgroundImage: `url(/companion-${theme}.png)`,
-          backgroundPosition,
-          backgroundSize: `${SPRITE_SIZE * SPRITE_SCALE * 5}px auto`,
-          imageRendering: "pixelated",
-        }}
-      />
-    </motion.div>
+      {enabled && showCompanion && (
+        <motion.div
+          key="companion"
+          initial={{ opacity: 1, scale: 1, y: -100 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 1, scale: 1, y: -100 }}
+          whileHover={!prefersReducedMotion ? { scale: 1.1 } : undefined}
+          whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
+          transition={{
+            y: { duration: 0.8, ease: "easeInOut" },
+            opacity: { duration: 0.3 },
+            scale: { duration: 0.2, ease: "easeOut" },
+          }}
+          className="fixed top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-auto cursor-pointer"
+          onClick={handleClick}
+          role="img"
+          aria-label="Companion character"
+        >
+          <div
+            className="bg-center bg-no-repeat"
+            style={{
+              width: `${SPRITE_SIZE * SPRITE_SCALE}px`,
+              height: `${SPRITE_SIZE * SPRITE_SCALE}px`,
+              backgroundImage: `url(/companion-${theme}.png)`,
+              backgroundPosition,
+              backgroundSize: `${SPRITE_SIZE * SPRITE_SCALE * 5}px auto`,
+              imageRendering: "pixelated",
+            }}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

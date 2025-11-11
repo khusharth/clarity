@@ -37,10 +37,13 @@ export type AnimationType =
  * Companion behavioral states
  */
 export type CompanionStateType =
+  | "entering" // Initial entrance animation
+  | "exiting" // Exit animation when toggling off
   | "idle" // Default resting state
   | "motivated" // Task completion reaction
   | "celebrating" // Quadrant clear celebration
   | "tired" // 2-hour inactivity state
+  | "waking" // Waking up from tired state
   | "happy" // Interactive reaction 1
   | "curious" // Interactive reaction 2
   | "playful"; // Interactive reaction 3
@@ -71,7 +74,7 @@ export const spriteMap: Record<AnimationType, SpriteConfig> = {
   idleDiaDown: { row: 7, frames: 3, startX: 32, duration: 1200 },
   runDiaUp: { row: 8, frames: 3, startX: 32, duration: 600 }, // Faster for running
   runDiaDown: { row: 9, frames: 3, startX: 32, duration: 600 },
-  wakeUp: { row: 10, frames: 3, startX: 32, duration: 900 },
+  wakeUp: { row: 10, frames: 4, startX: 32, duration: 2000 }, // Slow wake up (500ms per frame)
   sleep: { row: 11, frames: 4, startX: 32, duration: 2400 }, // Slower for sleeping
   wuff: { row: 12, frames: 3, startX: 32, duration: 1200 },
 };
@@ -83,6 +86,8 @@ export const spriteMap: Record<AnimationType, SpriteConfig> = {
  * Other states have specific animation sequences
  */
 export const stateAnimationMap: Record<CompanionStateType, AnimationType[]> = {
+  entering: ["runFront", "runFront", "runFront"], // Walk in from top (3 cycles)
+  exiting: ["runBack", "runBack", "runBack"], // Walk away to top (3 cycles, backwards)
   idle: ["idleFront"], // Stay facing forward in idle state
   motivated: ["wuff"], // Excited bark on task completion
   celebrating: [
@@ -97,6 +102,7 @@ export const stateAnimationMap: Record<CompanionStateType, AnimationType[]> = {
     "idleFront",
   ], // Full 360° spin + bark
   tired: ["sleep"], // Sleeping loop for inactivity
+  waking: ["wakeUp", "idleFront"], // Wake up animation then settle into idle
   happy: ["wuff"], // Click reaction 1 - excited bark
   curious: ["idleDiaUp", "idleDiaDown"], // Click reaction 2 - look around
   playful: ["runFront", "runSide", "runBack"], // Click reaction 3 - run around
@@ -145,13 +151,24 @@ export function canTransition(
   to: CompanionStateType
 ): boolean {
   const validTransitions: Record<CompanionStateType, CompanionStateType[]> = {
-    idle: ["motivated", "celebrating", "tired", "happy", "curious", "playful"],
-    motivated: ["idle", "celebrating"], // Can chain to celebrating if quadrant cleared
-    celebrating: ["idle"],
-    tired: ["motivated", "idle"], // Wake up on task completion
-    happy: ["idle"],
-    curious: ["idle"],
-    playful: ["idle"],
+    entering: ["idle"], // Entrance animation only transitions to idle
+    exiting: [], // Exiting is terminal - no transitions from here
+    idle: [
+      "motivated",
+      "celebrating",
+      "tired",
+      "happy",
+      "curious",
+      "playful",
+      "exiting",
+    ],
+    motivated: ["idle", "celebrating", "exiting"], // Can exit from any state
+    celebrating: ["idle", "exiting"],
+    tired: ["waking", "motivated", "idle", "exiting"], // Can wake up on click, or exit
+    waking: ["idle", "exiting"], // After waking, go to idle or can be interrupted by exit
+    happy: ["idle", "exiting"],
+    curious: ["idle", "exiting"],
+    playful: ["idle", "exiting"],
   };
 
   return validTransitions[from]?.includes(to) ?? false;
