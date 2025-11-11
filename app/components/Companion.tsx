@@ -33,7 +33,9 @@ export default function Companion() {
 
   // Only render on client to avoid SSR hydration mismatch
   useEffect(() => {
-    setIsMounted(true);
+    if (!isMounted) {
+      setIsMounted(true);
+    }
   }, []);
 
   // Get idle animation based on sequence index
@@ -79,6 +81,17 @@ export default function Companion() {
     // Animation frame cycling logic
     let frameCount = 0; // Local frame counter to avoid stale closure
     const cycleFrames = () => {
+      // For tired state, play once then stay on last frame
+      if (companionState === "tired") {
+        if (frameCount < animationConfig.frames - 1) {
+          frameCount++;
+          setCurrentFrame(frameCount);
+        }
+        // Stay on last frame (don't cycle back to 0)
+        return;
+      }
+
+      // Normal cycling for other states
       frameCount = (frameCount + 1) % animationConfig.frames;
       setCurrentFrame(frameCount);
 
@@ -107,7 +120,7 @@ export default function Companion() {
               setCurrentFrame(0);
             }, 100); // 100ms pause between celebration animations
           } else {
-            // Sequence complete - transition back to idle (T023)
+            // Sequence complete - transition back to idle
             useCompanionStore.getState().transitionTo("idle");
           }
         }
@@ -177,9 +190,9 @@ export default function Companion() {
       animate={{ opacity: 1, scale: 1 }}
       whileHover={!prefersReducedMotion ? { scale: 1.1 } : undefined}
       whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
-      transition={{ 
+      transition={{
         opacity: { duration: 0.3 },
-        scale: { duration: 0.2, ease: "easeOut" }
+        scale: { duration: 0.2, ease: "easeOut" },
       }}
       className="fixed top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-auto cursor-pointer"
       onClick={handleClick}

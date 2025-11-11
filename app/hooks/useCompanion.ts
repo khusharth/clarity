@@ -114,13 +114,13 @@ export function useCompanion(): UseCompanionReturn {
     return unsubscribe;
   }, [store]);
 
-  // Check inactivity every minute
+  // Check inactivity frequently for testing
   useEffect(() => {
     if (!store.enabled) return;
 
     const interval = setInterval(() => {
       store.checkInactivity();
-    }, 60000); // 60 seconds
+    }, 5000); // Check every 5 seconds (for 10 second timeout)
 
     return () => clearInterval(interval);
   }, [store]);

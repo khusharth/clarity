@@ -73,7 +73,7 @@ export const spriteMap: Record<AnimationType, SpriteConfig> = {
   runDiaDown: { row: 9, frames: 3, startX: 32, duration: 600 },
   wakeUp: { row: 10, frames: 3, startX: 32, duration: 900 },
   sleep: { row: 11, frames: 4, startX: 32, duration: 2400 }, // Slower for sleeping
-  wuff: { row: 12, frames: 4, startX: 32, duration: 600 }, // Quick bark
+  wuff: { row: 12, frames: 3, startX: 32, duration: 1200 },
 };
 
 /**
@@ -83,9 +83,19 @@ export const spriteMap: Record<AnimationType, SpriteConfig> = {
  * Other states have specific animation sequences
  */
 export const stateAnimationMap: Record<CompanionStateType, AnimationType[]> = {
-  idle: ["idleFront", "idleDiaDown", "idleSide", "idleDiaUp", "idleBack"], // All idle poses for variety
+  idle: ["idleFront"], // Stay facing forward in idle state
   motivated: ["wuff"], // Excited bark on task completion
-  celebrating: ["runDiaUp", "wuff"], // Run + bark sequence for quadrant clear
+  celebrating: [
+    "idleFront",
+    "idleDiaDown",
+    "idleSide",
+    "idleDiaUp",
+    "idleBack",
+    "idleDiaUp",
+    "idleSide",
+    "idleDiaDown",
+    "idleFront",
+  ], // Full 360° spin + bark
   tired: ["sleep"], // Sleeping loop for inactivity
   happy: ["wuff"], // Click reaction 1 - excited bark
   curious: ["idleDiaUp", "idleDiaDown"], // Click reaction 2 - look around

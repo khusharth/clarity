@@ -152,6 +152,16 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
       return;
     }
 
+    // Wake up if sleeping
+    if (state === "tired") {
+      get().transitionTo("idle");
+      set({ 
+        lastClickTime: now,
+        lastTaskCompletionTime: now, // Reset inactivity timer
+      });
+      return;
+    }
+
     // Block clicks during high-priority animations
     if ((state === "motivated" || state === "celebrating") && isAnimating) {
       return;
@@ -186,10 +196,10 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
     if (!lastTaskCompletionTime) return;
 
     const elapsed = Date.now() - lastTaskCompletionTime;
-    const twoHours = 2 * 60 * 60 * 1000; // 7200000ms
+    const tenSeconds = 10 * 1000; // 10000ms (for testing)
 
-    // Transition to tired if inactive for 2 hours and not already tired
-    if (elapsed >= twoHours && state !== "tired") {
+    // Transition to tired if inactive for 10 seconds and not already tired
+    if (elapsed >= tenSeconds && state !== "tired") {
       get().transitionTo("tired");
     }
   },
