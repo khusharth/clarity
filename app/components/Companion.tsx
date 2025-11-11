@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useCompanion } from "../hooks/useCompanion";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { useTodos } from "../store/todos";
@@ -11,7 +11,6 @@ import {
   SPRITE_SCALE,
   spriteMap,
   stateAnimationMap,
-  getRandomIdleAnimation,
   getSpritePosition,
   type AnimationType,
 } from "../lib/companion-animations";
@@ -27,29 +26,33 @@ export default function Companion() {
   const prefersReducedMotion = useReducedMotion();
 
   const [currentFrame, setCurrentFrame] = useState(0);
-  const [idleVariant, setIdleVariant] = useState<AnimationType>(getRandomIdleAnimation());
+  const [idleSequenceIndex, setIdleSequenceIndex] = useState(0); // Track position in idle sequence (360° rotation)
   const [animationIndex, setAnimationIndex] = useState(0); // Track position in animation sequence (T027)
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-
-  // Log theme changes only
-  useEffect(() => {
-    console.log("[Companion Component] Theme changed to:", theme);
-  }, [theme]);
 
   // Only render on client to avoid SSR hydration mismatch
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  // Get idle animation based on sequence index
+  const idleAnimations = stateAnimationMap.idle;
+  const idleVariant = idleAnimations[idleSequenceIndex];
+
   // Get animation sequence for current state
-  const animationSequence = companionState !== "idle" 
-    ? stateAnimationMap[companionState] 
-    : [idleVariant];
+  const animationSequence =
+    companionState !== "idle"
+      ? stateAnimationMap[companionState]
+      : [idleVariant];
 
   // Derive current animation from sequence index with bounds checking (T027)
-  const safeAnimationIndex = Math.min(animationIndex, animationSequence.length - 1);
-  const currentAnimation: AnimationType = animationSequence[safeAnimationIndex] || "idleFront";
+  const safeAnimationIndex = Math.min(
+    animationIndex,
+    animationSequence.length - 1
+  );
+  const currentAnimation: AnimationType =
+    animationSequence[safeAnimationIndex] || "idleFront";
 
   // Get current animation config
   const animationConfig = spriteMap[currentAnimation];
@@ -81,21 +84,24 @@ export default function Companion() {
 
       // When animation completes (returns to frame 0)
       if (frameCount === 0) {
-        // If in idle state, pick random idle animation for variety
+        // If in idle state, cycle to next animation (360° rotation)
         if (companionState === "idle") {
-          setIdleVariant(getRandomIdleAnimation());
+          setIdleSequenceIndex((prevIndex) => {
+            // Loop back to start after reaching the end
+            return (prevIndex + 1) % idleAnimations.length;
+          });
         } else {
           // Non-idle animation completed - check if there are more in sequence (T027)
           const sequence = stateAnimationMap[companionState];
           const nextIndex = animationIndex + 1;
-          
+
           if (nextIndex < sequence.length) {
             // More animations in sequence - pause briefly then play next (T028)
             if (animationIntervalRef.current) {
               clearInterval(animationIntervalRef.current);
               animationIntervalRef.current = null;
             }
-            
+
             setTimeout(() => {
               setAnimationIndex(nextIndex);
               setCurrentFrame(0);
@@ -129,6 +135,7 @@ export default function Companion() {
     animationIndex,
     animationConfig.duration,
     animationConfig.frames,
+    idleAnimations.length,
   ]);
 
   // Don't render during SSR to avoid hydration mismatch
@@ -165,31 +172,31 @@ export default function Companion() {
   }
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.8 }}
-        whileHover={!prefersReducedMotion ? { scale: 1.1 } : undefined}
-        whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
-        transition={{ duration: 0.3, ease: "easeOut" }}
-        className="fixed top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-auto cursor-pointer"
-        onClick={handleClick}
-        role="img"
-        aria-label="Companion character"
-      >
-        <div
-          className="bg-center bg-no-repeat"
-          style={{
-            width: `${SPRITE_SIZE * SPRITE_SCALE}px`,
-            height: `${SPRITE_SIZE * SPRITE_SCALE}px`,
-            backgroundImage: `url(/companion-${theme}.png)`,
-            backgroundPosition,
-            backgroundSize: `${SPRITE_SIZE * SPRITE_SCALE * 5}px auto`,
-            imageRendering: "pixelated",
-          }}
-        />
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={!prefersReducedMotion ? { scale: 1.1 } : undefined}
+      whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
+      transition={{ 
+        opacity: { duration: 0.3 },
+        scale: { duration: 0.2, ease: "easeOut" }
+      }}
+      className="fixed top-4 right-4 md:top-6 md:right-6 z-50 pointer-events-auto cursor-pointer"
+      onClick={handleClick}
+      role="img"
+      aria-label="Companion character"
+    >
+      <div
+        className="bg-center bg-no-repeat"
+        style={{
+          width: `${SPRITE_SIZE * SPRITE_SCALE}px`,
+          height: `${SPRITE_SIZE * SPRITE_SCALE}px`,
+          backgroundImage: `url(/companion-${theme}.png)`,
+          backgroundPosition,
+          backgroundSize: `${SPRITE_SIZE * SPRITE_SCALE * 5}px auto`,
+          imageRendering: "pixelated",
+        }}
+      />
+    </motion.div>
   );
 }

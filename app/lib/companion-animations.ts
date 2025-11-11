@@ -24,6 +24,9 @@ export type AnimationType =
   | "idleBack"
   | "idleDiaUp"
   | "idleDiaDown"
+  | "runFront"
+  | "runSide"
+  | "runBack"
   | "runDiaUp"
   | "runDiaDown"
   | "wakeUp"
@@ -61,13 +64,16 @@ export const spriteMap: Record<AnimationType, SpriteConfig> = {
   idleFront: { row: 0, frames: 3, startX: 32, duration: 1200 }, // 400ms per frame
   idleSide: { row: 1, frames: 3, startX: 32, duration: 1200 },
   idleBack: { row: 2, frames: 3, startX: 32, duration: 1200 },
-  idleDiaUp: { row: 3, frames: 3, startX: 32, duration: 1200 },
-  idleDiaDown: { row: 4, frames: 3, startX: 32, duration: 1200 },
-  runDiaUp: { row: 5, frames: 3, startX: 32, duration: 600 }, // Faster for running
-  runDiaDown: { row: 6, frames: 3, startX: 32, duration: 600 },
-  wakeUp: { row: 7, frames: 3, startX: 32, duration: 900 },
-  sleep: { row: 8, frames: 3, startX: 32, duration: 2400 }, // Slower for sleeping
-  wuff: { row: 9, frames: 3, startX: 32, duration: 600 }, // Quick bark
+  runFront: { row: 3, frames: 3, startX: 32, duration: 600 },
+  runSide: { row: 4, frames: 3, startX: 32, duration: 600 },
+  runBack: { row: 5, frames: 3, startX: 32, duration: 600 },
+  idleDiaUp: { row: 6, frames: 3, startX: 32, duration: 1200 },
+  idleDiaDown: { row: 7, frames: 3, startX: 32, duration: 1200 },
+  runDiaUp: { row: 8, frames: 3, startX: 32, duration: 600 }, // Faster for running
+  runDiaDown: { row: 9, frames: 3, startX: 32, duration: 600 },
+  wakeUp: { row: 10, frames: 3, startX: 32, duration: 900 },
+  sleep: { row: 11, frames: 4, startX: 32, duration: 2400 }, // Slower for sleeping
+  wuff: { row: 12, frames: 4, startX: 32, duration: 600 }, // Quick bark
 };
 
 /**
@@ -77,13 +83,13 @@ export const spriteMap: Record<AnimationType, SpriteConfig> = {
  * Other states have specific animation sequences
  */
 export const stateAnimationMap: Record<CompanionStateType, AnimationType[]> = {
-  idle: ["idleFront", "idleSide", "idleBack", "idleDiaUp", "idleDiaDown"], // All idle poses for variety
-  motivated: ["wuff"], // Excited bark
-  celebrating: ["runDiaUp", "wuff"], // Run + bark sequence
-  tired: ["sleep"], // Sleeping loop
-  happy: ["wuff"], // Click reaction 1
-  curious: ["idleDiaUp"], // Click reaction 2
-  playful: ["runDiaDown"], // Click reaction 3
+  idle: ["idleFront", "idleDiaDown", "idleSide", "idleDiaUp", "idleBack"], // All idle poses for variety
+  motivated: ["wuff"], // Excited bark on task completion
+  celebrating: ["runDiaUp", "wuff"], // Run + bark sequence for quadrant clear
+  tired: ["sleep"], // Sleeping loop for inactivity
+  happy: ["wuff"], // Click reaction 1 - excited bark
+  curious: ["idleDiaUp", "idleDiaDown"], // Click reaction 2 - look around
+  playful: ["runFront", "runSide", "runBack"], // Click reaction 3 - run around
 };
 
 /**

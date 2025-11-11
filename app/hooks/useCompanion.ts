@@ -10,7 +10,11 @@
 import { useEffect, useMemo } from "react";
 import { useCompanionStore } from "../store/companion";
 import { useTodos } from "../store/todos";
-import { getSpritePosition, type CompanionStateType, type AnimationType } from "../lib/companion-animations";
+import {
+  getSpritePosition,
+  type CompanionStateType,
+  type AnimationType,
+} from "../lib/companion-animations";
 import type { Task } from "../lib/schema";
 
 /**
@@ -53,27 +57,24 @@ export function useCompanion(): UseCompanionReturn {
   // Subscribe to task completions
   useEffect(() => {
     if (!store.enabled) {
-      console.log("[Companion] Not subscribing - companion disabled");
       return;
     }
 
-    console.log("[Companion] Setting up task completion subscription");
-
     // Track previous completed count to detect new completions
-    let prevCompletedCount = useTodos.getState().tasks.filter((t: Task) => t.status === "completed").length;
-    console.log("[Companion] Initial completed count:", prevCompletedCount);
+    let prevCompletedCount = useTodos
+      .getState()
+      .tasks.filter((t: Task) => t.status === "completed").length;
 
     const unsubscribe = useTodos.subscribe((state) => {
       const tasks = state.tasks;
 
       // Count completed tasks
-      const completedCount = tasks.filter((t: Task) => t.status === "completed").length;
+      const completedCount = tasks.filter(
+        (t: Task) => t.status === "completed"
+      ).length;
       const newCompletions = completedCount - prevCompletedCount;
 
-      console.log("[Companion] Task state update - prev:", prevCompletedCount, "current:", completedCount, "new:", newCompletions);
-
       if (newCompletions > 0 && store.enabled) {
-        console.log("[Companion] New task completion detected!");
         store.updateLastTaskTime();
 
         // Find the last completed task
@@ -92,17 +93,15 @@ export function useCompanion(): UseCompanionReturn {
               t.isImportant === lastCompleted.isImportant &&
               t.isUrgent === lastCompleted.isUrgent
           );
-          const quadrantCleared = quadrantTasks.every((t: Task) => t.status === "completed");
-
-          console.log("[Companion] Quadrant check - cleared:", quadrantCleared, "state:", store.state);
+          const quadrantCleared = quadrantTasks.every(
+            (t: Task) => t.status === "completed"
+          );
 
           // Wake up if tired, otherwise celebrate or react
           if (store.state === "tired") {
-            console.log("[Companion] Waking up from tired state");
             store.transitionTo("motivated");
           } else {
             const targetState = quadrantCleared ? "celebrating" : "motivated";
-            console.log("[Companion] Transitioning to:", targetState);
             store.transitionTo(targetState);
           }
         }
@@ -131,12 +130,9 @@ export function useCompanion(): UseCompanionReturn {
     const updateTheme = () => {
       const dataTheme = document.documentElement.getAttribute("data-theme");
       const newTheme = dataTheme === "dark" ? "dark" : "light";
-      
-      console.log("[Companion] Theme check - data-theme:", dataTheme, "newTheme:", newTheme, "currentTheme:", store.theme);
-      
+
       // Only update if theme actually changed to prevent infinite loops
       if (store.theme !== newTheme) {
-        console.log("[Companion] Theme changed, syncing to:", newTheme);
         store.syncTheme(newTheme);
       }
     };

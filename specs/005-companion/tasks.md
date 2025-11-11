@@ -150,7 +150,7 @@
 ### Implementation for User Story 4
 
 - [x] T037 [US4] Add checkInactivity method in companion store at `app/store/companion.ts` that calculates elapsed time since lastTaskCompletionTime
-- [x] T038 [US4] Implement 2-hour threshold check (2 * 60 * 60 * 1000 milliseconds) in checkInactivity method with transition to tired state
+- [x] T038 [US4] Implement 2-hour threshold check (2 _ 60 _ 60 \* 1000 milliseconds) in checkInactivity method with transition to tired state
 - [x] T039 [US4] Add useEffect timer in useCompanion hook in `app/hooks/useCompanion.ts` that calls checkInactivity every 60 seconds (60000ms)
 - [x] T040 [US4] Implement wake-up transition logic in useCompanion todo subscription to check if current state is tired and transition to motivated on task completion
 - [ ] T041 [US4] Add wakeUp animation support in `app/components/Companion.tsx` to play wakeUp sprite animation before transitioning to motivated state

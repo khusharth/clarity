@@ -153,10 +153,7 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
     }
 
     // Block clicks during high-priority animations
-    if (
-      (state === "motivated" || state === "celebrating") &&
-      isAnimating
-    ) {
+    if ((state === "motivated" || state === "celebrating") && isAnimating) {
       return;
     }
 
