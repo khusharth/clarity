@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCompanion } from "../hooks/useCompanion";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { useTodos } from "../store/todos";
 import { useCompanionStore } from "../store/companion";
 import {
@@ -20,16 +21,18 @@ import {
  * that reacts to user activity and provides visual feedback
  */
 export default function Companion() {
-  const { showCompanion } = useTodos();
+  const { showCompanion, isFocus } = useTodos();
   const { enabled, handleClick, state: companionState } = useCompanionStore();
   const { theme } = useCompanion();
   const prefersReducedMotion = useReducedMotion();
+  const isMobile = useMediaQuery("(max-width: 768px)"); // Detect mobile viewport
 
   const [currentFrame, setCurrentFrame] = useState(0);
   const [idleSequenceIndex, setIdleSequenceIndex] = useState(0); // Track position in idle sequence (360° rotation)
   const [animationIndex, setAnimationIndex] = useState(0); // Track position in animation sequence (T027)
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [isInFocusPosition, setIsInFocusPosition] = useState(false); // Track if companion is at focus position
 
   // Only render on client to avoid SSR hydration mismatch
   useEffect(() => {
@@ -122,14 +125,32 @@ export default function Companion() {
               setCurrentFrame(0);
             }, pauseDuration);
           } else {
-            // Sequence complete - transition back to idle (but not for exiting state)
-            if (companionState !== "exiting" && companionState !== "entering") {
+            // Sequence complete - handle state-specific transitions
+            if (companionState === "entering") {
+              // Entering animation finished
+              // Check if we should go to focus mode or idle (skip focus on mobile)
+              if (isFocus && !isMobile) {
+                useCompanionStore.getState().transitionTo("focusing");
+              } else {
+                useCompanionStore.getState().transitionTo("idle");
+              }
+            } else if (companionState === "focusing") {
+              // Reached focus position, stay focused
+              useCompanionStore.getState().transitionTo("focused");
+            } else if (companionState === "unfocusing") {
+              // Returned from focus position, back to idle
               useCompanionStore.getState().transitionTo("idle");
-            } else if (companionState === "entering") {
-              // Entering animation finished, now go to idle
+            } else if (companionState === "waking" && isFocus && !isMobile) {
+              // Woke up during focus mode (desktop only), go straight to focusing
+              useCompanionStore.getState().transitionTo("focusing");
+            } else if (
+              companionState !== "exiting" &&
+              companionState !== "focused"
+            ) {
+              // Default: transition back to idle (except exiting and focused states)
               useCompanionStore.getState().transitionTo("idle");
             }
-            // For exiting, don't transition - let the unmount happen
+            // For exiting and focused, don't auto-transition
           }
         }
       }
@@ -157,6 +178,8 @@ export default function Companion() {
     animationConfig.duration,
     animationConfig.frames,
     idleAnimations.length,
+    isFocus,
+    isMobile,
   ]);
 
   // Handle showing/hiding companion with proper animations
@@ -164,14 +187,58 @@ export default function Companion() {
     if (enabled && showCompanion && isMounted) {
       // Show: force entering animation (bypasses state machine validation)
       useCompanionStore.getState().transitionTo("entering");
+      // Reset focus position flag when showing companion
+      // If already in focus mode, the focus effect will handle re-entry
+      setIsInFocusPosition(false);
     } else if ((!enabled || !showCompanion) && isMounted) {
       // Hide: trigger exiting animation
       const currentState = useCompanionStore.getState().state;
       if (currentState !== "exiting") {
         useCompanionStore.getState().transitionTo("exiting");
       }
+      // Reset focus position flag when hiding
+      setIsInFocusPosition(false);
     }
   }, [enabled, showCompanion, isMounted]);
+
+  // Handle focus mode transitions
+  useEffect(() => {
+    if (!isMounted || !enabled || !showCompanion) return;
+
+    const currentState = useCompanionStore.getState().state;
+
+    // On mobile, just wake up if sleeping but don't move
+    if (isMobile && isFocus) {
+      if (currentState === "tired") {
+        useCompanionStore.getState().transitionTo("waking");
+      }
+      return; // Skip focus positioning on mobile
+    }
+
+    if (isFocus && !isInFocusPosition) {
+      // Entering focus mode - wake up if sleeping, then move to focus position
+      if (currentState === "tired") {
+        // Wake up first, then transition to focusing
+        useCompanionStore.getState().transitionTo("waking");
+        // After waking animation completes, it will auto-transition through the state machine
+        // We'll need to catch this in the animation completion handler
+      } else if (
+        currentState !== "focusing" &&
+        currentState !== "focused" &&
+        currentState !== "exiting" &&
+        currentState !== "entering" // Don't interrupt entering animation
+      ) {
+        useCompanionStore.getState().transitionTo("focusing");
+      }
+      setIsInFocusPosition(true);
+    } else if (!isFocus && isInFocusPosition) {
+      // Exiting focus mode - return to normal position
+      if (currentState === "focused") {
+        useCompanionStore.getState().transitionTo("unfocusing");
+      }
+      setIsInFocusPosition(false);
+    }
+  }, [isFocus, isMounted, enabled, showCompanion, isInFocusPosition, isMobile]);
 
   // Don't render during SSR to avoid hydration mismatch
   if (!isMounted) {
@@ -218,12 +285,29 @@ export default function Companion() {
         <motion.div
           key="companion"
           initial={{ opacity: 1, scale: 1, y: -100 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            // Move down first, then to center for focus mode
+            y:
+              companionState === "focused" || companionState === "focusing"
+                ? 38 // Move down below logo, above quadrants
+                : 0, // Normal position (top)
+            x:
+              companionState === "focused" || companionState === "focusing"
+                ? "calc(-50vw + 100%)" // Move to horizontal center of screen
+                : 0, // Normal position (right edge)
+          }}
           exit={{ opacity: 1, scale: 1, y: -100 }}
           whileHover={!prefersReducedMotion ? { scale: 1.1 } : undefined}
           whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
           transition={{
-            y: { duration: 0.8, ease: "easeInOut" },
+            y: { duration: 0.6, ease: "easeInOut" }, // Move down/up
+            x: {
+              duration: 1.8,
+              ease: "easeInOut",
+              delay: companionState === "focusing" ? 0.3 : 0, // Delay horizontal movement when focusing
+            },
             opacity: { duration: 0.3 },
             scale: { duration: 0.2, ease: "easeOut" },
           }}
@@ -241,6 +325,13 @@ export default function Companion() {
               backgroundPosition,
               backgroundSize: `${SPRITE_SIZE * SPRITE_SCALE * 5}px auto`,
               imageRendering: "pixelated",
+              transform:
+                companionState === "focusing"
+                  ? "scaleX(-1)" // Flip left when moving to focus position
+                  : companionState === "unfocusing"
+                  ? "scaleX(1)" // Face right when returning from focus (no flip needed, runSide naturally faces right)
+                  : "scaleX(1)", // Normal orientation
+              transition: "transform 0.2s ease-out",
             }}
           />
         </motion.div>

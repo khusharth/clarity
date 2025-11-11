@@ -124,12 +124,14 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
   transitionTo: (newState) => {
     const currentState = get().state;
 
-    // Allow force transitions for enter/exit flow:
+    // Allow force transitions for special flows:
     // - exiting → idle (reset after hiding)
     // - any state → entering (force entering on show, even from exiting/persisted state)
+    // - any state → focusing (force focus mode from any state)
     const isForceTransition =
       (currentState === "exiting" && newState === "idle") ||
-      newState === "entering";
+      newState === "entering" ||
+      newState === "focusing";
 
     // Validate transition
     if (!isForceTransition && !canTransition(currentState, newState)) {

@@ -44,6 +44,9 @@ export type CompanionStateType =
   | "celebrating" // Quadrant clear celebration
   | "tired" // 2-hour inactivity state
   | "waking" // Waking up from tired state
+  | "focusing" // Moving to focus position (left side near logo)
+  | "focused" // Sitting in focus position
+  | "unfocusing" // Returning from focus position
   | "happy" // Interactive reaction 1
   | "curious" // Interactive reaction 2
   | "playful"; // Interactive reaction 3
@@ -103,6 +106,9 @@ export const stateAnimationMap: Record<CompanionStateType, AnimationType[]> = {
   ], // Full 360° spin + bark
   tired: ["sleep"], // Sleeping loop for inactivity
   waking: ["wakeUp", "idleFront"], // Wake up animation then settle into idle
+  focusing: ["runSide", "runSide", "runSide"], // Run to the left (toward logo)
+  focused: ["idleFront"], // Sit in focus position
+  unfocusing: ["runSide", "runSide", "runSide"], // Run back to normal position
   happy: ["wuff"], // Click reaction 1 - excited bark
   curious: ["idleDiaUp", "idleDiaDown"], // Click reaction 2 - look around
   playful: ["runFront", "runSide", "runBack"], // Click reaction 3 - run around
@@ -161,14 +167,18 @@ export function canTransition(
       "curious",
       "playful",
       "exiting",
+      "focusing", // Can enter focus mode from idle
     ],
-    motivated: ["idle", "celebrating", "exiting"], // Can exit from any state
-    celebrating: ["idle", "exiting"],
-    tired: ["waking", "motivated", "idle", "exiting"], // Can wake up on click, or exit
-    waking: ["idle", "exiting"], // After waking, go to idle or can be interrupted by exit
-    happy: ["idle", "exiting"],
-    curious: ["idle", "exiting"],
-    playful: ["idle", "exiting"],
+    motivated: ["idle", "celebrating", "exiting", "focusing"],
+    celebrating: ["idle", "exiting", "focusing"],
+    tired: ["waking", "motivated", "idle", "exiting", "focusing"], // Can wake up on focus mode
+    waking: ["idle", "exiting", "focused"], // After waking, go to idle or focus
+    focusing: ["focused"], // Move to focus position then stay focused
+    focused: ["unfocusing"], // Can only leave focus by unfocusing
+    unfocusing: ["idle"], // Return to normal idle position
+    happy: ["idle", "exiting", "focusing"],
+    curious: ["idle", "exiting", "focusing"],
+    playful: ["idle", "exiting", "focusing"],
   };
 
   return validTransitions[from]?.includes(to) ?? false;
