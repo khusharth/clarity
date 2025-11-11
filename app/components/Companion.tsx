@@ -329,8 +329,13 @@ export default function Companion() {
                 companionState === "focusing"
                   ? "scaleX(-1)" // Flip left when moving to focus position
                   : companionState === "unfocusing"
-                  ? "scaleX(1)" // Face right when returning from focus (no flip needed, runSide naturally faces right)
-                  : "scaleX(1)", // Normal orientation
+                  ? "scaleX(1)" // Face right when returning from focus
+                  : companionState === "celebrating" &&
+                    (animationIndex === 5 ||
+                      animationIndex === 6 ||
+                      animationIndex === 7)
+                  ? "scaleX(-1)" // Flip back-left half of rotation (frames 5-7: diagUp, side, diagDown on left)
+                  : "scaleX(1)", // Normal orientation for right side and front/back
               transition: "transform 0.2s ease-out",
             }}
           />

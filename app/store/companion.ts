@@ -154,14 +154,14 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
 
   handleClick: () => {
     const now = Date.now();
-    const { lastClickTime, clickCount, state, isAnimating } = get();
+    const { lastClickTime, state, isAnimating } = get();
 
     // Apply 500ms cooldown
     if (now - lastClickTime < 500) {
       return;
     }
 
-    // Wake up if sleeping - play wakeUp animation then runFront
+    // Wake up if sleeping - play wakeUp animation then idleFront
     if (state === "tired") {
       get().transitionTo("waking");
       set({
@@ -174,16 +174,14 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
     // Block clicks during high-priority animations
     if ((state === "motivated" || state === "celebrating") && isAnimating) {
       return;
-    } // Cycle through 3 reaction states: happy → curious → playful
-    const reactions: CompanionStateType[] = ["happy", "curious", "playful"];
-    const nextReaction = reactions[clickCount % reactions.length];
+    }
 
+    // Click triggers a spin animation (celebrating state)
     set({
       lastClickTime: now,
-      clickCount: clickCount + 1,
     });
 
-    get().transitionTo(nextReaction);
+    get().transitionTo("celebrating");
   },
 
   setEnabled: (enabled) => {
