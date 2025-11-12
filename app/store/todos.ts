@@ -134,6 +134,18 @@ export const useTodos = create<TodosState>()(
         const updated = tasks.find((t) => t.id === id);
         if (updated) await saveTask(updated);
         set({ tasks });
+
+        // Check if we should exit focus mode (all Q1 tasks completed)
+        const { isFocus } = get();
+        if (isFocus) {
+          const remainingQ1Tasks = tasks.filter(
+            (t) => t.status === "active" && t.isUrgent && t.isImportant
+          );
+          if (remainingQ1Tasks.length === 0) {
+            // All Q1 tasks completed - exit focus mode
+            set({ isFocus: false, activeTaskId: null });
+          }
+        }
       },
       uncomplete: async (id) => {
         const tasks = get().tasks.map((t) =>

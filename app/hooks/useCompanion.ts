@@ -102,6 +102,12 @@ export function useCompanion(): UseCompanionReturn {
           if (store.state === "tired") {
             useCompanionStore.setState({ shouldCelebrateAfterWaking: true });
             store.transitionTo("waking");
+          } else if (store.state === "focused" || store.state === "focusing") {
+            // If in focus mode, unfocus first before celebrating
+            useCompanionStore.setState({
+              shouldCelebrateAfterUnfocusing: true,
+            });
+            store.transitionTo("unfocusing");
           } else {
             // Always celebrate (spin) on every task completion
             store.transitionTo("celebrating");

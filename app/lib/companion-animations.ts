@@ -172,7 +172,7 @@ export function canTransition(
     waking: ["idle", "exiting", "focused"], // After waking, go to idle or focus
     focusing: ["focused"], // Move to focus position then stay focused
     focused: ["unfocusing"], // Can only leave focus by unfocusing
-    unfocusing: ["idle"], // Return to normal idle position
+    unfocusing: ["idle", "celebrating"], // Return to normal idle position or celebrate after
     happy: ["idle", "exiting", "focusing"],
     curious: ["idle", "exiting", "focusing"],
     playful: ["idle", "exiting", "focusing"],

@@ -37,8 +37,9 @@ interface CompanionStore {
   // Theme awareness
   theme: "light" | "dark"; // Synced from app theme
 
-  // Pending celebration flag (for wake-up then celebrate flow)
+  // Pending celebration flags (for sequenced animations)
   shouldCelebrateAfterWaking: boolean;
+  shouldCelebrateAfterUnfocusing: boolean;
 
   // Actions
 
@@ -123,6 +124,7 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
   clickCount: 0,
   theme: "light",
   shouldCelebrateAfterWaking: false,
+  shouldCelebrateAfterUnfocusing: false,
 
   // Actions
 

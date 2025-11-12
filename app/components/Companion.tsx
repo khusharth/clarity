@@ -175,8 +175,19 @@ export default function Companion() {
               // Reached focus position, stay focused
               useCompanionStore.getState().transitionTo("focused");
             } else if (companionState === "unfocusing") {
-              // Returned from focus position, back to idle
-              useCompanionStore.getState().transitionTo("idle");
+              // Returned from focus position
+              // Check if we should celebrate after unfocusing (task completion while focused)
+              const shouldCelebrate =
+                useCompanionStore.getState().shouldCelebrateAfterUnfocusing;
+              if (shouldCelebrate) {
+                useCompanionStore.setState({
+                  shouldCelebrateAfterUnfocusing: false,
+                });
+                useCompanionStore.getState().transitionTo("celebrating");
+              } else {
+                // Normal unfocus, go to idle
+                useCompanionStore.getState().transitionTo("idle");
+              }
             } else if (companionState === "waking") {
               // Check if we should celebrate after waking (task completion while sleeping)
               const shouldCelebrate =
@@ -289,6 +300,7 @@ export default function Companion() {
       setIsInFocusPosition(true);
     } else if (!isFocus && isInFocusPosition) {
       // Exiting focus mode - return to normal position
+      // Only trigger if not already unfocusing (could be triggered by task completion)
       if (currentState === "focused") {
         useCompanionStore.getState().transitionTo("unfocusing");
       }
