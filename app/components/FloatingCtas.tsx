@@ -4,9 +4,11 @@ import { Plus as PlusIcon, CircleCheckBigIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import Settings from "./Settings";
 import AddTodoModal from "./AddTodoModal";
+import { useTodos } from "../store/todos";
 
 const FloatingCtas = () => {
   const [open, setOpen] = useState(false);
+  const isFocus = useTodos((state) => state.isFocus);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -61,7 +63,12 @@ const FloatingCtas = () => {
         </Button>
       </div>
 
-      <AddTodoModal open={open} onCloseAction={() => setOpen(false)} />
+      <AddTodoModal
+        open={open}
+        onCloseAction={() => setOpen(false)}
+        initialUrgent={isFocus}
+        initialImportant={isFocus}
+      />
     </>
   );
 };

@@ -98,18 +98,25 @@ export function useCompanion(): UseCompanionReturn {
           })[0];
 
         if (lastCompleted) {
+          // Check if focus mode is still active (has remaining Q1 tasks)
+          const isFocusModeActive = useTodos.getState().isFocus;
+
           // If tired, wake up first before celebrating
           if (store.state === "tired") {
             useCompanionStore.setState({ shouldCelebrateAfterWaking: true });
             store.transitionTo("waking");
-          } else if (store.state === "focused" || store.state === "focusing") {
-            // If in focus mode, unfocus first before celebrating
+          } else if (
+            (store.state === "focused" || store.state === "focusing") &&
+            !isFocusModeActive
+          ) {
+            // Focus mode just ended (last Q1 task completed) - unfocus first before celebrating
             useCompanionStore.setState({
               shouldCelebrateAfterUnfocusing: true,
             });
             store.transitionTo("unfocusing");
           } else {
             // Always celebrate (spin) on every task completion
+            // This includes celebrating in center when in focus mode with tasks remaining
             store.transitionTo("celebrating");
           }
         }
