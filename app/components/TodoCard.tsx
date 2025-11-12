@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useDragControls } from "framer-motion";
 import { useTodos } from "../store/todos";
 import type { Task } from "../lib/schema";
 import { CheckCircle2, GripVertical } from "lucide-react";
@@ -35,11 +35,14 @@ export default function TodoCard({
   const reduced = useAppReducedMotion();
   const sfx = useSfx();
   const toast = useToast();
+  const dragControls = useDragControls();
   const [viewOpen, setViewOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isLongPressing, setIsLongPressing] = useState(false);
-  const [dragEnabled, setDragEnabled] = useState(false); // Controls if drag listener is active
+  const longPressCompletedRef = useRef(false); // Tracks if 500ms long press completed
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const initialPointerEventRef = useRef<PointerEvent | null>(null);
+  const initialPointerPosRef = useRef<{ x: number; y: number } | null>(null);
   const [isMobile] = useState(
     typeof window !== "undefined" &&
       window.matchMedia("(pointer: coarse)").matches
@@ -60,39 +63,77 @@ export default function TodoCard({
     };
   }, []);
 
-  const handleTouchStart = () => {
+  const handlePointerDown = (event: React.PointerEvent) => {
+    // Only handle long press logic on mobile
     if (!isMobile) return;
+
+    // Don't interfere with button clicks
+    const target = event.target as HTMLElement;
+    if (target.closest("button")) {
+      return;
+    }
+
+    // Store the initial pointer event and position
+    initialPointerEventRef.current = event.nativeEvent;
+    initialPointerPosRef.current = { x: event.clientX, y: event.clientY };
+
+    // Reset long press completion flag
+    longPressCompletedRef.current = false;
 
     // Start 500ms timer for long press
     longPressTimerRef.current = setTimeout(() => {
       setIsLongPressing(true);
-      setDragEnabled(true); // Enable drag listener after long press
+      longPressCompletedRef.current = true; // Mark long press as completed
       // Trigger visual lift effect
       sfx.dragStart();
+      // Haptic feedback on mobile
+      if (navigator.vibrate) {
+        navigator.vibrate([10]);
+      }
+      // Start drag programmatically using the stored pointer event
+      if (initialPointerEventRef.current) {
+        dragControls.start(initialPointerEventRef.current);
+      }
     }, 500);
   };
 
-  const handleTouchEnd = () => {
+  const handlePointerUp = () => {
+    // Only handle on mobile
     if (!isMobile) return;
 
-    // Cancel long press timer if touch ends before threshold
+    // Cancel long press timer if pointer up before threshold
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
-    setIsLongPressing(false);
+
+    // Don't reset if we're dragging
+    if (!isDragging) {
+      setIsLongPressing(false);
+      longPressCompletedRef.current = false;
+    }
   };
 
-  const handleTouchMove = () => {
-    // Touch move should not cancel the long press on mobile
-    // This allows drag to continue after the hold threshold
+  const handlePointerMove = (event: React.PointerEvent) => {
+    // Only handle on mobile
+    if (!isMobile) return;
 
-    // However, if dragging hasn't started yet and user scrolls,
-    // cancel the long press timer
-    if (longPressTimerRef.current && !isDragging) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-      setIsLongPressing(false);
+    // Don't cancel if already dragging or long press completed
+    if (isDragging || longPressCompletedRef.current) return;
+
+    // Check if user moved significantly (more than 10px in any direction)
+    // If so, they're probably trying to scroll, not drag
+    if (initialPointerPosRef.current && longPressTimerRef.current) {
+      const deltaX = Math.abs(event.clientX - initialPointerPosRef.current.x);
+      const deltaY = Math.abs(event.clientY - initialPointerPosRef.current.y);
+
+      if (deltaX > 10 || deltaY > 10) {
+        // Significant movement detected - cancel long press
+        clearTimeout(longPressTimerRef.current);
+        longPressTimerRef.current = null;
+        setIsLongPressing(false);
+        initialPointerPosRef.current = null;
+      }
     }
   };
 
@@ -100,22 +141,28 @@ export default function TodoCard({
     <>
       <motion.div
         drag
-        dragListener={isMobile ? dragEnabled : true}
+        dragListener={!isMobile} // Desktop: always listen, Mobile: use dragControls
+        dragControls={isMobile ? dragControls : undefined}
         dragSnapToOrigin
         dragMomentum={false}
         dragElastic={0}
         dragTransition={{ bounceStiffness: 600, bounceDamping: 30 }}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchMove={handleTouchMove}
+        {...(isMobile && {
+          onPointerDown: handlePointerDown,
+          onPointerUp: handlePointerUp,
+          onPointerMove: handlePointerMove,
+        })}
         onDragStart={() => {
           setIsDragging(true);
           if (onDragStart) {
             onDragStart(task.id, quadrant, index);
-            sfx.dragStart();
-            // Haptic feedback on mobile
+            // Only play sound on desktop (already played on mobile during long press)
+            if (!isMobile) {
+              sfx.dragStart();
+            }
+            // Additional haptic feedback on drag start (mobile)
             if (isMobile && navigator.vibrate) {
-              navigator.vibrate([10, 50, 10]);
+              navigator.vibrate([50, 10]);
             }
           }
         }}
@@ -135,7 +182,8 @@ export default function TodoCard({
           // Reset states after drag ends
           setTimeout(() => {
             setIsDragging(false);
-            setDragEnabled(false); // Reset for next drag on mobile
+            setIsLongPressing(false);
+            longPressCompletedRef.current = false;
           }, 100);
         }}
         whileDrag={
@@ -148,6 +196,7 @@ export default function TodoCard({
               }
         }
         style={{
+          touchAction: isMobile ? "none" : "auto", // Required for drag controls on touch devices
           pointerEvents: isDragging ? "none" : "auto",
           position: isDragging ? "relative" : "static",
           // Add visual lift effect for mobile long press
@@ -187,7 +236,12 @@ export default function TodoCard({
         transition={{ duration: reduced ? 0 : 0.18 }}
         whileHover={reduced ? undefined : { scale: 1.02 }}
         onClick={() => {
-          if (!isDragging) {
+          // Don't open modal if we just finished dragging or if long press was triggered
+          if (
+            !isDragging &&
+            !isLongPressing &&
+            !longPressCompletedRef.current
+          ) {
             setViewOpen(true);
           }
         }}
