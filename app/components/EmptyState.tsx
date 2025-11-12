@@ -1,22 +1,26 @@
 export default function EmptyState({
   message,
   onClick,
+  disabled,
 }: {
   message: string;
   onClick?: () => void;
+  disabled?: boolean;
 }) {
+  const isClickable = onClick && !disabled;
+
   return (
     <div
       className={`flex flex-col items-center justify-center rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-surface))] p-8 text-center shadow-(--shadow-soft) ${
-        onClick
+        isClickable
           ? "cursor-pointer transition-all hover:border-[rgb(var(--color-accent))] hover:bg-[rgb(var(--color-surface-hover))]"
           : ""
-      }`}
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
+      } ${disabled ? "pointer-events-none opacity-50" : ""}`}
+      onClick={isClickable ? onClick : undefined}
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
       onKeyDown={
-        onClick
+        isClickable
           ? (e) => {
               if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();

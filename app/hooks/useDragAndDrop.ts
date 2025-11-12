@@ -81,49 +81,69 @@ export function useDragAndDrop() {
         let newTargetQuadrant: QuadrantId | null = null;
         let newTargetIndex: number | null = null;
         let currentQuadrantElement: HTMLElement | null = null;
+        let closestQuadrant: {
+          id: QuadrantId;
+          distance: number;
+          element: HTMLElement;
+        } | null = null;
 
         // Check all quadrants to find the one containing the pointer
         for (const [quadrantId, element] of quadrantRefs.current.entries()) {
           const rect = element.getBoundingClientRect();
 
-          // Check if pointer is within this quadrant's bounds
+          // Check if pointer is within this quadrant's bounds (with some padding for easier targeting)
+          const padding = 20; // Add 20px padding to make drop zones more generous
           if (
-            x >= rect.left &&
-            x <= rect.right &&
-            y >= rect.top &&
-            y <= rect.bottom
+            x >= rect.left - padding &&
+            x <= rect.right + padding &&
+            y >= rect.top - padding &&
+            y <= rect.bottom + padding
           ) {
-            newTargetQuadrant = quadrantId;
-            currentQuadrantElement = element;
-
-            // Calculate target index based on vertical position within quadrant
-            // Exclude the currently dragged task from the calculation
-            const taskElements = Array.from(
-              element.querySelectorAll("[data-task-id]")
-            ).filter(
-              (el) =>
-                el.getAttribute("data-task-id") !==
-                dragStateRef.current.draggedTaskId
+            // Calculate distance from pointer to center of quadrant
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const distance = Math.sqrt(
+              Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
             );
 
-            if (taskElements.length === 0) {
-              newTargetIndex = 0;
-            } else {
-              // Find insertion point based on Y position
-              let insertIndex = 0;
-              for (let i = 0; i < taskElements.length; i++) {
-                const taskRect = taskElements[i].getBoundingClientRect();
-                const taskMiddle = taskRect.top + taskRect.height / 2;
-                if (y > taskMiddle) {
-                  insertIndex = i + 1;
-                } else {
-                  break;
-                }
-              }
-              newTargetIndex = insertIndex;
+            // Track the closest quadrant
+            if (!closestQuadrant || distance < closestQuadrant.distance) {
+              closestQuadrant = { id: quadrantId, distance, element };
             }
-            // Found the quadrant, no need to check others
-            break;
+          }
+        }
+
+        // Use the closest quadrant if we found one
+        if (closestQuadrant) {
+          newTargetQuadrant = closestQuadrant.id;
+          currentQuadrantElement = closestQuadrant.element;
+          const element = currentQuadrantElement;
+
+          // Calculate target index based on vertical position within quadrant
+          // Exclude the currently dragged task from the calculation
+          const taskElements = Array.from(
+            element.querySelectorAll("[data-task-id]")
+          ).filter(
+            (el) =>
+              el.getAttribute("data-task-id") !==
+              dragStateRef.current.draggedTaskId
+          );
+
+          if (taskElements.length === 0) {
+            newTargetIndex = 0;
+          } else {
+            // Find insertion point based on Y position
+            let insertIndex = 0;
+            for (let i = 0; i < taskElements.length; i++) {
+              const taskRect = taskElements[i].getBoundingClientRect();
+              const taskMiddle = taskRect.top + taskRect.height / 2;
+              if (y > taskMiddle) {
+                insertIndex = i + 1;
+              } else {
+                break;
+              }
+            }
+            newTargetIndex = insertIndex;
           }
         }
 

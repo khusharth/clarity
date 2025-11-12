@@ -53,8 +53,7 @@ export default function TodoCard({
         drag={!isMobile} // Disable drag on mobile - users can edit task to change quadrant
         dragSnapToOrigin
         dragMomentum={false}
-        dragElastic={0}
-        dragConstraints={{ top: 0, bottom: 0, left: 0, right: 0 }}
+        dragElastic={0.1}
         dragTransition={{ bounceStiffness: 600, bounceDamping: 30 }}
         onDragStart={() => {
           setIsDragging(true);
@@ -92,12 +91,13 @@ export default function TodoCard({
             : {
                 scale: 1.05,
                 boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
-                zIndex: 1000,
+                zIndex: 9999,
               }
         }
         style={{
           position: isDragging ? "relative" : "static",
           touchAction: isDragging ? "none" : "auto", // Allow scroll normally, prevent only during active drag
+          zIndex: isDragging ? 9999 : "auto",
         }}
         data-task-id={task.id}
         tabIndex={0}

@@ -234,6 +234,7 @@ export default function Matrix() {
                 tasks={q1}
                 isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q1"}
                 setQuadrantRef={dragAndDrop.setQuadrantRef}
+                isDragging={dragAndDrop.dragState.isDragging}
                 onEmptyClick={() =>
                   openModalWithPreset({ urgent: true, important: true })
                 }
@@ -287,6 +288,7 @@ export default function Matrix() {
               tasks={q1}
               isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q1"}
               setQuadrantRef={dragAndDrop.setQuadrantRef}
+              isDragging={dragAndDrop.dragState.isDragging}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: true, important: true })
               }
@@ -336,6 +338,7 @@ export default function Matrix() {
               tasks={q2}
               isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q2"}
               setQuadrantRef={dragAndDrop.setQuadrantRef}
+              isDragging={dragAndDrop.dragState.isDragging}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: false, important: true })
               }
@@ -383,6 +386,7 @@ export default function Matrix() {
               tasks={q3}
               isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q3"}
               setQuadrantRef={dragAndDrop.setQuadrantRef}
+              isDragging={dragAndDrop.dragState.isDragging}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: true, important: false })
               }
@@ -430,6 +434,7 @@ export default function Matrix() {
               tasks={q4}
               isDropTarget={dragAndDrop.dragState.targetQuadrant === "Q4"}
               setQuadrantRef={dragAndDrop.setQuadrantRef}
+              isDragging={dragAndDrop.dragState.isDragging}
               onEmptyClick={() =>
                 openModalWithPreset({ urgent: false, important: false })
               }

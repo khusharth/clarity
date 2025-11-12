@@ -18,6 +18,7 @@ export default function Quadrant({
   tasks,
   isDropTarget,
   setQuadrantRef,
+  isDragging,
 }: {
   title: string;
   colorVar: string; // CSS rgb triplet variable name, e.g., --q1
@@ -29,6 +30,7 @@ export default function Quadrant({
   tasks?: Task[];
   isDropTarget?: boolean;
   setQuadrantRef?: (id: QuadrantId, ref: HTMLElement | null) => void;
+  isDragging?: boolean;
 }) {
   const showQuadrantCounts = useTodos((state) => state.showQuadrantCounts);
   const isFocus = useTodos((state) => state.isFocus);
@@ -78,7 +80,8 @@ export default function Quadrant({
         {isEmpty ? (
           <EmptyState
             message={emptyMessage ?? "No items yet"}
-            onClick={onEmptyClick}
+            onClick={isDragging ? undefined : onEmptyClick}
+            disabled={isDragging}
           />
         ) : (
           children
