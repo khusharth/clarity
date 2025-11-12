@@ -37,6 +37,9 @@ interface CompanionStore {
   // Theme awareness
   theme: "light" | "dark"; // Synced from app theme
 
+  // Pending celebration flag (for wake-up then celebrate flow)
+  shouldCelebrateAfterWaking: boolean;
+
   // Actions
 
   /**
@@ -93,8 +96,9 @@ interface CompanionStore {
    * Check for inactivity and transition to tired state if threshold exceeded
    *
    * Should be called periodically (e.g., every 60 seconds)
+   * @param isFocusMode - Whether the app is in focus mode (prevents sleeping)
    */
-  checkInactivity: () => void;
+  checkInactivity: (isFocusMode?: boolean) => void;
 }
 
 /**
@@ -118,6 +122,7 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
   lastClickTime: 0,
   clickCount: 0,
   theme: "light",
+  shouldCelebrateAfterWaking: false,
 
   // Actions
 
@@ -128,10 +133,12 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
     // - exiting → idle (reset after hiding)
     // - any state → entering (force entering on show, even from exiting/persisted state)
     // - any state → focusing (force focus mode from any state)
+    // - any state → celebrating (force celebration on task completion from any state)
     const isForceTransition =
       (currentState === "exiting" && newState === "idle") ||
       newState === "entering" ||
-      newState === "focusing";
+      newState === "focusing" ||
+      newState === "celebrating";
 
     // Validate transition
     if (!isForceTransition && !canTransition(currentState, newState)) {
@@ -196,9 +203,12 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
     set({ lastTaskCompletionTime: Date.now() });
   },
 
-  checkInactivity: () => {
+  checkInactivity: (isFocusMode = false) => {
     const { lastTaskCompletionTime, state } = get();
     if (!lastTaskCompletionTime) return;
+
+    // Don't sleep in focus mode
+    if (isFocusMode) return;
 
     const elapsed = Date.now() - lastTaskCompletionTime;
     const fifteenSeconds = 15 * 1000; // 15000ms

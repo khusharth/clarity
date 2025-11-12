@@ -23,7 +23,13 @@ import {
  */
 export default function Companion() {
   const { showCompanion, isFocus } = useTodos();
-  const { enabled, handleClick, state: companionState } = useCompanionStore();
+  const companionStore = useCompanionStore();
+  const {
+    enabled,
+    handleClick,
+    state: companionState,
+    lastClickTime,
+  } = companionStore;
   const { theme } = useCompanion();
   const prefersReducedMotion = useReducedMotion();
   const isMobile = useMediaQuery("(max-width: 768px)"); // Detect mobile viewport
@@ -36,12 +42,31 @@ export default function Companion() {
   const [isMounted, setIsMounted] = useState(false);
   const [isInFocusPosition, setIsInFocusPosition] = useState(false); // Track if companion is at focus position
 
-  // Wrapper for handleClick that plays sound only when awake
+  // Wrapper for handleClick that plays sound only when awake and click will be processed
   const handleClickWithSound = () => {
-    // Play howl sound only when dog is awake (not tired)
-    if (companionState !== "tired") {
-      sfx.dogHowl();
+    const now = Date.now();
+
+    // Check if click will be blocked (replicate store logic)
+    // Don't play sound if in cooldown
+    if (now - lastClickTime < 500) {
+      handleClick();
+      return;
     }
+
+    // Don't play sound if tired (will just wake up)
+    if (companionState === "tired") {
+      handleClick();
+      return;
+    }
+
+    // Don't play sound if already celebrating or motivated (block entire animation)
+    if (companionState === "motivated" || companionState === "celebrating") {
+      handleClick();
+      return;
+    }
+
+    // Play howl sound only when click will actually trigger celebrating animation
+    sfx.dogHowl();
     handleClick();
   };
 
@@ -151,9 +176,22 @@ export default function Companion() {
             } else if (companionState === "unfocusing") {
               // Returned from focus position, back to idle
               useCompanionStore.getState().transitionTo("idle");
-            } else if (companionState === "waking" && isFocus && !isMobile) {
-              // Woke up during focus mode (desktop only), go straight to focusing
-              useCompanionStore.getState().transitionTo("focusing");
+            } else if (companionState === "waking") {
+              // Check if we should celebrate after waking (task completion while sleeping)
+              const shouldCelebrate =
+                useCompanionStore.getState().shouldCelebrateAfterWaking;
+              if (shouldCelebrate) {
+                useCompanionStore.setState({
+                  shouldCelebrateAfterWaking: false,
+                });
+                useCompanionStore.getState().transitionTo("celebrating");
+              } else if (isFocus && !isMobile) {
+                // Woke up during focus mode (desktop only), go straight to focusing
+                useCompanionStore.getState().transitionTo("focusing");
+              } else {
+                // Normal wake up, go to idle
+                useCompanionStore.getState().transitionTo("idle");
+              }
             } else if (
               companionState !== "exiting" &&
               companionState !== "focused"

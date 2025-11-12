@@ -53,17 +53,21 @@ export interface UseCompanionReturn {
  */
 export function useCompanion(): UseCompanionReturn {
   const store = useCompanionStore();
+  const isHydrated = useTodos((state) => state.isHydrated);
 
   // Subscribe to task completions
   useEffect(() => {
-    if (!store.enabled) {
-      return;
+    if (!store.enabled || !isHydrated) {
+      return; // Wait for hydration before tracking completions
     }
 
     // Track previous completed count to detect new completions
     let prevCompletedCount = useTodos
       .getState()
       .tasks.filter((t: Task) => t.status === "completed").length;
+
+    // Flag to skip the first subscription trigger (prevents celebration on mount)
+    let isFirstRun = true;
 
     const unsubscribe = useTodos.subscribe((state) => {
       const tasks = state.tasks;
@@ -73,6 +77,13 @@ export function useCompanion(): UseCompanionReturn {
         (t: Task) => t.status === "completed"
       ).length;
       const newCompletions = completedCount - prevCompletedCount;
+
+      // Skip celebration on first run (initial subscription setup)
+      if (isFirstRun) {
+        isFirstRun = false;
+        prevCompletedCount = completedCount;
+        return;
+      }
 
       if (newCompletions > 0 && store.enabled) {
         store.updateLastTaskTime();
@@ -87,11 +98,12 @@ export function useCompanion(): UseCompanionReturn {
           })[0];
 
         if (lastCompleted) {
-          // Always celebrate on task completion (360° spin)
-          // Wake up if tired, otherwise always celebrate
+          // If tired, wake up first before celebrating
           if (store.state === "tired") {
-            store.transitionTo("celebrating");
+            useCompanionStore.setState({ shouldCelebrateAfterWaking: true });
+            store.transitionTo("waking");
           } else {
+            // Always celebrate (spin) on every task completion
             store.transitionTo("celebrating");
           }
         }
@@ -102,15 +114,17 @@ export function useCompanion(): UseCompanionReturn {
     });
 
     return unsubscribe;
-  }, [store]);
+  }, [store, isHydrated]);
 
   // Check inactivity frequently for testing
   useEffect(() => {
     if (!store.enabled) return;
 
     const interval = setInterval(() => {
-      store.checkInactivity();
-    }, 5000); // Check every 5 seconds (for 10 second timeout)
+      // Get current focus mode state and pass it to checkInactivity
+      const isFocusMode = useTodos.getState().isFocus;
+      store.checkInactivity(isFocusMode);
+    }, 5000); // Check every 5 seconds (for 15 second timeout)
 
     return () => clearInterval(interval);
   }, [store]);
