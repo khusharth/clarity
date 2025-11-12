@@ -29,6 +29,7 @@ A minimal task management app built with the Eisenhower Matrix principle - helpi
 ## ✨ Features
 
 - 📊 **Eisenhower Matrix** - Organize tasks by urgency and importance (4 quadrants)
+- 🐕 **Companion Pet** - Interactive animated companion that celebrates with you
 - 🎯 **Focus Mode** - Single or quadrant focus to eliminate distractions
 - 🎨 **Beautiful UI** - Clean, modern interface with smooth animations
 - 🌓 **Dark/Light Theme** - Seamless theme switching
@@ -139,6 +140,19 @@ pnpm start
 
 Enable focus mode to concentrate on specific quadrants or individual tasks, hiding distractions.
 
+### Companion Pet
+
+Meet your productivity companion! A friendly animated pet that lives in the corner of your screen:
+
+- **Celebrates with you** - Spins and barks when you complete tasks
+- **Sleeps when idle** - After 30 seconds of inactivity, your companion takes a nap
+- **Wake up interaction** - Ring the doorbell (click) to wake your sleeping companion
+- **Focus mode support** - Stays awake and moves to center during focus mode
+- **Theme adaptive** - Changes appearance based on your light/dark theme preference
+- **Toggle visibility** - Show/hide your companion in settings
+
+The companion can be enabled or disabled in the Settings modal.
+
 ### Settings
 
 Access the Settings modal by clicking the gear icon in the top-right corner. Customize your experience with these options:
@@ -148,6 +162,7 @@ Access the Settings modal by clicking the gear icon in the top-right corner. Cus
 - **Theme** - Switch between Light and Dark mode
 - **Reduce Motion** - Disable animations for accessibility (respects system preference)
 - **Sound Effects** - Enable/disable audio feedback for task actions
+- **Companion** - Show/hide your animated companion pet
 
 **Task Display:**
 
