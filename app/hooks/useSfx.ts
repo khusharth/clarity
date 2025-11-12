@@ -57,6 +57,10 @@ export function useSfx() {
     volume: 0.4,
     soundEnabled: enabled,
   });
+  const [playDoorbell] = useSound("/sounds/doorbell.mp3", {
+    volume: 0.4,
+    soundEnabled: enabled,
+  });
 
   return {
     add: () => (enabled ? playAdd?.() ?? beep(100, 660) : undefined),
@@ -68,5 +72,6 @@ export function useSfx() {
       enabled ? playDragStart?.() ?? beep(100, 660) : undefined,
     dragDrop: () => (enabled ? playDragDrop?.() ?? beep(120, 520) : undefined),
     dogHowl: () => (enabled ? playDogHowl?.() ?? beep(150, 300) : undefined),
+    doorbell: () => (enabled ? playDoorbell?.() ?? beep(200, 500) : undefined),
   };
 }

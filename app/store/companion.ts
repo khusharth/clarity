@@ -211,10 +211,10 @@ export const useCompanionStore = create<CompanionStore>((set, get) => ({
     if (isFocusMode) return;
 
     const elapsed = Date.now() - lastTaskCompletionTime;
-    const fifteenSeconds = 15 * 1000; // 15000ms
+    const thirtySeconds = 30 * 1000; // 30000ms
 
-    // Transition to tired if inactive for 15 seconds and not already tired
-    if (elapsed >= fifteenSeconds && state !== "tired") {
+    // Transition to tired if inactive for 30 seconds and not already tired
+    if (elapsed >= thirtySeconds && state !== "tired") {
       get().transitionTo("tired");
     }
   },

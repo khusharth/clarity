@@ -53,8 +53,9 @@ export default function Companion() {
       return;
     }
 
-    // Don't play sound if tired (will just wake up)
+    // Play doorbell sound when clicking sleeping dog, otherwise play howl when awake
     if (companionState === "tired") {
+      sfx.doorbell();
       handleClick();
       return;
     }
