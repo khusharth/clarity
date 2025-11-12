@@ -55,7 +55,7 @@ const TaskActions = (props: { task: Task }) => {
   );
 };
 export default function CompletedPage() {
-  const { tasks, isHydrated, hydrate, remove } = useTodos();
+  const { tasks, isHydrated, hydrate, remove, showOverallCount } = useTodos();
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
   const sfx = useSfx();
   const toast = useToast();
@@ -102,7 +102,9 @@ export default function CompletedPage() {
               <ArrowLeft size={16} />
               Back
             </Link>
-            <h1 className="text-xl font-semibold">Completed</h1>
+            <h1 className="text-xl font-semibold">
+              Completed{showOverallCount && ` (${completed.length})`}
+            </h1>
           </div>
           {completed.length > 1 && (
             <Button
