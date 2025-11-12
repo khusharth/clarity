@@ -41,6 +41,7 @@ export default function Companion() {
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isInFocusPosition, setIsInFocusPosition] = useState(false); // Track if companion is at focus position
+  const [initialDelayComplete, setInitialDelayComplete] = useState(false); // Track 2-second initial delay
 
   // Wrapper for handleClick that plays sound only when awake and click will be processed
   const handleClickWithSound = () => {
@@ -76,7 +77,17 @@ export default function Companion() {
     if (!isMounted) {
       setIsMounted(true);
     }
-  }, []);
+  }, [isMounted]);
+
+  // Add 2-second delay before showing companion on initial load
+  useEffect(() => {
+    if (isMounted) {
+      const timer = setTimeout(() => {
+        setInitialDelayComplete(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isMounted]);
 
   // Get idle animation based on sequence index
   const idleAnimations = stateAnimationMap.idle;
@@ -251,13 +262,17 @@ export default function Companion() {
 
   // Handle showing/hiding companion with proper animations
   useEffect(() => {
-    if (enabled && showCompanion && isMounted) {
+    if (enabled && showCompanion && isMounted && initialDelayComplete) {
       // Show: force entering animation (bypasses state machine validation)
       useCompanionStore.getState().transitionTo("entering");
       // Reset focus position flag when showing companion
       // If already in focus mode, the focus effect will handle re-entry
       setIsInFocusPosition(false);
-    } else if ((!enabled || !showCompanion) && isMounted) {
+    } else if (
+      (!enabled || !showCompanion) &&
+      isMounted &&
+      initialDelayComplete
+    ) {
       // Hide: trigger exiting animation
       const currentState = useCompanionStore.getState().state;
       if (currentState !== "exiting") {
@@ -266,7 +281,7 @@ export default function Companion() {
       // Reset focus position flag when hiding
       setIsInFocusPosition(false);
     }
-  }, [enabled, showCompanion, isMounted]);
+  }, [enabled, showCompanion, isMounted, initialDelayComplete]);
 
   // Handle focus mode transitions
   useEffect(() => {
@@ -349,7 +364,7 @@ export default function Companion() {
         useCompanionStore.getState().transitionTo("idle");
       }}
     >
-      {enabled && showCompanion && (
+      {enabled && showCompanion && initialDelayComplete && (
         <motion.div
           key="companion"
           initial={{ opacity: 1, scale: 1, y: -100 }}
@@ -375,7 +390,7 @@ export default function Companion() {
           whileHover={!prefersReducedMotion ? { scale: 1.1 } : undefined}
           whileTap={!prefersReducedMotion ? { scale: 0.95 } : undefined}
           transition={{
-            y: { duration: 0.6, ease: "easeInOut" }, // Move down/up
+            y: { duration: 1.5, ease: "easeInOut" }, // Move down/up - slowed down to see walking
             x: {
               duration: 1.8,
               ease: "easeInOut",
