@@ -197,8 +197,14 @@ export default function Companion() {
               companionState !== "exiting" &&
               companionState !== "focused"
             ) {
-              // Default: transition back to idle (except exiting and focused states)
-              useCompanionStore.getState().transitionTo("idle");
+              // Default: transition back to idle or focused based on focus mode
+              // Check if we should return to focus mode after celebration
+              const shouldReturnToFocus = isFocus && !isMobile;
+              if (shouldReturnToFocus) {
+                useCompanionStore.getState().transitionTo("focused");
+              } else {
+                useCompanionStore.getState().transitionTo("idle");
+              }
             }
             // For exiting and focused, don't auto-transition
           }
@@ -339,12 +345,17 @@ export default function Companion() {
             opacity: 1,
             scale: 1,
             // Move down first, then to center for focus mode
+            // Keep centered during celebration if in focus mode
             y:
-              companionState === "focused" || companionState === "focusing"
+              companionState === "focused" ||
+              companionState === "focusing" ||
+              (companionState === "celebrating" && isFocus && !isMobile)
                 ? 38 // Move down below logo, above quadrants
                 : 0, // Normal position (top)
             x:
-              companionState === "focused" || companionState === "focusing"
+              companionState === "focused" ||
+              companionState === "focusing" ||
+              (companionState === "celebrating" && isFocus && !isMobile)
                 ? "calc(-50vw + 100%)" // Move to horizontal center of screen
                 : 0, // Normal position (right edge)
           }}

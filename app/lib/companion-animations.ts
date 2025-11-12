@@ -167,7 +167,7 @@ export function canTransition(
       "focusing", // Can enter focus mode from idle
     ],
     motivated: ["idle", "celebrating", "exiting", "focusing"],
-    celebrating: ["idle", "exiting", "focusing"],
+    celebrating: ["idle", "exiting", "focusing", "focused"], // Can return to focused after celebrating
     tired: ["waking", "motivated", "idle", "exiting", "focusing"], // Can wake up on focus mode
     waking: ["idle", "exiting", "focused"], // After waking, go to idle or focus
     focusing: ["focused"], // Move to focus position then stay focused
