@@ -20,7 +20,7 @@
     "framer-motion": "^12.0.0",
     "howler": "^2.2.4",
     "lucide-react": "^0.468.0",
-    "next": "16.0.1",
+    "next": "16.0.10",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "react-rewards": "^2.1.0",
